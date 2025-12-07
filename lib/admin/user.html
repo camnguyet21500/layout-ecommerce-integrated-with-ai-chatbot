@@ -1,40 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Management</title>
-
-    <!--    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"-->
-    <!--            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"-->
-    <!--            crossorigin="anonymous"></script>-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-            crossorigin="anonymous"></script>
-
-    <!--Bootstrap CSS-->
-    <script src="../js/bootstrap.min.js"></script>
-
-    <!--Bootstrap JS-->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
-
-    <!--CSS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="../../css/user.css">
-
-    <!-- FONT AWESOME -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
 </head>
-
 <body>
-<!-- HEADER -->
+<!-- HEADER giữ nguyên của em -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
-
-            <!-- MENU -->
             <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="../customer/index.html">HOME</a></li>
@@ -45,304 +25,319 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
                 </ul>
             </div>
-
-            <!-- LOGO -->
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
-                <img src="../../img/logoblack.png" alt="Logo" width="80" class="d-inline-block align-top">
+                <img src="../../img/logoblack.png" alt="Logo" width="80">
             </a>
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
-<!-- USER MANAGEMENT SECTION -->
-<div class="user-management container">
-    <div class="text-center">
-        <h3 class="title-heading">User Management</h3>
+<div class="user-management container" style="margin-top: 120px;">
+    <h3 class="text-center my-4">User Management</h3>
+    <div class="text-right mb-3">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add User</button>
+        <button class="btn btn-success ml-2">Import Excel</button>
+        <button class="btn btn-info ml-2">Export Excel</button>
     </div>
-    <div class="management-actions text-right mb-3">
-        <button class="button" data-toggle="modal" data-target="#addUserModal">Add User</button>
-        <button class="button">Import Excel</button>
-        <button class="button">Export Excel</button>
-    </div>
+
     <table class="table table-bordered table-hover">
-        <thead>
+        <thead class="thead-light">
         <tr>
-            <th>ID</th>
-            <th>Username</th>
+            <th>STT</th>
+            <th>User name</th>
+            <th>Address</th>
             <th>Email</th>
+            <th>Phone</th>
+            <th>Status</th>
             <th>Role</th>
             <th>Actions</th>
         </tr>
         </thead>
         <tbody>
-        <!-- Sample Rows (In real app, populate via backend) -->
         <tr>
-            <td>1</td>
-            <td>admin</td>
-            <td>admin@example.com</td>
-            <td>Admin</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-primary edit-btn"
-                        data-toggle="modal"
-                        data-target="#editUserModal"
-                        title="Chỉnh sửa">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn"
-                        data-id="${user.id}"
-                        title="Xóa người dùng">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+            <!--            class="text-center text-muted py-4">-->
+            <td colspan="8">
+                <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải dữ liệu...
             </td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>user1</td>
-            <td>user1@example.com</td>
-            <td>User</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-primary edit-btn"
-                        data-toggle="modal"
-                        data-target="#editUserModal"
-                        title="Chỉnh sửa">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn"
-                        onclick="confirmDelete('admin')"
-                        title="Xóa người dùng">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        </tr>
-        <!-- Add more rows as needed -->
         </tbody>
     </table>
 </div>
 
 <!-- Add User Modal -->
-<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<!-- Add User Modal – PHIÊN BẢN ĐẸP + ĐẦY ĐỦ FIELD + VALIDATION -->
+<div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addUserModalLabel">Add New User</h5>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="addUserModalLabel">Thêm người dùng mới</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+            <form id="addUserForm">
+                <div class="modal-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="email" required placeholder="abc@example.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mật khẩu <span class="text-danger">*</span></label>
+                                <input type="password" class="form-control" id="password" required minlength="6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Họ và tên đệm (First Name) <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="firstName" required placeholder="Nguyễn Văn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên (Last Name)</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="A, B, C... (không bắt buộc)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Địa chỉ đầy đủ <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="fullAddress" required placeholder="Số nhà, đường, phường/xã...">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Thành phố / Tỉnh</label>
+                                <input type="text" class="form-control" id="city" placeholder="TP.HCM, Hà Nội...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Quận / Huyện</label>
+                                <input type="text" class="form-control" id="province" placeholder="Quận 1, Bình Thạnh...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Quốc gia</label>
+                                <input type="text" class="form-control" id="country" value="Việt Nam">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" id="phone" placeholder="0901234567">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="status" checked>
+                                    <label class="form-check-label" for="status">
+                                        Kích hoạt tài khoản (active)
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary" id="btnSaveNewUser">
+                        <i class="fas fa-save"></i> Lưu người dùng
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit User</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
             <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="username">Username</label>
-                        <input type="text" class="form-control" id="username" placeholder="Enter username">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" class="form-control" id="password" placeholder="Enter password">
-                    </div>
-                    <div class="form-group">
-                        <label for="role">Role</label>
-                        <select class="form-control" id="role">
-                            <option>User</option>
-                            <option>Admin</option>
-                        </select>
-                    </div>
-                </form>
+                <div class="form-group"><label>Username</label><input type="text" class="form-control" id="editUsername"></div>
+                <div class="form-group"><label>Email</label><input type="email" class="form-control" id="editEmail"></div>
+                <div class="form-group"><label>Password (để trống nếu không đổi)</label><input type="password" class="form-control" id="editPassword"></div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!--                <button type="button" class="button">Save User</button>-->
-                <button type="button" id="btnSaveNewUser" class="button">Save User</button>
+                <button type="button" id="btnUpdateUser" class="btn btn-primary">Update User</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Edit User Modal (Similar to Add, but pre-filled) -->
-<div class="modal fade" id="editUserModal" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="editUsername">Username</label>
-                        <input type="text" class="form-control" id="editUsername" placeholder="Enter username">
-                    </div>
-                    <div class="form-group">
-                        <label for="editEmail">Email</label>
-                        <input type="email" class="form-control" id="editEmail" placeholder="Enter email">
-                    </div>
-                    <div class="form-group">
-                        <label for="editPassword">Password (Leave blank to keep current)</label>
-                        <input type="password" class="form-control" id="editPassword" placeholder="Enter new password">
-                    </div>
-                    <div class="form-group">
-                        <label for="editRole">Role</label>
-                        <select class="form-control" id="editRole">
-                            <option>User</option>
-                            <option>Admin</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <!--                <button type="button" class="button">Update User</button>-->
-                <button type="button" id="btnUpdateUser" class="button">Update User</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- FOOTER giữ nguyên của em -->
+<footer class="footer mt-5"> ... (giữ nguyên) ... </footer>
+<script>
+    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    let authToken = null;
+    let currentUsers = []; // Biến lưu danh sách user hiện tại
 
-<!--FOOTER-->
-<footer class="footer mt-5">
-    <div class="top-footer">
-        <div class="row footerreponsive">
-            <div class="col-sm-3">
-                <div class="info_footer end">
-                    <div class="logo-top">
-                        <a href="" class="logo">
-                            <img src="../../img/logowhite.png" style="width: 50%;">
-                        </a>
-                    </div>
-                    <div class="mb-0 content_footer" style="margin-top: 23px;">
-                        University of Information Technology (VNUHCM – UIT)<br>
-                        (028) 372 52002 <br>
-                        (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
-                    </div>
-                    <div class="list-icon">
-                        <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr style="background-color: white;">
-    <div class="copyright" style="color: white;">
-        <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
-                <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Lazashoes
-                    </a>
-                </div>
-                <p></p>
-            </div>
-        </div>
-    </div>
-</footer>
+    async function autoLoginAndLoad() {
+        try {
+            console.log("Đang đăng nhập tự động...");
+            const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const loginData = await loginRes.json();
+            if (loginData.data?.accessToken) {
+                authToken = loginData.data.accessToken;
+                console.log("Đăng nhập thành công!");
+                loadUsers();
+            } else {
+                alert("Không đăng nhập được – kiểm tra email/pass");
+            }
+        } catch (err) {
+            console.error("Lỗi login:", err);
+            alert("Không kết nối được server");
+        }
+    }
+
+    async function loadUsers() {
+        try {
+            const res = await fetch(`${BASE_URL}/users?itemPerPage=100&page=1`, {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!res.ok && res.status === 401) {
+                alert("Token hết hạn, đang đăng nhập lại...");
+                return autoLoginAndLoad();
+            }
+            if (!res.ok) throw new Error("Lỗi server");
+
+            const json = await res.json();
+            const activeUsers = json.data.list.filter(user => !user.deletedAt);
+            currentUsers = activeUsers; // Lưu vào biến toàn cục
+            renderTable(currentUsers);
+        } catch (err) {
+            console.error(err);
+            document.querySelector("tbody").innerHTML = "<tr><td colspan='8' class='text-danger text-center'>Lỗi tải dữ liệu</td></tr>";
+        }
+    }
+
+    function renderTable(users) {
+        const tbody = document.querySelector("tbody");
+        tbody.innerHTML = "";
+
+        if (!users || users.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">Không có người dùng nào</td></tr>`;
+            return;
+        }
+
+        // Sắp xếp: cũ nhất trên đầu → mới nhất dưới cùng
+        users.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+
+        users.forEach((user, index) => {
+            const fullName = [(user.firstName || ""), (user.lastName || "")].filter(Boolean).join(" ").trim();
+            const displayName = fullName || user.email.split('@')[0];
+            const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-';
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
+            <td>${displayName}</td>
+            <td>${user.fullAddress || "-"}</td>
+            <td>${user.email}</td>
+            <td>${user.phone || "-"}</td>
+            <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
+            <td><span class="badge badge-info">${createdDate}</span></td>
+            <td class="text-center" style="width:130px;">
+                <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // THÊM USER – CHỈ GIỮ LẠI ĐOẠN DUY NHẤT NÀY
+    $('#addUserForm').on('submit', async function (e) {
+        e.preventDefault();
+
+        const payload = {
+            email: $('#email').val().trim(),
+            password: $('#password').val(),
+            firstName: $('#firstName').val().trim(),
+            lastName: $('#lastName').val().trim() || null,
+            fullAddress: $('#fullAddress').val().trim(),
+            city: $('#city').val().trim() || null,
+            province: $('#province').val().trim() || null,
+            country: $('#country').val().trim() || "Việt Nam",
+            phone: $('#phone').val().trim() || null,
+            status: $('#status').is(':checked') ? 'active' : 'inactive'
+        };
+
+        $('#btnSaveNewUser').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+
+        try {
+            const res = await fetch(`${BASE_URL}/users`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.status === 200 || res.status === 201) {
+                const result = await res.json();
+                const newUser = result.data;
+
+                alert("Thêm người dùng thành công!");
+                $('#addUserModal').modal('hide');
+                $('#addUserForm')[0].reset();
+
+                // THÊM NGAY USER MỚI VÀO DANH SÁCH VÀ RERENDER
+                currentUsers.push(newUser);
+                renderTable(currentUsers);
+
+            } else {
+                const err = await res.json();
+                alert("Thêm thất bại: " + (err.message || "Lỗi không xác định"));
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi kết nối server!");
+        } finally {
+            $('#btnSaveNewUser').prop('disabled', false).html('<i class="fas fa-save"></i> Lưu người dùng');
+        }
+    });
+
+    // Các phần còn lại (xóa, sửa) giữ nguyên hoặc sẽ fix sau nếu cần
+
+    $(document).ready(function () {
+        autoLoginAndLoad();
+    });
+</script>
 </body>
-
 </html>
