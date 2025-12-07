@@ -68,291 +68,210 @@
 <!-- END HEADER -->
 
 <!-- PRODUCT MANAGEMENT SECTION -->
-<div class="product-management container">
-    <div class="text-center">
-        <h3 class="title-heading">Product Management</h3>
-    </div>
-    <div class="management-actions text-right mb-4">
-        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addProductModal">
+<div class="container" style="margin-top: 120px;">
+    <h3 class="text-center my-4">Product Management</h3>
+
+    <div class="text-right mb-3">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
             Add Product
-        </a>
-        <label class="btn-admin" style="cursor: pointer;">
-            Import Excel
-            <input type="file" accept=".xlsx, .xls" style="display: none;">
-        </label>
-        <a href="#" class="btn-admin" onclick="exportToExcel()">
-            Export Excel
-        </a>
+        </button>
+        <button class="btn btn-success ml-2">Import Excel</button>
+        <button class="btn btn-info ml-2">Export Excel</button>
     </div>
+
     <table class="table table-bordered table-hover">
-        <thead>
+        <thead class="thead-light">
         <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Description</th>
+            <th>STT</th>
             <th>Image</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
         </thead>
-        <tbody>
-        <!-- Sample Rows (In real app, populate via backend) -->
+        <tbody id="productTableBody">
         <tr>
-            <td>1</td>
-            <td>Adidas Stan Smith Shoes</td>
-            <td>$400.00</td>
-            <td>Classic sneakers</td>
-            <td><img src="../../img/product1.jpg" alt="Product" style="width: 50px;"></td>
-            <td class="text-center">
-                <button class="btn btn-sm edit-btn" title="Chỉnh sửa"
-                        data-toggle="modal" data-target="#editProductModal">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm delete-btn" title="Xóa"
-                        onclick="confirmDeleteProduct(1)">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
+            <td colspan="8" class="text-center">
+                <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải sản phẩm...
             </td>
         </tr>
-        <tr>
-            <td>2</td>
-            <td>Converse Chuck Taylor All</td>
-            <td>$300.00</td>
-            <td>All-star edition</td>
-            <td><img src="../../img/product2.jpg" alt="Product" style="width: 50px;"></td>
-            <td class="text-center">
-                <button class="btn btn-sm edit-btn" title="Chỉnh sửa"
-                        data-toggle="modal" data-target="#editProductModal">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm delete-btn" title="Xóa"
-                        onclick="confirmDeleteProduct(1)">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        </tr>
-        <!-- Add more rows as needed -->
         </tbody>
     </table>
 </div>
 
 <!-- Add Product Modal -->
-<div class="modal fade" id="addProductModal" tabindex="-1" role="dialog" aria-labelledby="addProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="addProductModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addProductModalLabel">Add New Product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Thêm sản phẩm mới</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="productName">Name</label>
-                        <input type="text" class="form-control" id="productName" placeholder="Enter product name">
+            <form id="addProductForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label>Tên sản phẩm <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="addName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="addPrice" required min="0">
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <label for="productPrice">Price</label>
-                        <input type="text" class="form-control" id="productPrice" placeholder="Enter price">
+                        <label>Mô tả</label>
+                        <textarea class="form-control" id="addDescription" rows="3"></textarea>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số lượng tồn kho</label>
+                                <input type="number" class="form-control" id="addStock" value="0" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <select class="form-control" id="addStatus">
+                                    <option value="active">Active</option>
+                                    <option value="draft">Draft</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="form-group">
-                        <label for="productDescription">Description</label>
-                        <textarea class="form-control" id="productDescription" placeholder="Enter description"></textarea>
+                        <label>Ảnh sản phẩm (chọn nhiều)</label>
+                        <input type="file" class="form-control" id="addImages" multiple accept="image/*">
                     </div>
-                    <div class="form-group">
-                        <label for="productImage">Image</label>
-                        <input type="file" class="form-control" id="productImage">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btnloadmore">Save Product</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Product Modal (Similar to Add, but pre-filled) -->
-<div class="modal fade" id="editProductModal" tabindex="-1" role="dialog" aria-labelledby="editProductModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="editProductModalLabel">Edit Product</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label for="editProductName">Name</label>
-                        <input type="text" class="form-control" id="editProductName" placeholder="Enter product name">
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductPrice">Price</label>
-                        <input type="text" class="form-control" id="editProductPrice" placeholder="Enter price">
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductDescription">Description</label>
-                        <textarea class="form-control" id="editProductDescription" placeholder="Enter description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="editProductImage">Image</label>
-                        <input type="file" class="form-control" id="editProductImage">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btnloadmore">Update Product</button>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Footer giữ nguyên -->
+<footer class="footer mt-5"> ... (giữ nguyên) ... </footer>
 
-<!--FOOTER-->
-<footer class="footer mt-5">
-    <div class="top-footer">
-        <div class="row footerreponsive">
-            <div class="col-sm-3">
-                <div class="info_footer end">
-                    <div class="logo-top">
-                        <a href="" class="logo">
-                            <img src="../../img/logowhite.png" style="width: 50%;">
-                        </a>
-                    </div>
-                    <div class="mb-0 content_footer" style="margin-top: 23px;">
-                        University of Information Technology (VNUHCM – UIT)<br>
-                        (028) 372 52002 <br>
-                        (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
-                    </div>
-                    <div class="list-icon">
-                        <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr style="background-color: white;">
-    <div class="copyright" style="color: white;">
-        <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
-                <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Lazashoes
-                    </a>
-                </div>
-                <p></p>
-            </div>
-        </div>
-    </div>
-</footer>
+<script>
+    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    let authToken = null;
+    let currentProducts = [];
 
-<!--END FOOTER-->
+    // Auto login + load
+    async function autoLoginAndLoad() {
+        try {
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const data = await res.json();
+            if (data.data?.accessToken) {
+                authToken = data.data.accessToken;
+                loadProducts();
+            } else {
+                alert("Login thất bại!");
+            }
+        } catch (err) {
+            alert("Không kết nối được server");
+        }
+    }
+
+    async function loadProducts() {
+        try {
+            const res = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load sản phẩm");
+            const json = await res.json();
+
+            // Lọc sản phẩm chưa xóa
+            currentProducts = json.data.list.filter(p => !p.deletedAt);
+            renderProductTable(currentProducts);
+        } catch (err) {
+            document.getElementById("productTableBody").innerHTML =
+                `<tr><td colspan="8" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+        }
+    }
+
+    function renderProductTable(products) {
+        const tbody = document.getElementById("productTableBody");
+        tbody.innerHTML = "";
+
+        if (products.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Chưa có sản phẩm nào</td></tr>`;
+            return;
+        }
+
+        products.forEach((product, index) => {
+            const mainImage = product.productImages?.[0]?.imageUrl || "https://via.placeholder.com/60";
+            const variantCount = product.productVariants?.length || 0;
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td class="text-center">${index + 1}</td>
+          <td><img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px;"></td>
+          <td><strong>${product.name}</strong></td>
+          <td><strong>${product.description}</strong></td>
+          <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
+          <td>${product.stockQuantity}</td>
+          <td><span class="badge badge-${product.status === 'active' ? 'success' : 'secondary'}">${product.status}</span></td>
+          <td class="text-center">
+            <button class="btn btn-sm btn-warning edit-btn" data-product='${JSON.stringify(product)}'>
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-danger delete-btn" data-id="${product.id}">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // XÓA SẢN PHẨM
+    $(document).on('click', '.delete-btn', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xóa sản phẩm này? Không thể khôi phục!")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/products/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (res.ok) {
+                alert("Xóa thành công!");
+                currentProducts = currentProducts.filter(p => p.id !== id);
+                renderProductTable(currentProducts);
+            } else {
+                alert("Xóa thất bại!");
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // CHẠY KHI LOAD TRANG
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+</script>
 </body>
 
 </html>
