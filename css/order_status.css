@@ -1,0 +1,225 @@
+@import url("https://fonts.googleapis.com/css2?family=El+Messiri&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+body{
+  overflow-x: hidden;
+  font-family: "Quicksand", sans-serif;
+}
+
+/*HEADER*/
+
+.icon a{
+  color: black;
+}
+
+.icon a:hover{
+  color: #ffa6a8;
+}
+
+.slide-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+}
+.slide-container img {
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+}
+
+.slide-caption {
+  font-family: "El Messiri", sans-serif;
+  position: absolute;
+  top:200px;
+  left:100px;
+}
+
+ .slide-caption > h3 {
+  font-size: 80px;
+  padding-bottom: 15px;
+}
+
+.slide-caption > p {
+  color: #7d7b7b;
+  font-size: 20px;
+}
+
+.slide-caption > p > a {
+  background: none;
+  font-family: "Quicksand", sans-serif;
+  padding: 10px 30px;
+   display: inline-block; 
+  color: black;
+  margin-top: 15px;
+  text-decoration: none;
+  border: 1px solid black;
+}
+
+.slide-caption > p > a:hover {
+  background: #ffa6a8;
+  color: white;
+  border: 1px solid #fff;
+} 
+
+.navbar-nav {
+  justify-content: flex-end;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.icon > i {
+  width: 40px;
+  height: 30px;
+}
+
+.navbar-collapse {
+  flex-grow: 0;
+}
+
+.nav-item {
+  font-family: "Quicksand", sans-serif;
+  font-size: 17px;
+}
+
+.label_menu {
+  background-color: #e62e05;
+  color: white;
+  padding: 0px 3px;
+  font-size: 8px;
+  font-weight: 600;
+  font-family: Arial, Helvetica, sans-serif;
+  position: absolute;
+  top: 0px;
+  left: none;
+}
+
+.label_menu:before{
+  content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    display: inline-block;
+    top: 100%;
+    border-top: 4px solid #e62e05;
+    border-right: 4px solid transparent;
+}
+
+.dropdown {
+  font-family: "Quicksand", sans-serif;
+  padding-left: 30px;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.dropdown-item:hover {
+  color: #ffa6a8;
+  background: white;
+}
+
+.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+
+.dropdown > .dropdown-toggle:active {
+  /*Without this, clicking will make it sticky*/
+  pointer-events: none;
+}
+
+.col-sm-7 {
+  font-size: 13px;
+}
+
+.container-fluid-v1{
+    height: 70px;
+}
+
+/*BGR*/
+.jumbotron{
+    background-image: url('../img/bgr_order.jpg');
+    height: 400px;
+    text-align: center;
+}
+
+.jumbotron h1{
+    font-size: 46px;
+    font-weight: 400;
+    padding-top: 100px;
+    padding-bottom: 10px;
+}
+
+.jumbotron p{
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.jumbotron p a{
+    text-decoration: none;
+    color: black;
+}
+
+
+/*FOOTER*/
+.footer{
+  padding: 50px;
+  background-color: black;
+}
+
+.top-footer{
+  padding-bottom: 50px;
+}
+
+.hr{
+  margin-right: 200px;
+  background-color: white;
+  width: 150px;
+}
+
+.title_border{
+  color: #f9af47;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.content_footer{
+  font-size: 14px;
+  font-weight: 400;
+  color: white;
+}
+
+.list-unstyled li a{
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.list-unstyled li a:hover{
+  color: #f9af47;
+  text-decoration: none;
+}
+
+.underline_hover{
+  color: #7d7b7b;
+}
+
+.underline_hover:hover{
+  color: #f9af47;
+  text-decoration: none;
+}
+
+.content{
+  color: #7d7b7b;
+  font-size: 16px;
+  font-weight: 400;
+  margin-top: 10px;
+}
+
+.content a{
+  color: #7d7b7b;
+}
+
+.content a:hover{
+  color: #ffa6a8;
+}
+
+  

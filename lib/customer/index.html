@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+
+    <!--Bootstrap CSS-->
+    <script src="../js/bootstrap.min.js"></script>
+
+    <!--Bootstrap JS-->
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+
+    <!--CSS-->
+    <link rel="stylesheet" href="../../css/index.css">
+
+    <!-- FONT AWESOME -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <!-- JS -->
+    <script src="../../js/testapi.js"></script>
+
+</head>
+
+<body>
+    <!--HEADER-->
+
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
+            <div class="container-fluid container-fluid-v1">
+                <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav">
+                        <div class="dropdown">
+                            <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
+                        </div>
+                        <div class="dropdown">
+                            <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
+                                <span class="absolute label_menu">HOT</span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="product.html">ALL ITEMS</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Sneaker</a>
+                                        <a class="dropdown-item text-secondary" href="#">Converse</a>
+                                        <a class="dropdown-item text-secondary" href="#">Adidas</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">PRODUCTS</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Hot Trend</a>
+                                        <a class="dropdown-item text-secondary" href="#">Best Seller</a>
+                                        <a class="dropdown-item text-secondary" href="#">Fashion</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">POPULAR</a>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            SB Chron British Tan<br>
+                                                            $ 500.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            Converse Chuck Taylor Star<br>
+                                                            $ 500.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            Converse Unisex Shoes<br>
+                                                            $ 300.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
+                            <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                </div>
+                                <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
+                            </div>
+                        </div>
+
+                        <div class="dropdown">
+                            <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
+                            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
+                            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                                <div class="row">
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Another action</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    </div>
+                                    <div class="col-sm">
+                                        <a class="dropdown-item" href="#">Something else here</a>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            SB Chron British Tan<br>
+                                                            $ 500.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            Converse Chuck Taylor Star<br>
+                                                            $ 500.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dropdown-divider"></div>
+                                        <div class="poly-cart">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    <div class="row">
+                                                        <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                        <ul class="col-sm-7">
+                                                            Converse Unisex Shoes<br>
+                                                            $ 300.00
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+                <img src="../../img/logoblack.png" width="6%" style="margin-right: 450px;">
+                <div class="icon" style="display: inherit">
+                    <i class="fas fa-search"></i>
+
+                    <!-- LOGIN -->
+                    <!-- Button trigger modal -->
+                    <i class="far fa-user" data-toggle="modal" data-target="#exampleModalCenter">
+
+                    </i>
+
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+                        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                            <div class="modal-content" style="text-align: center;">
+                                <div class="modal-body" style="text-align: center; padding: 50px;">
+                                    <!-- Nav tabs -->
+                                    <ul class="nav nav-tabs" role="tablist">
+                                        <li class="nav-item">
+                                            <a class="nav-link active" data-toggle="tab" href="#home">LOGIN</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" data-toggle="tab" href="#signup">SIGN UP</a>
+                                        </li>
+                                    </ul>
+
+                                    <!-- Tab panes -->
+                                    <div class="tab-content">
+                                        <div id="home" class=" tab-pane active"><br>
+                                            <h3 style="font-size: 36px;
+font-weight: 600;">SOLE MATES</h3>
+                                            <hr>
+                                            <p>Great to have you back!</p>
+                                            <form>
+                                                <div class="form-group">
+                                                    <input type="email" class="form-control" id="exampleInputEmail15"
+                                                        aria-describedby="emailHelp" placeholder="Email address">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control"
+                                                        id="exampleInputPassword16" placeholder="Password">
+                                                </div>
+                                                <div class="login">
+                                                    <input type="submit" class="button" value="LOG IN"
+                                                        name="update_cart">
+                                                </div>
+                                                <div>
+                                                    <p>or login with</p>
+                                                    <img src="../../img/logo_google.png" alt="" style="width: 8%;">
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div id="signup" class=" tab-pane fade"><br>
+                                            <h3 style="font-size: 36px;
+font-weight: 600;">SOLE MATES</h3>
+                                            <hr>
+                                            <p>Sign up for an account for a better experience!</p>
+                                            <form>
+                                                <div class="form-group">
+                                                    <input type="email" class="form-control" id="exampleInputEmail1"
+                                                        aria-describedby="emailHelp" placeholder="Email address">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control"
+                                                        id="exampleInputPassword1" placeholder="Password">
+                                                </div>
+                                                <div class="login">
+                                                    <input type="submit" class="button" value="LOG IN"
+                                                        name="update_cart">
+                                                </div>
+                                                <div>
+                                                    <p>or sign up with</p>
+                                                    <img src="../../img/logo_google.png" alt="" style="width: 8%;">
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- END LOGIN -->
+
+                    <i class="far fa-heart"></i>
+                    <a href="cart.html"><i class="fas fa-dolly"></i></a>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <!--HEADER END-->
+
+    <!--SLIDER-->
+    <div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="background-color: #ecd9c8;">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <div class="mask flex-center">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-7 col-12 order-md-1 order-2">
+                                <h4 style="color: black;">Elevate your <br>
+                                    walking experience</h4>
+                                <p style="color: black;">Crafted from premium materials, our shoes deliver unmatched durability, <br>
+                                    lightweight comfort, and a fashionable edge to keep you moving with ease.</p>
+                                <a href="#">BUY NOW</a>
+                            </div>
+                            <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider2.png" class="mx-auto"
+                                                                                 alt="slide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="mask flex-center">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-7 col-12 order-md-1 order-2">
+                                <h4 style="color: black;">Step into <br>
+                                    timeless fashion</h4>
+                                <p style="color: black;">Discover sneakers that blend modern design with everyday comfort, <br>
+                                    ensuring every step reflects your style, confidence, and unique personality.</p>
+                                <a href="#">BUY NOW</a>
+                            </div>
+                            <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider1.png" class="mx-auto"
+                                                                                 alt="slide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <div class="mask flex-center">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-md-7 col-12 order-md-1 order-2">
+                                <h4 style="color: black;">Unlock <br>
+                                    your perfect style</h4>
+                                <p style="color: black;">Designed with precision and care, our shoes combine trend-forward aesthetics, <br>
+                                    reliable comfort, and long-lasting performance for your daily adventures.</p>
+                                <a href="#">BUY NOW</a>
+                            </div>
+                            <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider3.png   "
+                                    class="mx-auto" alt="slide"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev"
+            style="top: 300px; width: 45px;">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span>
+        </a>
+
+        <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next"
+            style="top: 300px; width:45px">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span>
+        </a>
+    </div>
+    <!--SLIDE END -->
+
+    <!--CARD-->
+    <div class="card-content">
+        <div class="card card-one text-center">
+            <img src="../../img/card1.png" class="card-img-top">
+            <div class="card-body">
+                <h4 class="card-title">24/7 FRIENDLY SUPPORT</h4>
+                <p class="card-text">Our support team alway ready for you to 7 day a week</p>
+            </div>
+        </div>
+        <div class="card card-two text-center">
+            <img src="../../img/card2.png" class="card-img-top">
+            <div class="card-body">
+                <h4 class="card-title">FREE SHIPPING</h4>
+                <p class="card-text">Free worldwide shipping on all area order above $100</p>
+            </div>
+        </div>
+        <div class="card card-three text-center">
+            <img src="../../img/card3.png" class="card-img-top">
+            <div class="card-body">
+                <h4 class="card-title">QUALITY GUARANTEED</h4>
+                <p class="card-text">Our Buyer Protection covers your purchase from click to delivery.</p>
+            </div>
+        </div>
+    </div>
+    <!--CARD END-->
+
+    <!--SHOPIFY-->
+    <div class="shopify">
+        <div class="text-center">
+            <h3 class="title-heading">
+                Best Sellers
+            </h3>
+            <span class="sub-heading">
+                Don't Miss Today's Featured Deals
+            </span>
+        </div>
+        <div class="product">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="product-item">
+                        <a href="product.html">
+                            <img src="../../img/shopify1.png">
+                        </a>
+                    </div>
+                    <div class="product-info">
+                        <h4>Sneaker earth - hight top -goat</h4>
+                        <span>$500.00</span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="product-item">
+                        <img src="../../img/shopify2.png">
+                    </div>
+                    <div class="product-info">
+                        <h4>SB Chron British Tan</h4>
+                        <span>$500.00</span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="product-item">
+                        <img src="../../img/shopify3.png">
+                    </div>
+                    <div class="product-info">
+                        <h4>Converse Chuck Taylor Star</h4>
+                        <span>$500.00</span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="product-item">
+                        <img src="../../img/shopify4.png">
+                    </div>
+                    <div class="product-info">
+                        <h4>Converse Unisex Shoes</h4>
+                        <span>$500.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- </div> -->
+    </div>
+    <!--END SHOPIFY-->
+
+    <!--BANNER-->
+    <div class="banner">
+        <div class="row text-center bannerbottom">
+            <div class="col-sm">
+                <img src="../../img/banner1.png">
+            </div>
+            <div class="col-sm">
+                <img src="../../img/banner2.png">
+            </div>
+        </div>
+
+        <div class="text-center bannertop">
+            <h3 class="title-heading">
+                Street Collection
+            </h3>
+            <span>
+                JUST FOR YOU
+            </span>
+            <p href="" style="margin-top:55px">
+                SHOP NOW
+            </p>
+        </div>
+    </div>
+    <!--END BANNER-->
+
+    <!--INSPIRATION-->
+    <div class="inspiration">
+        <div class="text-center">
+            <h3 class="title-heading">
+                INSPIRATION
+            </h3>
+            <span class="sub-heading">
+                Our beloved beauty experts will wow your brows, get you glowing and so much more
+            </span>
+        </div>
+        <div class="blog">
+            <div class="row">
+                <div class="col-sm">
+                    <div class="blog-item">
+                        <img src="../../img/blog1.png">
+                    </div>
+                    <div class="blog-info">
+                        <h3>
+                            Sneaker Freaker Shoes Van
+                        </h3>
+                        <span>
+                            Dancing Shoes from Mr.Klesha animation on Vimeo. The Australian independent magazine has
+                            become a staple for sneaker news predating back to its...
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="blog-item">
+                        <img src="../../img/blog2.png">
+                    </div>
+                    <div class="blog-info">
+                        <h3>
+                            Sneaker Freaker Shoes
+                        </h3>
+                        <span>
+                            It's BL'EVE! · PAYROLL feat. Jimmy 2Shoes (Prod by Platinum Beat Service) The Australian
+                            independent magazine has become a staple for...
+                        </span>
+                    </div>
+                </div>
+                <div class="col-sm">
+                    <div class="blog-item">
+                        <img src="../../img/blog3.png">
+                    </div>
+                    <div class="blog-info">
+                        <h3>
+                            Sneaker Freaker Shoes
+                        </h3>
+                        <span>
+                            The Australian independent magazine has become a staple for sneaker news predating back to
+                            its 2002 print launch. Adapting with the times,...
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--END INSPIRATION-->
+
+    <!--INSTAGRAM-->
+    <div class="instagram text-center">
+        <img src="../../img/instagram.png">
+        <h3>
+            SHOP INSTAGRAM
+        </h3>
+        <span>
+            News & updates from NiverStore. No spam, we promise.
+        </span>
+    </div>
+    <!--END INSTAGRAM-->
+
+    <!--FOOTER-->
+    <footer class="footer mt-5">
+        <div class="top-footer">
+            <div class="row footerreponsive">
+                <div class="col-sm-3">
+                    <div class="info_footer end">
+                        <div class="logo-top">
+                            <a href="" class="logo">
+                                <img src="../../img/logowhite.png" style="width: 50%;">
+                            </a>
+                        </div>
+                        <div class="mb-0 content_footer" style="margin-top: 23px;">
+                            University of Information Technology (VNUHCM – UIT)<br>
+                            (028) 372 52002 <br>
+                            (028) 372 52148 <br>
+                            info@uit.edu.vn</p>
+                        </div>
+                        <div class="list-icon">
+                            <ul class="list-inline list-unstyled mb-0">
+                                <li class="list-inline-item">
+                                    <a href="" class="social-item">
+                                        <i class="fab fa-twitter"></i>
+                                    </a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="" class="social-item">
+                                        <i class="fab fa-weixin"></i>
+                                    </a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="" class="social-item">
+                                        <i class="fab fa-weibo"></i>
+                                    </a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="" class="social-item">
+                                        <i class="fab fa-skype"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="line-height: 34px;">
+                    <div class="info_footer">
+                        <div class="title_footer">
+                            <h4 class="mb-0 title_border">
+                                Help & Information <br>
+                                <hr class="hr">
+                            </h4>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="" title="Pagination">Pagination</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Terms & Conditions</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Contact</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Accessories</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Term of use</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="line-height: 34px;">
+                    <div class="info_footer">
+                        <div class="title_footer">
+                            <h4 class="mb-0 title_border">
+                                About Us <br>
+                                <hr class="hr">
+                            </h4>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="" title="Pagination">Help Center</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Address Store</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Privacy Policy</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Receivers & Amplifiers</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-sm-3" style="line-height: 34px;">
+                    <div class="info_footer">
+                        <div class="title_footer">
+                            <h4 class="mb-0 title_border">
+                                Profile <br>
+                                <hr class="hr">
+                            </h4>
+                        </div>
+                        <ul class="list-unstyled mb-0">
+                            <li>
+                                <a href="" title="Pagination">My Account</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Checkout</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Order Tracking</a>
+                            </li>
+                            <li>
+                                <a href="" title="Pagination">Help & Support</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr style="background-color: white;">
+        <div class="copyright" style="color: white;">
+            <div class="row align-items-center">
+                <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                    <div class="text-copyright mb-0">
+                        © Copyright 2025 |
+                        <a href="" class="underline_hover bold">
+                            Designed
+                        </a>
+                        by
+                        <a href="" class="underline_hover link">
+                            Lazashoes
+                        </a>
+                    </div>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--END FOOTER-->
+</body>
+
+</html>

@@ -1,0 +1,205 @@
+@import url("https://fonts.googleapis.com/css2?family=El+Messiri&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+.role-management {
+    margin-top: 90px;
+    margin-bottom: 100px;
+}
+
+.role-management .title-heading {
+    font-size: 36px;
+    font-weight: 600;
+    color: #333;
+    letter-spacing: 1px;
+}
+
+.role-management .sub-heading {
+    font-size: 16px;
+    color: #777;
+    font-weight: 500;
+}
+
+/* HEADER */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* Icon hover */
+.icon-hover {
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.icon-hover:hover {
+    color: #f9af47;
+    transform: scale(1.15);
+}
+
+/* Menu item */
+.font-weight-medium {
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    padding: 0 18px !important;
+}
+
+/* Active */
+.nav-link.active {
+    color: #f9af47 !important;
+    font-weight: 700 !important;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        position: relative;
+        transform: none;
+        left: auto;
+        margin: 0 auto;
+    }
+
+    .navbar-icons {
+        margin-left: auto;
+    }
+
+    .navbar-collapse {
+        background: white;
+        padding: 15px 0;
+        margin-top: 10px;
+        border-top: 1px solid #eee;
+    }
+}
+
+body {
+    padding-top: 90px !important;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+/* Button */
+.management-actions .btn-admin {
+    min-width: 172px;
+    height: 54px;
+    border: 2px solid #000;
+    background: transparent;
+    color: #000;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: .2em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin-left: 12px;
+    padding: 0 25px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    line-height: 50px;
+    color: white;
+    background-color: black;
+}
+
+.management-actions .btn-admin:hover {
+    background-color: #f9af47;
+    color: white;
+    border-color: #f9af47;
+}
+
+/* Table header */
+.table thead th {
+    background-color: black;
+    color: white;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.btnloadmore {
+    background: #000;
+    color: white;
+    padding: 12px 40px;
+    border: none;
+    letter-spacing: .2em;
+    font-weight: 600;
+}
+
+.btnloadmore:hover {
+    background: #f9af47;
+    color: white;
+}
+
+/*FOOTER*/
+.footer{
+    padding: 50px;
+    background-color: black;
+}
+
+.top-footer{
+    padding-bottom: 50px;
+}
+
+.hr{
+    margin-right: 200px;
+    background-color: white;
+    width: 150px;
+}
+
+.title_border{
+    color: #f9af47;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.content_footer{
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+}
+
+.list-unstyled li a{
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.list-unstyled li a:hover{
+    color: #f9af47;
+    text-decoration: none;
+}
+
+.underline_hover{
+    color: #7d7b7b;
+}
+
+.underline_hover:hover{
+    color: #f9af47;
+    text-decoration: none;
+}
+
+.content{
+    color: #7d7b7b;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.content a{
+    color: #7d7b7b;
+}
+
+.content a:hover{
+    color: #f9af47;
+}

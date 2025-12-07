@@ -1,0 +1,241 @@
+
+@import url("https://fonts.googleapis.com/css2?family=El+Messiri&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
+/* HEADER */
+.navbar {
+    padding: 0.5rem 1rem;
+}
+
+.navbar-brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+/* Icon hover */
+.icon-hover {
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #333;
+}
+
+.icon-hover:hover {
+    color: #f9af47;
+    transform: scale(1.15);
+}
+
+/* Menu item */
+.font-weight-medium {
+    font-weight: 500 !important;
+    font-size: 15px;
+    letter-spacing: 0.5px;
+    padding: 0 18px !important;
+}
+
+/* Active */
+.nav-link.active {
+    color: #f9af47 !important;
+    font-weight: 700 !important;
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .navbar-brand {
+        position: relative;
+        transform: none;
+        left: auto;
+        margin: 0 auto;
+    }
+
+    .navbar-icons {
+        margin-left: auto;
+    }
+
+    .navbar-collapse {
+        background: white;
+        padding: 15px 0;
+        margin-top: 10px;
+        border-top: 1px solid #eee;
+    }
+}
+
+body {
+    padding-top: 90px !important;
+}
+
+.sticky-top {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+body {
+    font-family: 'Quicksand', sans-serif;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+.navbar {
+    height: 80px;
+}
+
+.title-heading {
+    font-size: 36px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+/* Button */
+.btn-admin {
+    min-width: 172px;
+    height: 54px;
+    border: 2px solid #000;
+    background: transparent;
+    color: #000;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    margin-left: 12px;
+    padding: 0 25px;
+}
+
+.btn-admin:hover {
+    background-color: #f9af47;
+    color: white;
+    border-color: #f9af47;
+    text-decoration: none;
+}
+
+.btn-admin.btn-export {
+    background-color: #28a745;
+    color: white;
+    border-color: #28a745;
+}
+
+.btn-admin.btn-export:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+/* BUTTON ACTION */
+.btn-confirm {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-confirm:hover {
+    background-color: #218838;
+}
+
+.btn-cancel {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-cancel:hover {
+    background-color: #c82333;
+}
+
+.table th {
+    background-color: #333;
+    color: white;
+    text-transform: center;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.badge {
+    font-size: 13px;
+    padding: 6px 12px;
+}
+
+.text-danger {
+    font-weight: 700;
+}
+
+/* Table header */
+.table thead th {
+    background-color: #000 !important;
+    color: #fff !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px;
+    font-weight: 700 !important;
+    text-align: center;
+    padding: 15px 10px !important;
+    border: none !important;
+}
+
+.table thead tr th {
+    background-color: #000 !important;
+    color: #fff !important;
+}
+
+
+/*FOOTER*/
+.footer{
+    padding: 50px;
+    background-color: black;
+}
+
+.top-footer{
+    padding-bottom: 50px;
+}
+
+.hr{
+    margin-right: 200px;
+    background-color: white;
+    width: 150px;
+}
+
+.title_border{
+    color: #f9af47;
+    font-size: 21px;
+    font-weight: 600;
+}
+
+.content_footer{
+    font-size: 14px;
+    font-weight: 400;
+    color: white;
+}
+
+.list-unstyled li a{
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.list-unstyled li a:hover{
+    color: #f9af47;
+    text-decoration: none;
+}
+
+.underline_hover{
+    color: #7d7b7b;
+}
+
+.underline_hover:hover{
+    color: #f9af47;
+    text-decoration: none;
+}
+
+.content{
+    color: #7d7b7b;
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 10px;
+}
+
+.content a{
+    color: #7d7b7b;
+}
+
+.content a:hover{
+    color: #f9af47;
+}
