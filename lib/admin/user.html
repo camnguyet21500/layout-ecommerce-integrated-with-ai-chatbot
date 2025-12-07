@@ -167,22 +167,95 @@
 </div>
 
 <!-- Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1">
-    <div class="modal-dialog">
+<!-- Edit User Modal – ĐẸP + ĐẦY ĐỦ FIELD GIỐNG ADD USER -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Edit User</h5>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title" id="editUserModalLabel">Chỉnh sửa người dùng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
-            <div class="modal-body">
-                <div class="form-group"><label>Username</label><input type="text" class="form-control" id="editUsername"></div>
-                <div class="form-group"><label>Email</label><input type="email" class="form-control" id="editEmail"></div>
-                <div class="form-group"><label>Password (để trống nếu không đổi)</label><input type="password" class="form-control" id="editPassword"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" id="btnUpdateUser" class="btn btn-primary">Update User</button>
-            </div>
+            <form id="editUserForm">
+                <input type="hidden" id="editUserId">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Email <span class="text-danger">*</span></label>
+                                <input type="email" class="form-control" id="editEmail" required placeholder="abc@example.com">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Mật khẩu mới (để trống nếu không đổi)</label>
+                                <input type="password" class="form-control" id="editPassword" placeholder="Để trống = giữ nguyên mật khẩu cũ">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Họ và tên đệm (First Name) <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editFirstName" required placeholder="Nguyễn Văn">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên (Last Name)</label>
+                                <input type="text" class="form-control" id="editLastName" placeholder="A, B, C... (không bắt buộc)">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Địa chỉ đầy đủ <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editFullAddress" required placeholder="Số nhà, đường, phường/xã...">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Thành phố / Tỉnh</label>
+                                <input type="text" class="form-control" id="editCity" placeholder="TP.HCM, Hà Nội...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Quận / Huyện</label>
+                                <input type="text" class="form-control" id="editProvince" placeholder="Quận 1, Bình Thạnh...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label>Quốc gia</label>
+                                <input type="text" class="form-control" id="editCountry" value="Việt Nam">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số điện thoại</label>
+                                <input type="text" class="form-control" id="editPhone" placeholder="0901234567">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mt-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editStatus">
+                                    <label class="form-check-label" for="editStatus"> Kích hoạt tài khoản (active) </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning" id="btnUpdateUser">
+                        <i class="fas fa-save"></i> Cập nhật người dùng
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -333,7 +406,83 @@
         }
     });
 
-    // Các phần còn lại (xóa, sửa) giữ nguyên hoặc sẽ fix sau nếu cần
+    // Khi bấm nút Edit → điền dữ liệu vào form
+    $(document).on('click', '.edit-btn', function () {
+        const user = JSON.parse($(this).attr('data-user'));
+
+        $('#editUserId').val(user.id);
+        $('#editEmail').val(user.email);
+        $('#editPassword').val(''); // luôn để trống
+        $('#editFirstName').val(user.firstName || '');
+        $('#editLastName').val(user.lastName || '');
+        $('#editFullAddress').val(user.fullAddress || '');
+        $('#editCity').val(user.city || '');
+        $('#editProvince').val(user.province || '');
+        $('#editCountry').val(user.country || 'Việt Nam');
+        $('#editPhone').val(user.phone || '');
+        $('#editStatus').prop('checked', user.status === 'active');
+
+        $('#editUserModal').modal('show');
+    });
+
+    // Khi bấm Cập nhật
+    $('#editUserForm').on('submit', async function (e) {
+        e.preventDefault();
+
+        const userId = $('#editUserId').val();
+        const payload = {
+            email: $('#editEmail').val().trim(),
+            firstName: $('#editFirstName').val().trim(),
+            lastName: $('#editLastName').val().trim() || null,
+            fullAddress: $('#editFullAddress').val().trim(),
+            city: $('#editCity').val().trim() || null,
+            province: $('#editProvince').val().trim() || null,
+            country: $('#editCountry').val().trim() || "Việt Nam",
+            phone: $('#editPhone').val().trim() || null,
+            status: $('#editStatus').is(':checked') ? 'active' : 'inactive'
+        };
+
+        // Chỉ thêm password nếu người dùng nhập
+        const newPassword = $('#editPassword').val().trim();
+        if (newPassword) payload.password = newPassword;
+
+        $('#btnUpdateUser').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang cập nhật...');
+
+        try {
+            const res = await fetch(`${BASE_URL}/users/${userId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.status === 200 || res.status === 201) {
+                const result = await res.json();
+                const updatedUser = result.data;
+
+                alert("Cập nhật thành công!");
+
+                // Cập nhật ngay trong mảng currentUsers
+                const index = currentUsers.findIndex(u => u.id === userId);
+                if (index !== -1) currentUsers[index] = updatedUser;
+
+                // Render lại bảng (giữ thứ tự createdAt)
+                renderTable(currentUsers);
+
+                $('#editUserModal').modal('hide');
+            } else {
+                const err = await res.json();
+                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi kết nối server!");
+        } finally {
+            $('#btnUpdateUser').prop('disabled', false).html('<i class="fas fa-save"></i> Cập nhật người dùng');
+        }
+    });
 
     $(document).ready(function () {
         autoLoginAndLoad();
