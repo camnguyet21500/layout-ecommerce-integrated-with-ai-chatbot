@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Management | Mabu Store Admin</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <!-- jQuery (full version) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../../css/vendor_admin.css">
+</head>
+<body>
+<!-- HEADER -->
+<header class="fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
+        <div class="container-fluid container-fluid-v1">
+            <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="../customer/index.html">HOME</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="product_admin.html">PRODUCT</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="category_admin.html">CATEGORY</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="user.html">USER</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="order_admin.html">ORDER</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium active" href="vendor_admin.html">VENDOR</a></li>
+                </ul>
+            </div>
+            <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
+                <img src="../../img/logoblack.png" alt="Logo" width="80">
+            </a>
+        </div>
+    </nav>
+</header>
+
+<!-- VENDOR MANAGEMENT SECTION -->
+<div class="container" style="margin-top: 120px;">
+    <div class="text-center mb-4">
+        <h3 class="title-heading">Vendor Management</h3>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-right mb-4">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addVendorModal">
+            <i class="fas fa-plus mr-2"></i> Add Vendor
+        </button>
+        <button class="btn btn-success ml-2">Import Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportVendorsToExcel()">Export Excel</button>
+    </div>
+
+    <!-- Vendors Table -->
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th>STT</th>
+                <th>LOGO</th>
+                <th>NAME</th>
+                <th>SLUG</th>
+                <th>DESCRIPTION</th>
+                <th>TAX CODE</th>
+                <th>TOTAL PRODUCTS</th>
+                <th>TOTAL ORDERS</th>
+                <th>STATUS</th>
+                <th>ACTION</th>
+            </tr>
+            </thead>
+            <tbody id="vendorTableBody">
+            <tr>
+                <td colspan="10" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải danh sách vendor...
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Add Vendor Modal – ĐÃ BỎ PHẦN USER SỞ HỮU -->
+<div class="modal fade" id="addVendorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Thêm Vendor mới</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="addVendorForm">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên Vendor <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="addName" required>
+                                <small class="text-muted">Slug sẽ tự động tạo từ tên này</small>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Slug <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="addSlug" readonly>
+                                <small class="text-muted">Tự động tạo từ tên</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả (tùy chọn)</label>
+                        <textarea class="form-control" id="addDescription" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Logo (URL ảnh, tùy chọn)</label>
+                        <input type="url" class="form-control" id="addLogoUrl" placeholder="https://example.com/logo.jpg">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mã số thuế (tùy chọn)</label>
+                        <input type="text" class="form-control" id="addTaxCode">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select class="form-control" id="addStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Thêm Vendor</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Vendor Modal – ĐẦY ĐỦ FIELD THEO UpdateVendorDto -->
+<div class="modal fade" id="editVendorModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">Chỉnh sửa Vendor</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form id="editVendorForm">
+                <input type="hidden" id="editId">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên Vendor</label>
+                                <input type="text" class="form-control" id="editName">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Slug</label>
+                                <input type="text" class="form-control" id="editSlug">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <textarea class="form-control" id="editDescription" rows="4"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Logo hiện tại</label><br>
+                        <img id="editCurrentLogo" src="" width="150" class="img-thumbnail mb-2">
+                    </div>
+
+                    <div class="form-group">
+                        <label>URL Logo mới (tùy chọn)</label>
+                        <input type="url" class="form-control" id="editLogoUrl">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Mã số thuế</label>
+                        <input type="text" class="form-control" id="editTaxCode">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Trạng thái</label>
+                        <select class="form-control" id="editStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>User sở hữu (UserID)</label>
+                        <input type="text" class="form-control" id="editUserID" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Cập nhật</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--FOOTER-->
+<footer class="footer mt-5">
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/logowhite.jpg" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        No 40 New York City 133/2 <br>
+                        + (156) 1800-766-9999 <br>
+                        ttcosmetic@example.com <br>
+                        ttcosmetic-store.com</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Help & Information <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Pagination</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Terms & Conditions</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Contact</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Accessories</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Term of use</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            About Us <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Help Center</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Address Store</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Receivers & Amplifiers</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">TT Cosmetic</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Profile <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">My Account</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Checkout</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Order Tracking</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2020 |
+                    <a href="" class="underline_hover bold">
+                        Camamas
+                    </a>
+                    By
+                    <a href="" class="underline_hover link">
+                        Mabu Store
+                    </a>
+                </div>
+                <p></p>
+            </div>
+            <!-- <div class="col-lg-6 col-md-6 text-md-right">
+                <img src="images/paymet.jpg" alt="" style="justify-content: right;">
+            </div> -->
+        </div>
+    </div>
+</footer>
+<!--END FOOTER-->
+
+<script>
+    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    let authToken = null;
+    let currentVendors = [];
+
+    // Auto login
+    async function autoLoginAndLoad() {
+        try {
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const data = await res.json();
+            if (data.data?.accessToken) {
+                authToken = data.data.accessToken;
+                loadVendors();
+            } else {
+                alert("Login thất bại!");
+            }
+        } catch (err) {
+            alert("Không kết nối server");
+        }
+    }
+
+    // Load danh sách vendor
+    async function loadVendors() {
+        try {
+            const res = await fetch(`${BASE_URL}/vendors?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load vendor");
+            const json = await res.json();
+            currentVendors = json.data.list.filter(v => !v.deletedAt);
+            renderVendorTable(currentVendors);
+        } catch (err) {
+            document.getElementById("vendorTableBody").innerHTML = `<tr><td colspan="10" class="text-danger text-center">Lỗi tải dữ liệu vendor</td></tr>`;
+        }
+    }
+
+    // Render bảng vendor
+    function renderVendorTable(vendors) {
+        const tbody = document.getElementById("vendorTableBody");
+        tbody.innerHTML = "";
+        if (vendors.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">Chưa có vendor nào</td></tr>`;
+            return;
+        }
+
+        vendors.forEach((vendor, index) => {
+            const logo = vendor.logoUrl || "https://via.placeholder.com/60";
+            const statusBadge = vendor.status === 'active'
+                ? '<span class="badge badge-success">Active</span>'
+                : '<span class="badge badge-secondary">Inactive</span>';
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                    <td class="text-center">${index + 1}</td>
+                    <td><img src="${logo}" width="60" height="60" style="object-fit: cover; border-radius: 8px;"></td>
+                    <td><strong>${vendor.name}</strong></td>
+                    <td>${vendor.slug}</td>
+                    <td>${vendor.description || '-'}</td>
+                    <td>${vendor.taxCode || '-'}</td>
+                    <td class="text-center">${vendor.totalProducts || 0}</td>
+                    <td class="text-center">${vendor.totalOrders || 0}</td>
+                    <td>${statusBadge}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-warning edit-btn mr-1" data-vendor='${JSON.stringify(vendor)}'>
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="${vendor.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // ADD VENDOR – GỬI KÈM userID (lấy từ token hoặc hardcode tạm)
+    $('#addVendorForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const name = $('#addName').val().trim();
+        if (!name) {
+            alert("Tên vendor là bắt buộc!");
+            return;
+        }
+
+        const slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/-+/g, '-');
+
+        if (!slug) {
+            alert("Không thể tạo slug!");
+            return;
+        }
+
+        const payload = {
+            name: name,
+            slug: slug,
+            description: $('#addDescription').val().trim() || null,
+            logoUrl: $('#addLogoUrl').val().trim() || null,
+            taxCode: $('#addTaxCode').val().trim() || null,
+            status: $('#addStatus').val(),
+            userID: "CURRENT_USER_ID"  // ← QUAN TRỌNG: PHẢI GỬI userID
+        };
+
+        // Tạm thời: dùng userID của tài khoản đang login (nvo28@example.com)
+        // Em có thể lấy từ token hoặc hardcode tạm ID của user admin
+        // Giả sử em biết ID của user nvo28 là cái này (em cần kiểm tra trong DB hoặc API /users)
+        payload.userID = "some-known-user-uuid-here"; // THAY BẰNG USER ID THẬT
+
+        // HOẶC: nếu backend cho phép không gửi userID (nullable), thì bỏ field này đi
+
+        try {
+            const res = await fetch(`${BASE_URL}/vendors`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await res.json();
+            console.log("Response từ backend:", result); // DEBUG
+
+            if (res.ok || res.status === 201) {
+                alert("Thêm vendor thành công!");
+                $('#addVendorModal').modal('hide');
+                $('#addVendorForm')[0].reset();
+                loadVendors();
+            } else {
+                alert("Thêm thất bại! Lý do: " + (result.message || JSON.stringify(result.errors)));
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi kết nối server!");
+        }
+    });
+
+    // Edit Vendor
+    $(document).on('click', '.edit-btn', function() {
+        const vendor = JSON.parse($(this).attr('data-vendor'));
+        $('#editId').val(vendor.id);
+        $('#editName').val(vendor.name);
+        $('#editDescription').val(vendor.description || '');
+        $('#editTaxCode').val(vendor.taxCode || '');
+        $('#editLogoUrl').val(vendor.logoUrl || '');
+        $('#editStatus').val(vendor.status);
+        $('#editCurrentLogo').attr('src', vendor.logoUrl || 'https://via.placeholder.com/150');
+        $('#editVendorModal').modal('show');
+    });
+
+    $('#editVendorForm').on('submit', async function(e) {
+        e.preventDefault();
+        const id = $('#editId').val();
+        const name = $('#editName').val().trim();
+        const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+
+        const payload = {
+            name: name,
+            slug: slug,
+            description: $('#editDescription').val().trim() || null,
+            taxCode: $('#editTaxCode').val().trim() || null,
+            logoUrl: $('#editLogoUrl').val().trim() || null,
+            status: $('#editStatus').val()
+        };
+
+        try {
+            const res = await fetch(`${BASE_URL}/vendors/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Cập nhật vendor thành công!");
+                $('#editVendorModal').modal('hide');
+                loadVendors();
+            } else {
+                const err = await res.json();
+                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Delete Vendor
+    $(document).on('click', '.delete-btn', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xóa vendor này? Tất cả sản phẩm liên quan sẽ bị ảnh hưởng!")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/vendors/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (res.ok) {
+                alert("Xóa vendor thành công!");
+                loadVendors();
+            } else {
+                alert("Xóa thất bại!");
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Export Excel
+    function exportVendorsToExcel() {
+        window.location.href = `${BASE_URL}/vendors/export`;
+    }
+
+    // Run when page loads
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+
+    // Khi nhập tên → tự động tạo slug (cho cả Add và Edit)
+    $('#addName').on('input', function() {
+        const name = $(this).val().trim();
+        const slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/-+/g, '-');
+        $('#addSlug').val(slug);
+    });
+
+    $('#editName').on('input', function() {
+        const name = $(this).val().trim();
+        const slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/-+/g, '-');
+        $('#editSlug').val(slug);
+    });
+</script>
+</body>
+</html>

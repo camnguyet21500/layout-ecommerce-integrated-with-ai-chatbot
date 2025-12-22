@@ -232,14 +232,39 @@ body{
     float: left;
 }
 
-.info-product .title-product{
+/*.info-product .title-product{*/
+/*    font-size: 16px;*/
+/*    font-weight: 500;*/
+/*  }*/
+/*  */
+/*  .info-product .title-product:hover{*/
+/*    color: #f9af47;*/
+/*  }*/
+
+/* TÊN SẢN PHẨM – MÀU ĐEN MẶC ĐỊNH, HOVER MÀU VÀNG, KHÔNG GẠCH CHÂN */
+.info-product .title-product {
     font-size: 16px;
     font-weight: 500;
-  }
-  
-  .info-product .title-product:hover{
-    color: #f9af47;
-  }
+    color: #000; /* Màu đen mặc định */
+    text-decoration: none; /* Không gạch chân */
+    transition: color 0.3s ease; /* Hiệu ứng mượt */
+}
+
+.info-product .title-product:hover {
+    color: #f9af47 !important; /* Màu vàng giống giá khi hover */
+    text-decoration: none !important; /* Đảm bảo không gạch chân */
+}
+
+/* Link bên trong tên sản phẩm (nếu dùng <a>) */
+.info-product .title-product a {
+    color: inherit; /* Kế thừa màu từ parent */
+    text-decoration: none; /* Không gạch chân */
+}
+
+.info-product .title-product a:hover {
+    color: #f9af47; /* Màu vàng khi hover */
+    text-decoration: none;
+}
 
   .price-product{
     color:  #f9af47;
