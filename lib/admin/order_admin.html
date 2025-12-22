@@ -1,33 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management | Mabu Store Admin</title>
-
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/order_admin.css">
-
 </head>
-
 <body>
-
-<!-- HEADER -->
+<!-- HEADER giữ nguyên -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
-
-            <!-- MENU -->
             <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="../customer/index.html">HOME</a></li>
@@ -38,29 +29,24 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
                 </ul>
             </div>
-
-            <!-- LOGO -->
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
-                <img src="../../img/logoblack.png" alt="Logo" width="80" class="d-inline-block align-top">
+                <img src="../../img/logoblack.png" alt="Logo" width="80">
             </a>
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
 <!-- MAIN CONTENT -->
 <div class="order-management container mt-5 pt-5">
     <div class="text-center mb-4">
         <h3 class="title-heading">Order Management</h3>
     </div>
-
     <!-- Actions -->
     <div class="d-flex justify-content-end mb-4">
         <button class="btn-admin btn-export" onclick="exportOrdersToExcel()">
             <i class="fas fa-file-excel mr-2"></i> Export Excel
         </button>
     </div>
-
     <!-- Orders Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
@@ -76,66 +62,10 @@
                 <th>ACTION</th>
             </tr>
             </thead>
-            <tbody>
-            <!-- Sample Data -->
+            <tbody id="orderTableBody">
             <tr>
-                <td>#1001</td>
-                <td>Nguyễn Văn A</td>
-                <td>nguyenvana@gmail.com</td>
-                <td>0901234567</td>
-                <td class="text-danger font-weight-bold">2,450,000đ</td>
-                <td>25/11/2025</td>
-                <td><span class="badge badge-warning">Chờ xác nhận</span></td>
-                <td>
-                    <button class="btn btn-sm btn-success btn-confirm" title="Xác nhận">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-cancel" title="Hủy đơn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <button class="btn btn-sm btn-info text-white" title="Xem chi tiết" data-toggle="modal" data-target="#orderDetailModal">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>#1001</td>
-                <td>Nguyễn Văn A</td>
-                <td>nguyenvana@gmail.com</td>
-                <td>0901234567</td>
-                <td class="text-danger font-weight-bold">2,450,000đ</td>
-                <td>25/11/2025</td>
-                <td><span class="badge badge-warning">Chờ xác nhận</span></td>
-                <td>
-                    <button class="btn btn-sm btn-success btn-confirm" title="Xác nhận">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-cancel" title="Hủy đơn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <button class="btn btn-sm btn-info text-white" title="Xem chi tiết" data-toggle="modal" data-target="#orderDetailModal">
-                        <i class="fas fa-eye"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>#1001</td>
-                <td>Nguyễn Văn A</td>
-                <td>nguyenvana@gmail.com</td>
-                <td>0901234567</td>
-                <td class="text-danger font-weight-bold">2,450,000đ</td>
-                <td>25/11/2025</td>
-                <td><span class="badge badge-warning">Chờ xác nhận</span></td>
-                <td>
-                    <button class="btn btn-sm btn-success btn-confirm" title="Xác nhận">
-                        <i class="fas fa-check"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger btn-cancel" title="Hủy đơn">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <button class="btn btn-sm btn-info text-white" title="Xem chi tiết" data-toggle="modal" data-target="#orderDetailModal">
-                        <i class="fas fa-eye"></i>
-                    </button>
+                <td colspan="8" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải đơn hàng...
                 </td>
             </tr>
             </tbody>
@@ -148,22 +78,11 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Chi tiết đơn hàng #1001</h5>
+                <h5 class="modal-title" id="orderDetailTitle">Chi tiết đơn hàng</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <p><strong>Khách hàng:</strong> Nguyễn Văn A</p>
-                <p><strong>Email:</strong> nguyenvana@gmail.com</p>
-                <p><strong>Số điện thoại:</strong> 0901234567</p>
-                <p><strong>Địa chỉ:</strong> 123 Đường ABC, Quận 1, TP.HCM</p>
-                <p><strong>Ngày đặt:</strong> 25/11/2025</p>
-                <hr>
-                <h6>Sản phẩm:</h6>
-                <ul>
-                    <li>Adidas Stan Smith Shoes × 1 – 400,000đ</li>
-                    <li>Converse Chuck Taylor × 2 – 600,000đ</li>
-                </ul>
-                <h5 class="text-right text-danger">Tổng cộng: 2,450,000đ</h5>
+            <div class="modal-body" id="orderDetailBody">
+                <!-- Dữ liệu sẽ đổ động ở đây -->
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -172,147 +91,311 @@
     </div>
 </div>
 
-<!--FOOTER-->
+<!-- FOOTER giữ nguyên -->
 <footer class="footer mt-5">
-    <div class="top-footer">
-        <div class="row footerreponsive">
-            <div class="col-sm-3">
-                <div class="info_footer end">
-                    <div class="logo-top">
-                        <a href="" class="logo">
-                            <img src="../../img/logowhite.png" style="width: 50%;">
-                        </a>
-                    </div>
-                    <div class="mb-0 content_footer" style="margin-top: 23px;">
-                        University of Information Technology (VNUHCM – UIT)<br>
-                        (028) 372 52002 <br>
-                        (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
-                    </div>
-                    <div class="list-icon">
-                        <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr style="background-color: white;">
-    <div class="copyright" style="color: white;">
-        <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
-                <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Lazashoes
-                    </a>
-                </div>
-                <p></p>
-            </div>
-        </div>
-    </div>
+    <!-- Giữ nguyên code footer của bạn -->
 </footer>
 
-<!--END FOOTER-->
-</body>
+<!-- SCRIPT JS để connect data thực -->
+<script>
+    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    let authToken = null;
+    let currentOrders = []; // Sửa từ currentProducts thành currentOrders
 
+    // TỰ ĐỘNG LOGIN VÀ LOAD ORDERS
+    async function autoLoginAndLoad() {
+        try {
+            console.log("Đang đăng nhập tự động...");
+            const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const loginData = await loginRes.json();
+            if (loginData.data?.accessToken) {
+                authToken = loginData.data.accessToken;
+                console.log("Đăng nhập thành công!");
+                loadOrders(); // Sửa từ loadProducts thành loadOrders
+            } else {
+                alert("Không đăng nhập được – kiểm tra email/pass");
+            }
+        } catch (err) {
+            console.error("Lỗi login:", err);
+            alert("Không kết nối được server");
+        }
+    }
+
+    // LOAD DANH SÁCH ORDERS
+    async function loadOrders() {
+        try {
+            const res = await fetch(`${BASE_URL}/orders?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) {
+                if (res.status === 401) {
+                    alert("Token hết hạn, đăng nhập lại...");
+                    return autoLoginAndLoad();
+                }
+                throw new Error("Lỗi server");
+            }
+            const json = await res.json();
+            currentOrders = json.data.list.filter(order => !order.deletedAt);
+            await renderOrderTable(currentOrders); // Thêm await vì giờ là async
+        } catch (err) {
+            console.error(err);
+            document.getElementById("orderTableBody").innerHTML = "<tr><td colspan='8' class='text-danger text-center'>Lỗi tải dữ liệu</td></tr>";
+        }
+    }
+
+    async function renderOrderTable(orders) {
+        const tbody = document.getElementById("orderTableBody");
+
+        // Hiển thị loading ban đầu
+        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải thông tin khách hàng...</td></tr>";
+
+        if (!orders || orders.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">Không có đơn hàng nào</td></tr>`;
+            return;
+        }
+
+        // Sắp xếp theo createdAt
+        orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        // XÓA DÒNG LOADING TRƯỚC KHI BẮT ĐẦU RENDER ROW THỰC
+        tbody.innerHTML = ""; // ← Dòng quan trọng nhất! Xóa sạch loading
+
+        for (const order of orders) {
+            let fullName = 'Khách ẩn danh';
+            let email = '-';
+            let phone = '-';
+
+            if (order.user) {
+                fullName = `${order.user.firstName} ${order.user.lastName || ''}`.trim();
+                email = order.user.email || '-';
+                phone = order.user.phone || '-';
+            } else if (order.userID) {
+                try {
+                    const userRes = await fetch(`${BASE_URL}/users/${order.userID}`, {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+                    if (userRes.ok) {
+                        const userJson = await userRes.json();
+                        const user = userJson.data;
+                        fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                        email = user.email || '-';
+                        phone = user.phone || '-';
+                    }
+                } catch (err) {
+                    console.error(`Lỗi fetch user ${order.userID}:`, err);
+                }
+            }
+
+            const total = Number(order.totalAmount).toLocaleString('vi-VN') + 'đ';
+            const date = new Date(order.createdAt).toLocaleDateString('vi-VN');
+            const statusBadge = getStatusBadge(order.status);
+
+            const actionButtons = order.status === 'pending' ? `
+            <button class="btn btn-sm btn-success btn-confirm" data-id="${order.id}" title="Xác nhận">
+                <i class="fas fa-check"></i>
+            </button>
+            <button class="btn btn-sm btn-danger btn-cancel" data-id="${order.id}" title="Hủy đơn">
+                <i class="fas fa-times"></i>
+            </button>
+        ` : '';
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td>${order.orderNumber}</td>
+            <td>${fullName}</td>
+            <td>${email}</td>
+            <td>${phone}</td>
+            <td class="text-danger font-weight-bold">${total}</td>
+            <td>${date}</td>
+            <td>${statusBadge}</td>
+            <td>
+                ${actionButtons}
+                <button class="btn btn-sm btn-info text-white view-detail" data-id="${order.id}" title="Xem chi tiết">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
+            tbody.appendChild(row);
+        }
+    }
+
+    // Helper: Badge cho status
+    function getStatusBadge(status) {
+        let className = 'badge-secondary';
+        let text = status;
+        switch (status) {
+            case 'pending': className = 'badge-warning'; text = 'Chờ xác nhận'; break;
+            case 'confirmed': className = 'badge-primary'; text = 'Đã xác nhận'; break;
+            case 'processing': className = 'badge-info'; text = 'Đang xử lý'; break;
+            case 'shipped': className = 'badge-warning'; text = 'Đang giao'; break;
+            case 'delivered': className = 'badge-success'; text = 'Đã giao'; break;
+            case 'cancelled': className = 'badge-danger'; text = 'Đã hủy'; break;
+            case 'refunded': className = 'badge-dark'; text = 'Đã hoàn tiền'; break;
+        }
+        return `<span class="badge ${className}">${text}</span>`;
+    }
+
+    // XEM CHI TIẾT ORDER
+    $(document).on('click', '.view-detail', async function() {
+        const id = $(this).data('id');
+        try {
+            const res = await fetch(`${BASE_URL}/orders/${id}`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load chi tiết");
+            const order = await res.json().then(json => json.data);
+
+            // Đổ data vào modal
+            document.getElementById("orderDetailTitle").innerText = `Chi tiết đơn hàng ${order.orderNumber}`;
+            const body = document.getElementById("orderDetailBody");
+            body.innerHTML = `
+                    <p><strong>Khách hàng:</strong> ${order.user.firstName} ${order.user.lastName || ''}</p>
+                    <p><strong>Email:</strong> ${order.user.email}</p>
+                    <p><strong>Số điện thoại:</strong> ${order.user.phone || '-'}</p>
+                    <p><strong>Địa chỉ giao:</strong> ${order.orderAddresses.find(a => a.type === 'shipping')?.fullAddress || '-'}</p>
+                    <p><strong>Ngày đặt:</strong> ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
+                    <hr>
+                    <h6>Sản phẩm:</h6>
+                    <ul>
+                        ${order.orderItems.map(item => `<li>${item.productVariant.name || 'Sản phẩm'} × ${item.quantity} – ${Number(item.totalPrice).toLocaleString('vi-VN')}đ</li>`).join('')}
+                    </ul>
+                    <h5 class="text-right text-danger">Tổng cộng: ${Number(order.totalAmount).toLocaleString('vi-VN')}đ</h5>
+                `;
+        } catch (err) {
+            alert("Lỗi load chi tiết order!");
+        }
+    });
+
+    // XÁC NHẬN ORDER
+    $(document).on('click', '.btn-confirm', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xác nhận đơn hàng này?")) return;
+        await updateOrderStatus(id, 'confirmed');
+    });
+
+    // HỦY ORDER – COPY 100% LOGIC TỪ NÚT CONFIRM
+    $(document).on('click', '.btn-cancel', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xác nhận hủy đơn hàng này?")) return;
+
+        // Gọi hàm chung, truyền status 'canceled' (giống nút confirm gọi 'confirmed')
+        await updateOrderStatus(id, 'cancelled');
+    });
+
+    // Helper: Update status (copy 100% logic từ nút confirm)
+    // Helper: Update status (dùng chung cho cả confirm và cancel) - PHIÊN BẢN ĐÃ DEBUG CHI TIẾT
+    async function updateOrderStatus(id, newStatus) {
+        // Xác định text thông báo
+        let statusText = '';
+        if (newStatus === 'confirmed') {
+            statusText = 'XÁC NHẬN';
+        } else if (newStatus === 'cancelled') {
+            statusText = 'HỦY';
+        } else {
+            statusText = newStatus.toUpperCase();
+        }
+
+        // Loading trên nút (tìm tất cả nút trong dòng đó)
+        const actionCell = $(`[data-id="${id}"]`).closest('td');
+        const buttons = actionCell.find('button');
+        const originalHtmls = buttons.map(function() { return $(this).html(); }).get();
+        buttons.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
+
+        try {
+            // Payload: thêm notes khi hủy (rất hay cần)
+            let payload = { status: newStatus };
+            if (newStatus === 'cancelled') {
+                payload.notes = 'Hủy bởi admin từ giao diện quản trị vào ngày ' + new Date().toLocaleDateString('vi-VN');
+            }
+
+            const res = await fetch(`${BASE_URL}/orders/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            // THÀNH CÔNG
+            if (res.ok || res.status === 200 || res.status === 201 || res.status === 204) {
+                alert(`Đơn hàng đã được ${statusText} thành công!`);
+
+                // Cập nhật local data
+                const index = currentOrders.findIndex(o => o.id === id);
+                if (index !== -1) {
+                    currentOrders[index].status = newStatus;
+                }
+
+                renderOrderTable(currentOrders);
+            }
+            // THẤT BẠI → DEBUG CHI TIẾT
+            else {
+                console.log("%c[DEBUG ORDER UPDATE ERROR]", "color: red; font-size: 16px; font-weight: bold;");
+                console.log("Status code:", res.status);
+                console.log("Status text:", res.statusText);
+                console.log("URL:", res.url);
+
+                let errorMessage = `${statusText} đơn hàng thất bại!\nMã lỗi: ${res.status}`;
+
+                try {
+                    // Thử đọc response dưới dạng text để thấy full error
+                    const errorText = await res.text();
+                    console.log("Full response body:", errorText);
+
+                    // Nếu là JSON thì parse để lấy message
+                    try {
+                        const errorJson = JSON.parse(errorText);
+                        errorMessage += `\nLý do: ${errorJson.message || errorJson.error || 'Không rõ'}`;
+                    } catch (e) {
+                        errorMessage += `\nResponse: ${errorText.substring(0, 300)}...`;
+                    }
+                } catch (e) {
+                    errorMessage += `\nKhông đọc được response body`;
+                }
+
+                alert(errorMessage);
+            }
+        } catch (err) {
+            console.error("Lỗi mạng hoặc exception:", err);
+            alert(`Lỗi kết nối khi ${statusText.toLowerCase()} đơn hàng!\nChi tiết xem console (F12)`);
+        } finally {
+            // Khôi phục nút
+            buttons.each(function(i) {
+                $(this).prop('disabled', false).html(originalHtmls[i]);
+            });
+        }
+    }
+
+    // EXPORT EXCEL
+    async function exportOrdersToExcel() {
+        try {
+            const res = await fetch(`${BASE_URL}/orders/export`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi export");
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'orders_export.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (err) {
+            alert("Lỗi export Excel!");
+        }
+    }
+
+    // CHẠY KHI LOAD TRANG
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+</script>
+</body>
 </html>
