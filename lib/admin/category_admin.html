@@ -1,31 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Category Management | Mabu Store Admin</title>
-
     <!-- Bootstrap 4 CDN -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/category_admin.css">
 </head>
-
 <body>
-<!-- HEADER -->
+<!-- HEADER giữ nguyên -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
-
-            <!-- MENU -->
             <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="../customer/index.html">HOME</a></li>
@@ -36,90 +29,45 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
                 </ul>
             </div>
-
-            <!-- LOGO -->
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
-                <img src="../../img/logoblack.png" alt="Logo" width="80" class="d-inline-block align-top">
+                <img src="../../img/logoblack.png" alt="Logo" width="80">
             </a>
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
 <!-- CATEGORY MANAGEMENT SECTION -->
-<div class="category-management container mt-5">
+<div class="category-management container" style="margin-top: 120px;">
     <div class="text-center mb-4">
         <h3 class="title-heading">Category Management</h3>
     </div>
 
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
-        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addCategoryModal">
+        <button class="btn-admin btn-add" data-toggle="modal" data-target="#addCategoryModal">
             Add Category
-        </a>
-        <label class="btn-admin" style="cursor: pointer;">
-            Import Excel
-            <input type="file" accept=".xlsx, .xls" style="display: none;">
-        </label>
-        <a href="#" class="btn-admin" onclick="exportCategoriesToExcel()">
-            Export Excel
-        </a>
+        </button>
+        <button class="btn btn-success ml-2">Import Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportCategoriesToExcel()">Export Excel</button>
     </div>
 
     <!-- Categories Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
-            <thead>
+            <thead class="thead-light">
             <tr>
-                <th>ID</th>
+                <th>STT</th>
                 <th>CATEGORY</th>
+                <th>PARENT CATEGORY</th>
                 <th>DESCRIPTION</th>
                 <th>STATUS</th>
                 <th>ACTION</th>
             </tr>
             </thead>
-            <tbody>
-            <!-- Sample Data -->
+            <tbody id="categoryTableBody">
             <tr>
-                <td>1</td>
-                <td>Sneakers</td>
-                <td>Giày thể thao cao cấp</td>
-                <td><span class="badge badge-success">Hoạt động</span></td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editCategoryModal">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Boots</td>
-                <td>Giày bốt thời trang</td>
-                <td><span class="badge badge-success">Hoạt động</span></td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editCategoryModal">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Sandals</td>
-                <td>Dép sandal thoải mái</td>
-                <td><span class="badge badge-secondary">Ẩn</span></td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editCategoryModal">
-                        <i class="fas fa-edit"></i> Edit
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn">
-                        <i class="fas fa-trash-alt"></i> Delete
-                    </button>
+                <td colspan="6" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải danh mục...
                 </td>
             </tr>
             </tbody>
@@ -127,216 +75,387 @@
     </div>
 </div>
 
-<!-- Add Category Modal -->
+
+<!-- Add Category Modal – ĐÃ BỎ DANH MỤC CHA -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Thêm danh mục mới</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form>
+            <form id="addCategoryForm">
+                <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên danh mục</label>
-                        <input type="text" class="form-control" placeholder="Ví dụ: Sneakers, Boots...">
+                        <label>Tên danh mục <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addName" required placeholder="Ví dụ: Sneakers, Giày thể thao, Áo thun...">
+                        <small class="text-muted mt-1 d-block">Slug sẽ tự động được tạo từ tên này</small>
                     </div>
+
                     <div class="form-group">
-                        <label>Mô tả</label>
-                        <textarea class="form-control" rows="3" placeholder="Mô tả ngắn về danh mục"></textarea>
+                        <label>Mô tả (tùy chọn)</label>
+                        <textarea class="form-control" id="addDescription" rows="4" placeholder="Mô tả ngắn về danh mục này..."></textarea>
                     </div>
+
                     <div class="form-group">
-                        <label>Trạng thái</label>
-                        <select class="form-control">
-                            <option>Hoạt động</option>
-                            <option>Ẩn</option>
-                        </select>
+                        <label>URL ảnh danh mục (tùy chọn)</label>
+                        <input type="url" class="form-control" id="addImageUrl" placeholder="https://example.com/image.jpg">
+                        <small class="text-muted">Dán link ảnh từ bên ngoài (tạm thời chưa hỗ trợ upload file)</small>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                <button type="button" class="btnloadmore">Thêm danh mục</button>
-            </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Thêm danh mục
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Category Modal -->
+<!-- Edit Category Modal – ĐẦY ĐỦ FIELD -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-warning text-dark">
                 <h5 class="modal-title">Chỉnh sửa danh mục</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="form-group">
-                        <label>CATEGORY</label>
-                        <input type="text" class="form-control" value="Sneakers">
+            <form id="editCategoryForm">
+                <input type="hidden" id="editId">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Tên danh mục <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="editName" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Danh mục cha</label>
+                                <select class="form-control" id="editParentID">
+                                    <option value="">-- Không có --</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
+
                     <div class="form-group">
-                        <label>DESCRIPTION</label>
-                        <textarea class="form-control" rows="3">Giày thể thao cao cấp</textarea>
+                        <label>Mô tả</label>
+                        <textarea class="form-control" id="editDescription" rows="4"></textarea>
                     </div>
+
                     <div class="form-group">
-                        <label>Trạng thái</label>
-                        <select class="form-control">
-                            <option selected>Hoạt động</option>
-                            <option>Ẩn</option>
-                        </select>
+                        <label>Ảnh hiện tại</label><br>
+                        <img id="editCurrentImage" src="" width="200" class="img-thumbnail mb-2" style="max-height: 150px;">
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                <button type="button" class="btnloadmore">Cập nhật</button>
-            </div>
+
+                    <div class="form-group">
+                        <label>Thay ảnh mới (tùy chọn)</label>
+                        <input type="file" class="form-control" id="editImageFile" accept="image/*">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Hoặc nhập URL ảnh mới</label>
+                        <input type="url" class="form-control" id="editImageUrl" placeholder="https://example.com/new-image.jpg">
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="fas fa-save"></i> Cập nhật
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!--FOOTER-->
+<!-- FOOTER giữ nguyên -->
 <footer class="footer mt-5">
-    <div class="top-footer">
-        <div class="row footerreponsive">
-            <div class="col-sm-3">
-                <div class="info_footer end">
-                    <div class="logo-top">
-                        <a href="" class="logo">
-                            <img src="../../img/logowhite.png" style="width: 50%;">
-                        </a>
-                    </div>
-                    <div class="mb-0 content_footer" style="margin-top: 23px;">
-                        University of Information Technology (VNUHCM – UIT)<br>
-                        (028) 372 52002 <br>
-                        (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
-                    </div>
-                    <div class="list-icon">
-                        <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div class="col-sm-3" style="line-height: 34px;">
-                <div class="info_footer">
-                    <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
-                    </div>
-                    <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-    <hr style="background-color: white;">
-    <div class="copyright" style="color: white;">
-        <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
-                <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Lazashoes
-                    </a>
-                </div>
-                <p></p>
-            </div>
-        </div>
-    </div>
+    <!-- Giữ nguyên footer của bạn -->
 </footer>
 
-<!--END FOOTER-->
+<script>
+    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    let authToken = null;
+    let currentCategories = [];
+
+    // Auto login
+    async function autoLoginAndLoad() {
+        try {
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const data = await res.json();
+            if (data.data?.accessToken) {
+                authToken = data.data.accessToken;
+                loadCategories();
+            } else {
+                alert("Login thất bại!");
+            }
+        } catch (err) {
+            alert("Không kết nối server");
+        }
+    }
+
+    // Load danh sách category
+    async function loadCategories() {
+        try {
+            const res = await fetch(`${BASE_URL}/categories?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load");
+            const json = await res.json();
+            currentCategories = json.data.list.filter(c => !c.deletedAt);
+            renderTable(currentCategories);
+            loadParentOptions(); // Load cho select parent
+        } catch (err) {
+            document.getElementById("categoryTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+        }
+    }
+
+    // Render bảng – SẮP XẾP THEO createdAt TĂNG DẦN (mới nhất ở dưới cùng)
+    function renderTable(categories) {
+        const tbody = document.getElementById("categoryTableBody");
+        tbody.innerHTML = "";
+
+        if (categories.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có danh mục nào</td></tr>`;
+            return;
+        }
+
+        // SẮP XẾP THEO createdAt TĂNG DẦN → MỚI NHẤT Ở DƯỚI CÙNG
+        categories.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+        categories.forEach((cat, index) => {
+            const parentName = cat.parent ? cat.parent.name : '-';
+            const statusBadge = cat.status === 'active'
+                ? '<span class="badge badge-success">Hoạt động</span>'
+                : '<span class="badge badge-secondary">Ẩn</span>';
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+            <td class="text-center">${index + 1}</td>
+            <td><strong>${cat.name}</strong></td>
+            <td>${parentName}</td>
+            <td>${cat.description || '-'}</td>
+            <td>${statusBadge}</td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${cat.id}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
+        `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Load options cho select Parent Category
+    async function loadParentOptions() {
+        const selectAdd = document.getElementById("addParentID");
+        const selectEdit = document.getElementById("editParentID");
+        selectAdd.innerHTML = '<option value="">-- Không có --</option>';
+        selectEdit.innerHTML = '<option value="">-- Không có --</option>';
+
+        currentCategories.forEach(cat => {
+            const option = document.createElement("option");
+            option.value = cat.id;
+            option.textContent = cat.name;
+            selectAdd.appendChild(option.cloneNode(true));
+            selectEdit.appendChild(option);
+        });
+    }
+
+    // ADD CATEGORY – HIỂN THỊ NGAY LẬP TỨC SAU KHI THÊM (KHÔNG CẦN RELOAD)
+    $('#addCategoryForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const name = $('#addName').val().trim();
+        if (!name) {
+            alert("Vui lòng nhập tên danh mục!");
+            return;
+        }
+
+        // Tạo slug
+        let slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'd')
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/^-+|-+$/g, '')
+            .replace(/-+/g, '-');
+
+        if (!slug) {
+            alert("Không thể tạo slug hợp lệ!");
+            return;
+        }
+
+        // Tránh trùng slug
+        let finalSlug = slug;
+        let counter = 1;
+        while (currentCategories.some(cat => cat.slug === finalSlug)) {
+            finalSlug = `${slug}-${counter}`;
+            counter++;
+        }
+
+        const description = $('#addDescription').val().trim() || null;
+        let imageUrl = $('#addImageUrl').val().trim() || null;
+
+        const payload = {
+            name: name,
+            slug: finalSlug,
+            description: description,
+            imageUrl: imageUrl
+        };
+
+        console.log("Payload gửi đi:", payload);
+
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalHtml = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+
+        try {
+            const res = await fetch(`${BASE_URL}/categories`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok || res.status === 201) {
+                const result = await res.json();
+                const newCategory = result.data; // LẤY CATEGORY MỚI TỪ RESPONSE BACKEND
+
+                alert("Thêm danh mục thành công!");
+
+                // ĐÓNG MODAL + RESET FORM
+                $('#addCategoryModal').modal('hide');
+                $('#addCategoryForm')[0].reset();
+
+                // THÊM NGAY VÀO DANH SÁCH HIỆN TẠI
+                currentCategories.push(newCategory);
+
+                // RERENDER BẢNG → CATEGORY MỚI HIỆN NGAY DƯỚI CÙNG
+                renderTable(currentCategories);
+
+                // Cập nhật lại select parent trong modal Edit (nếu mở)
+                loadParentOptions();
+            } else {
+                const err = await res.json();
+                console.log("Lỗi từ backend:", err);
+                alert("Thêm thất bại!\nLý do: " + (err.message || JSON.stringify(err.errors)));
+            }
+        } catch (err) {
+            console.error("Lỗi kết nối:", err);
+            alert("Lỗi kết nối server!");
+        } finally {
+            submitBtn.prop('disabled', false).html(originalHtml);
+        }
+    });
+
+    // Edit Category
+    $(document).on('click', '.edit-btn', function() {
+        const cat = JSON.parse($(this).attr('data-cat'));
+        $('#editId').val(cat.id);
+        $('#editName').val(cat.name);
+        $('#editDescription').val(cat.description || '');
+        $('#editParentID').val(cat.parentID || '');
+        $('#currentImage').attr('src', cat.imageUrl || 'https://via.placeholder.com/150');
+        $('#editCategoryModal').modal('show');
+    });
+
+    // EDIT CATEGORY – CŨNG TẠO SLUG MỚI NẾU NAME THAY ĐỔI
+    $('#editCategoryForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const id = $('#editId').val();
+        const name = $('#editName').val().trim();
+
+        // Tạo slug mới từ name
+        const slug = name
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+
+        const payload = {
+            name: name,
+            slug: slug,
+            description: $('#editDescription').val().trim() || null,
+            parentID: $('#editParentID').val() || null
+        };
+
+        try {
+            const res = await fetch(`${BASE_URL}/categories/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Cập nhật danh mục thành công!");
+                $('#editCategoryModal').modal('hide');
+                loadCategories();
+            } else {
+                const err = await res.json();
+                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Delete Category
+    $(document).on('click', '.delete-btn', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xóa danh mục này? Các sản phẩm liên quan sẽ bị ảnh hưởng!")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/categories/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (res.ok) {
+                alert("Xóa thành công!");
+                loadCategories();
+            } else {
+                alert("Xóa thất bại!");
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Export Excel (nếu có API)
+    function exportCategoriesToExcel() {
+        window.location.href = `${BASE_URL}/categories/export`;
+    }
+
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+</script>
 </body>
 </html>
