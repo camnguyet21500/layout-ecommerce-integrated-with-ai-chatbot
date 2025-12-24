@@ -52,6 +52,7 @@
         <table class="table table-bordered table-hover align-middle">
             <thead class="thead-light">
             <tr>
+                <th>STT</th>        <!-- Cột mới -->
                 <th>ID</th>
                 <th>NAME</th>
                 <th>EMAIL</th>
@@ -63,8 +64,7 @@
             </tr>
             </thead>
             <tbody id="orderTableBody">
-            <tr>
-                <td colspan="8" class="text-center">
+            <tr><td colspan="8" class="text-center py-5 text-muted">
                     <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải đơn hàng...
                 </td>
             </tr>
@@ -140,10 +140,15 @@
             }
             const json = await res.json();
             currentOrders = json.data.list.filter(order => !order.deletedAt);
-            await renderOrderTable(currentOrders); // Thêm await vì giờ là async
+
+            // === SORT CHỈ 1 LẦN KHI LOAD DỮ LIỆU ===
+            //currentOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            // ======================================
+
+            await renderOrderTable(currentOrders);
         } catch (err) {
             console.error(err);
-            document.getElementById("orderTableBody").innerHTML = "<tr><td colspan='8' class='text-danger text-center'>Lỗi tải dữ liệu</td></tr>";
+            document.getElementById("orderTableBody").innerHTML = "<tr><td colspan='9' class='text-danger text-center'>Lỗi tải dữ liệu</td></tr>";
         }
     }
 
@@ -151,20 +156,20 @@
         const tbody = document.getElementById("orderTableBody");
 
         // Hiển thị loading ban đầu
-        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải thông tin khách hàng...</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='9' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải thông tin khách hàng...</td></tr>";
 
         if (!orders || orders.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">Không có đơn hàng nào</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">Không có đơn hàng nào</td></tr>`;
             return;
         }
 
-        // Sắp xếp theo createdAt
-        orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        // Sắp xếp theo createdAt (cũ nhất lên đầu → STT tăng dần hợp lý)
+        //orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-        // XÓA DÒNG LOADING TRƯỚC KHI BẮT ĐẦU RENDER ROW THỰC
-        tbody.innerHTML = ""; // ← Dòng quan trọng nhất! Xóa sạch loading
+        // Xóa loading và bắt đầu render
+        tbody.innerHTML = "";
 
-        for (const order of orders) {
+        orders.forEach(async (order, index) => {  // ← Thêm index ở đây
             let fullName = 'Khách ẩn danh';
             let email = '-';
             let phone = '-';
@@ -195,32 +200,33 @@
             const statusBadge = getStatusBadge(order.status);
 
             const actionButtons = order.status === 'pending' ? `
-            <button class="btn btn-sm btn-success btn-confirm" data-id="${order.id}" title="Xác nhận">
-                <i class="fas fa-check"></i>
-            </button>
-            <button class="btn btn-sm btn-danger btn-cancel" data-id="${order.id}" title="Hủy đơn">
-                <i class="fas fa-times"></i>
-            </button>
-        ` : '';
+      <button class="btn btn-sm btn-success btn-confirm" data-id="${order.id}" title="Xác nhận">
+        <i class="fas fa-check"></i>
+      </button>
+      <button class="btn btn-sm btn-danger btn-cancel" data-id="${order.id}" title="Hủy đơn">
+        <i class="fas fa-times"></i>
+      </button>
+    ` : '';
 
             const row = document.createElement("tr");
             row.innerHTML = `
-            <td>${order.orderNumber}</td>
-            <td>${fullName}</td>
-            <td>${email}</td>
-            <td>${phone}</td>
-            <td class="text-danger font-weight-bold">${total}</td>
-            <td>${date}</td>
-            <td>${statusBadge}</td>
-            <td>
-                ${actionButtons}
-                <button class="btn btn-sm btn-info text-white view-detail" data-id="${order.id}" title="Xem chi tiết">
-                    <i class="fas fa-eye"></i>
-                </button>
-            </td>
-        `;
+      <td class="text-center">${index + 1}</td>                     <!-- STT MỚI -->
+      <td>${order.orderNumber}</td>
+      <td>${fullName}</td>
+      <td>${email}</td>
+      <td>${phone}</td>
+      <td class="text-danger font-weight-bold">${total}</td>
+      <td>${date}</td>
+      <td>${statusBadge}</td>
+      <td class="text-center">
+        ${actionButtons}
+        <button class="btn btn-sm btn-info text-white view-detail" data-id="${order.id}" title="Xem chi tiết">
+          <i class="fas fa-eye"></i>
+        </button>
+      </td>
+    `;
             tbody.appendChild(row);
-        }
+        });
     }
 
     // Helper: Badge cho status
@@ -239,34 +245,109 @@
         return `<span class="badge ${className}">${text}</span>`;
     }
 
-    // XEM CHI TIẾT ORDER
+    // XEM CHI TIẾT ORDER – PHIÊN BẢN HOÀN CHỈNH, AN TOÀN VÀ HIỂN THỊ ĐẦY ĐỦ THÔNG TIN
     $(document).on('click', '.view-detail', async function() {
         const id = $(this).data('id');
+        const modalTitle = document.getElementById("orderDetailTitle");
+        const modalBody = document.getElementById("orderDetailBody");
+
+        modalTitle.innerText = "Đang tải chi tiết đơn hàng...";
+        modalBody.innerHTML = `<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</p>`;
+        $('#orderDetailModal').modal('show');
+
         try {
-            const res = await fetch(`${BASE_URL}/orders/${id}`, {
+            // Lấy chi tiết order
+            const orderRes = await fetch(`${BASE_URL}/orders/${id}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi load chi tiết");
-            const order = await res.json().then(json => json.data);
 
-            // Đổ data vào modal
-            document.getElementById("orderDetailTitle").innerText = `Chi tiết đơn hàng ${order.orderNumber}`;
-            const body = document.getElementById("orderDetailBody");
-            body.innerHTML = `
-                    <p><strong>Khách hàng:</strong> ${order.user.firstName} ${order.user.lastName || ''}</p>
-                    <p><strong>Email:</strong> ${order.user.email}</p>
-                    <p><strong>Số điện thoại:</strong> ${order.user.phone || '-'}</p>
-                    <p><strong>Địa chỉ giao:</strong> ${order.orderAddresses.find(a => a.type === 'shipping')?.fullAddress || '-'}</p>
-                    <p><strong>Ngày đặt:</strong> ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
-                    <hr>
-                    <h6>Sản phẩm:</h6>
-                    <ul>
-                        ${order.orderItems.map(item => `<li>${item.productVariant.name || 'Sản phẩm'} × ${item.quantity} – ${Number(item.totalPrice).toLocaleString('vi-VN')}đ</li>`).join('')}
-                    </ul>
-                    <h5 class="text-right text-danger">Tổng cộng: ${Number(order.totalAmount).toLocaleString('vi-VN')}đ</h5>
-                `;
+            if (!orderRes.ok) throw new Error(`Lỗi server: ${orderRes.status}`);
+
+            const orderJson = await orderRes.json();
+            const order = orderJson.data;
+
+            // Lấy thông tin user nếu chưa có (backend có thể không include user)
+            let fullName = 'Khách ẩn danh';
+            let email = '-';
+            let phone = '-';
+
+            if (order.user) {
+                fullName = `${order.user.firstName} ${order.user.lastName || ''}`.trim();
+                email = order.user.email || '-';
+                phone = order.user.phone || '-';
+            } else if (order.userID) {
+                try {
+                    const userRes = await fetch(`${BASE_URL}/users/${order.userID}`, {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+                    if (userRes.ok) {
+                        const userJson = await userRes.json();
+                        const user = userJson.data;
+                        fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                        email = user.email || '-';
+                        phone = user.phone || '-';
+                    }
+                } catch (err) {
+                    console.error("Không thể tải thông tin khách hàng:", err);
+                }
+            }
+
+            // Địa chỉ giao hàng
+            const shippingAddress = order.orderAddresses?.find(a => a.type === 'shipping') || {};
+            const fullAddress = shippingAddress.fullAddress || 'Không có thông tin địa chỉ';
+
+            // Danh sách sản phẩm
+            const itemsHtml = order.orderItems?.length > 0
+                ? order.orderItems.map(item => {
+                    const variantName = item.productVariant?.name || item.productVariantSnapshot?.name || 'Sản phẩm không xác định';
+                    const qty = item.quantity || 1;
+                    const price = Number(item.totalPrice || item.unitPrice * qty).toLocaleString('vi-VN');
+                    return `<li class="mb-2">
+            <strong>${variantName}</strong> × ${qty}<br>
+            <small class="text-muted">Đơn giá: ${Number(item.unitPrice).toLocaleString('vi-VN')}đ</small><br>
+            <span class="font-weight-bold">Thành tiền: ${price}đ</span>
+          </li>`;
+                }).join('')
+                : '<li>Không có sản phẩm</li>';
+
+            // Cập nhật modal
+            modalTitle.innerText = `Chi tiết đơn hàng #${order.orderNumber}`;
+
+            modalBody.innerHTML = `
+      <div class="row">
+        <div class="col-md-6">
+          <h6><strong>Thông tin khách hàng</strong></h6>
+          <p><strong>Họ tên:</strong> ${fullName}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Số điện thoại:</strong> ${phone}</p>
+          <p><strong>Ngày đặt hàng:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
+          <p><strong>Trạng thái:</strong> ${getStatusBadge(order.status)}</p>
+          ${order.notes ? `<p><strong>Ghi chú:</strong> ${order.notes}</p>` : ''}
+        </div>
+        <div class="col-md-6">
+          <h6><strong>Địa chỉ giao hàng</strong></h6>
+          <p>${fullAddress.replace(/\n/g, '<br>')}</p>
+          ${order.shippingAmount > 0 ? `<p><strong>Phí vận chuyển:</strong> ${Number(order.shippingAmount).toLocaleString('vi-VN')}đ</p>` : ''}
+          ${order.discountAmount > 0 ? `<p><strong>Giảm giá:</strong> -${Number(order.discountAmount).toLocaleString('vi-VN')}đ</p>` : ''}
+        </div>
+      </div>
+
+      <hr>
+
+      <h6><strong>Danh sách sản phẩm</strong></h6>
+      <ul>${itemsHtml}</ul>
+
+      <div class="text-right mt-4">
+        <h5><strong>Tạm tính:</strong> ${Number(order.subtotal).toLocaleString('vi-VN')}đ</h5>
+        ${order.taxAmount > 0 ? `<h5><strong>Thuế:</strong> ${Number(order.taxAmount).toLocaleString('vi-VN')}đ</h5>` : ''}
+        <h4 class="text-danger"><strong>TỔNG CỘNG: ${Number(order.totalAmount).toLocaleString('vi-VN')}đ</strong></h4>
+      </div>
+    `;
+
         } catch (err) {
-            alert("Lỗi load chi tiết order!");
+            console.error("Lỗi khi tải chi tiết đơn hàng:", err);
+            modalTitle.innerText = "Lỗi tải chi tiết";
+            modalBody.innerHTML = `<p class="text-danger">Không thể tải chi tiết đơn hàng.<br>Lỗi: ${err.message || 'Không xác định'}</p>`;
         }
     });
 
@@ -281,38 +362,30 @@
     $(document).on('click', '.btn-cancel', async function() {
         const id = $(this).data('id');
         if (!confirm("Xác nhận hủy đơn hàng này?")) return;
-
-        // Gọi hàm chung, truyền status 'canceled' (giống nút confirm gọi 'confirmed')
-        await updateOrderStatus(id, 'cancelled');
+        await updateOrderStatus(id, 'canceled');  // ← sửa thành 'canceled'
     });
 
-    // Helper: Update status (copy 100% logic từ nút confirm)
-    // Helper: Update status (dùng chung cho cả confirm và cancel) - PHIÊN BẢN ĐÃ DEBUG CHI TIẾT
+    // Helper: Update status - PHIÊN BẢN ĐÃ FIX HOÀN TOÀN VẤN ĐỀ RELOAD MẤT TRẠNG THÁI
     async function updateOrderStatus(id, newStatus) {
-        // Xác định text thông báo
         let statusText = '';
-        if (newStatus === 'confirmed') {
-            statusText = 'XÁC NHẬN';
-        } else if (newStatus === 'cancelled') {
-            statusText = 'HỦY';
-        } else {
-            statusText = newStatus.toUpperCase();
-        }
+        if (newStatus === 'confirmed') statusText = 'XÁC NHẬN';
+        else if (newStatus === 'cancelled') statusText = 'HỦY';
+        else statusText = newStatus.toUpperCase();
 
-        // Loading trên nút (tìm tất cả nút trong dòng đó)
+        // Loading trên các nút trong dòng đó
         const actionCell = $(`[data-id="${id}"]`).closest('td');
         const buttons = actionCell.find('button');
         const originalHtmls = buttons.map(function() { return $(this).html(); }).get();
         buttons.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
 
         try {
-            // Payload: thêm notes khi hủy (rất hay cần)
+            // Gửi PATCH để cập nhật status
             let payload = { status: newStatus };
             if (newStatus === 'cancelled') {
-                payload.notes = 'Hủy bởi admin từ giao diện quản trị vào ngày ' + new Date().toLocaleDateString('vi-VN');
+                payload.notes = 'Hủy bởi admin từ giao diện quản trị vào ngày ' + new Date().toLocaleString('vi-VN');
             }
 
-            const res = await fetch(`${BASE_URL}/orders/${id}`, {
+            const patchRes = await fetch(`${BASE_URL}/orders/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -321,48 +394,57 @@
                 body: JSON.stringify(payload)
             });
 
-            // THÀNH CÔNG
-            if (res.ok || res.status === 200 || res.status === 201 || res.status === 204) {
-                alert(`Đơn hàng đã được ${statusText} thành công!`);
-
-                // Cập nhật local data
-                const index = currentOrders.findIndex(o => o.id === id);
-                if (index !== -1) {
-                    currentOrders[index].status = newStatus;
-                }
-
-                renderOrderTable(currentOrders);
-            }
-            // THẤT BẠI → DEBUG CHI TIẾT
-            else {
-                console.log("%c[DEBUG ORDER UPDATE ERROR]", "color: red; font-size: 16px; font-weight: bold;");
-                console.log("Status code:", res.status);
-                console.log("Status text:", res.statusText);
-                console.log("URL:", res.url);
-
-                let errorMessage = `${statusText} đơn hàng thất bại!\nMã lỗi: ${res.status}`;
-
+            // Nếu PATCH thất bại → báo lỗi chi tiết
+            if (!patchRes.ok) {
+                let errorMessage = `${statusText} đơn hàng thất bại! (PATCH lỗi)\nMã lỗi: ${patchRes.status}`;
                 try {
-                    // Thử đọc response dưới dạng text để thấy full error
-                    const errorText = await res.text();
-                    console.log("Full response body:", errorText);
-
-                    // Nếu là JSON thì parse để lấy message
+                    const errorText = await patchRes.text();
+                    let errorJson;
                     try {
-                        const errorJson = JSON.parse(errorText);
+                        errorJson = JSON.parse(errorText);
                         errorMessage += `\nLý do: ${errorJson.message || errorJson.error || 'Không rõ'}`;
-                    } catch (e) {
+                    } catch {
                         errorMessage += `\nResponse: ${errorText.substring(0, 300)}...`;
                     }
-                } catch (e) {
-                    errorMessage += `\nKhông đọc được response body`;
-                }
-
+                } catch {}
                 alert(errorMessage);
+                return;
             }
+
+            // === QUAN TRỌNG: FETCH LẠI ORDER MỚI NHẤT TỪ SERVER ===
+            const getRes = await fetch(`${BASE_URL}/orders/${id}`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            if (!getRes.ok) {
+                alert(`Cập nhật thành công nhưng không thể tải lại chi tiết đơn hàng để xác nhận. Vui lòng reload trang.`);
+                // Vẫn reload bảng để an toàn
+                loadOrders();
+                return;
+            }
+
+            const orderJson = await getRes.json();
+            const updatedOrder = orderJson.data;
+
+            // Cập nhật chính xác vào currentOrders theo dữ liệu thật từ server
+            const index = currentOrders.findIndex(o => o.id === id);
+            if (index !== -1) {
+                currentOrders[index] = updatedOrder;
+            } else {
+                // Nếu không tìm thấy (hiếm), reload toàn bộ
+                loadOrders();
+                alert(`${statusText} thành công! (Đã reload danh sách để đồng bộ)`);
+                return;
+            }
+
+            // Render lại bảng với dữ liệu chính xác từ server
+            await renderOrderTable(currentOrders);
+
+            alert(`Đơn hàng đã được ${statusText} thành công!`);
+
         } catch (err) {
-            console.error("Lỗi mạng hoặc exception:", err);
-            alert(`Lỗi kết nối khi ${statusText.toLowerCase()} đơn hàng!\nChi tiết xem console (F12)`);
+            console.error("Lỗi mạng khi cập nhật trạng thái:", err);
+            alert(`Lỗi kết nối khi ${statusText.toLowerCase()} đơn hàng!\nVui lòng thử lại.`);
         } finally {
             // Khôi phục nút
             buttons.each(function(i) {

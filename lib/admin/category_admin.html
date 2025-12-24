@@ -154,10 +154,10 @@
                         <img id="editCurrentImage" src="" width="200" class="img-thumbnail mb-2" style="max-height: 150px;">
                     </div>
 
-                    <div class="form-group">
-                        <label>Thay ảnh mới (tùy chọn)</label>
-                        <input type="file" class="form-control" id="editImageFile" accept="image/*">
-                    </div>
+<!--                    <div class="form-group">-->
+<!--                        <label>Thay ảnh mới (tùy chọn)</label>-->
+<!--                        <input type="file" class="form-control" id="editImageFile" accept="image/*">-->
+<!--                    </div>-->
 
                     <div class="form-group">
                         <label>Hoặc nhập URL ảnh mới</label>
@@ -501,9 +501,41 @@
         }
     });
 
-    // Export Excel (nếu có API)
-    function exportCategoriesToExcel() {
-        window.location.href = `${BASE_URL}/categories/export`;
+    // EXPORT EXCEL CHO CATEGORY – HOẠT ĐỘNG GIỐNG TRANG ORDER
+    async function exportCategoriesToExcel() {
+        try {
+            // Gọi API export (giả sử backend có endpoint POST /categories/export giống orders)
+            const res = await fetch(`${BASE_URL}/categories/export`, {
+                method: 'POST',  // Quan trọng: dùng POST như orders
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                    // Không cần Content-Type vì không gửi body
+                }
+            });
+
+            if (!res.ok) {
+                throw new Error(`Lỗi export: ${res.status}`);
+            }
+
+            // Lấy file blob
+            const blob = await res.blob();
+
+            // Tạo link tải về
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'categories_export.xlsx';  // Tên file tải về
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url); // Dọn dẹp
+
+            alert("Export danh mục thành công! File đã được tải về.");
+
+        } catch (err) {
+            console.error("Lỗi export category:", err);
+            alert("Export thất bại! Vui lòng kiểm tra console (F12) hoặc liên hệ dev backend.\nChi tiết: " + err.message);
+        }
     }
 
     $(document).ready(function() {
