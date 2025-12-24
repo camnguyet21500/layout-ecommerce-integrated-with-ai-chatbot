@@ -37,7 +37,7 @@
     <div class="text-right mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addUserModal">Add User</button>
         <button class="btn btn-success ml-2">Import Excel</button>
-        <button class="btn btn-info ml-2">Export Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportUsersToExcel()">Export Excel</button>
     </div>
 
     <table class="table table-bordered table-hover">
@@ -657,6 +657,64 @@
             alert("Lỗi kết nối server!");
         }
     });
+
+    // EXPORT EXCEL CHO USER – HOẠT ĐỘNG GIỐNG CATEGORY VÀ ORDER
+    // EXPORT EXCEL CHO USER – TỰ TẠO FILE TỪ DỮ LIỆU HIỆN TẠI (KHÔNG CẦN BACKEND)
+    function exportUsersToExcel() {
+        if (currentUsers.length === 0) {
+            alert("Không có dữ liệu người dùng để export!");
+            return;
+        }
+
+        // Tải thư viện SheetJS (cdns nhẹ, load 1 lần)
+        if (typeof XLSX === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            script.onload = generateExcelFile;
+            script.onerror = () => alert("Không tải được thư viện export Excel!");
+            document.head.appendChild(script);
+        } else {
+            generateExcelFile();
+        }
+
+        function generateExcelFile() {
+            // Chuẩn bị dữ liệu
+            const data = currentUsers.map((user, index) => {
+                const fullName = [(user.firstName || ""), (user.lastName || "")].filter(Boolean).join(" ").trim() || user.email.split('@')[0];
+                return {
+                    'STT': index + 1,
+                    'Họ tên': fullName,
+                    'Địa chỉ': user.fullAddress || '-',
+                    'Email': user.email,
+                    'Số điện thoại': user.phone || '-',
+                    'Trạng thái': user.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
+                    'Ngày tạo': user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-'
+                };
+            });
+
+            // Tạo workbook
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Users");
+
+            // Tự động điều chỉnh độ rộng cột
+            const colWidths = [
+                { wch: 8 },  // STT
+                { wch: 25 }, // Họ tên
+                { wch: 40 }, // Địa chỉ
+                { wch: 30 }, // Email
+                { wch: 15 }, // Phone
+                { wch: 15 }, // Trạng thái
+                { wch: 15 }  // Ngày tạo
+            ];
+            ws['!cols'] = colWidths;
+
+            // Xuất file
+            XLSX.writeFile(wb, 'users_export.xlsx');
+
+            alert("Export danh sách người dùng thành công! File đã được tải về.");
+        }
+    }
 
     $(document).ready(function () {
         autoLoginAndLoad();

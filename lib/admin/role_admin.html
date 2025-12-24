@@ -62,71 +62,20 @@
     <!-- Roles Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
-            <thead>
+            <thead class="thead-light">
             <tr>
-                <th>ID</th>
+                <th>STT</th>
                 <th>ROLE</th>
                 <th>DESCRIPTION</th>
-                <th>PERMISSION</th>
+                <th>IS SYSTEM ROLE</th>
+                <th>PERMISSIONS</th>
                 <th>ACTION</th>
             </tr>
             </thead>
-            <tbody>
-            <!-- Sample Data -->
+            <tbody id="roleTableBody">
             <tr>
-                <td>1</td>
-                <td>Super Admin</td>
-                <td>Toàn quyền hệ thống</td>
-                <td>Khách hàng thông thường</td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editRoleModal">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete('Super Admin')">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Admin</td>
-                <td>Quản trị viên cấp cao</td>
-                <td>Khách hàng thông thường</td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editRoleModal">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete('Admin')">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Editor</td>
-                <td>Chỉ chỉnh sửa sản phẩm</td>
-                <td>Khách hàng thông thường</td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editRoleModal">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete('Editor')">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Customer</td>
-                <td>Khách hàng thông thường</td>
-                <td>Khách hàng thông thường</td>
-                <td>
-                    <button class="btn btn-sm btn-primary edit-btn" data-toggle="modal" data-target="#editRoleModal">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="btn btn-sm btn-danger delete-btn" onclick="confirmDelete('Editor')">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
+                <td colspan="6" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải vai trò...
                 </td>
             </tr>
             </tbody>
@@ -135,104 +84,84 @@
 </div>
 
 <!-- Add Role Modal -->
+<!-- Add Role Modal -->
 <div class="modal fade" id="addRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Thêm vai trò mới</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Tên vai trò</label>
-                                <input type="text" class="form-control" placeholder="Ví dụ: Moderator, Staff...">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Mô tả ngắn</label>
-                                <input type="text" class="form-control" placeholder="Mô tả vai trò này làm gì">
-                            </div>
-                        </div>
+            <form id="addRoleForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên vai trò <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addRoleName" required placeholder="Ví dụ: Moderator, Staff...">
                     </div>
                     <div class="form-group">
-                        <label>Phân quyền chi tiết</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="perm1" value="product">
-                            <label class="form-check-label" for="perm1">Quản lý sản phẩm</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="perm2" value="order">
-                            <label class="form-check-label" for="perm2">Quản lý đơn hàng</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="perm3" value="user">
-                            <label class="form-check-label" for="perm3">Quản lý người dùng</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="perm4" value="category">
-                            <label class="form-check-label" for="perm4">Quản lý danh mục</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="perm5" value="report">
-                            <label class="form-check-label" for="perm5">Xem báo cáo</label>
+                        <label>Mô tả (tùy chọn)</label>
+                        <input type="text" class="form-control" id="addRoleDescription" placeholder="Mô tả ngắn về vai trò">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" id="addIsSystemRole">
+                            Là vai trò hệ thống (không thể xóa/sửa sau khi tạo)
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Phân quyền <span class="text-danger">*</span></label>
+                        <div id="addPermissionsList" class="border p-3" style="max-height: 300px; overflow-y: auto;">
+                            <p class="text-muted">Đang tải quyền...</p>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btnloadmore">Thêm vai trò</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Thêm vai trò</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
 
 <!-- Edit Role Modal -->
+<!-- Edit Role Modal -->
 <div class="modal fade" id="editRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chỉnh sửa vai trò: Admin</h5>
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title">Chỉnh sửa vai trò</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
-                <form>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Tên vai trò</label>
-                                <input type="text" class="form-control" value="Admin">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label>Mô tả ngắn</label>
-                                <input type="text" class="form-control" value="Quản trị viên cấp cao">
-                            </div>
-                        </div>
+            <form id="editRoleForm">
+                <input type="hidden" id="editRoleId">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Tên vai trò <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editRoleName" required>
                     </div>
                     <div class="form-group">
-                        <label>Phân quyền chi tiết</label><br>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" checked> <label>Quản lý sản phẩm</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" checked> <label>Quản lý đơn hàng</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" checked> <label>Quản lý người dùng</label>
+                        <label>Mô tả (tùy chọn)</label>
+                        <input type="text" class="form-control" id="editRoleDescription">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-check-label">
+                            <input type="checkbox" class="form-check-input" id="editIsSystemRole" disabled>
+                            Là vai trò hệ thống
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label>Phân quyền</label>
+                        <div id="editPermissionsList" class="border p-3" style="max-height: 300px; overflow-y: auto;">
+                            <p class="text-muted">Đang tải quyền...</p>
                         </div>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                <button type="button" class="btnloadmore">Cập nhật vai trò</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-warning">Cập nhật vai trò</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -378,5 +307,270 @@
 </footer>
 
 <!--END FOOTER-->
+<script>
+    const BASE_URL = "http://localhost:8888/api";
+    let authToken = null;
+    let currentRoles = [];
+    let currentPermissions = [];
+
+    // Auto login
+    async function autoLoginAndLoad() {
+        try {
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            const data = await res.json();
+            if (data.data?.accessToken) {
+                authToken = data.data.accessToken;
+                await loadPermissions();
+                await loadRoles();
+            } else {
+                alert("Login thất bại!");
+            }
+        } catch (err) {
+            alert("Không kết nối được server");
+        }
+    }
+
+    async function loadRoles() {
+        try {
+            const res = await fetch(`${BASE_URL}/roles?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load role");
+            const json = await res.json();
+            currentRoles = json.data.list.filter(r => !r.deletedAt);
+            renderRoleTable(currentRoles);
+        } catch (err) {
+            console.error(err);
+            document.getElementById("roleTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+        }
+    }
+
+    async function loadPermissions() {
+        try {
+            const res = await fetch(`${BASE_URL}/permissions?itemPerPage=200&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi load permission");
+            const json = await res.json();
+            currentPermissions = json.data.list.filter(p => !p.deletedAt);
+        } catch (err) {
+            console.error(err);
+            alert("Không thể load danh sách quyền!");
+        }
+    }
+
+    function renderRoleTable(roles) {
+        const tbody = document.getElementById("roleTableBody");
+        tbody.innerHTML = "";
+        if (roles.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có vai trò nào</td></tr>`;
+            return;
+        }
+        roles.forEach((role, index) => {
+            const permNames = role.rolePermissions?.map(rp => rp.permission.name).join(', ') || '-';
+            const isSystem = role.isSystemRole ? '<span class="badge badge-danger">Có</span>' : '<span class="badge badge-secondary">Không</span>';
+            const row = document.createElement("tr");
+            row.innerHTML = `
+      <td class="text-center">${index + 1}</td>
+      <td><strong>${role.name}</strong></td>
+      <td>${role.description || '-'}</td>
+      <td class="text-center">${isSystem}</td>
+      <td>${permNames}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
+          <i class="fas fa-edit"></i>
+        </button>
+        ${role.isSystemRole ? '' : `<button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
+          <i class="fas fa-trash-alt"></i>
+        </button>`}
+      </td>
+    `;
+            tbody.appendChild(row);
+        });
+    }
+
+    // Render permissions checkbox
+    function renderPermissions(containerId, selectedPermissionIds = []) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = "";
+        if (currentPermissions.length === 0) {
+            container.innerHTML = "<p class='text-muted'>Không có quyền nào</p>";
+            return;
+        }
+        currentPermissions.forEach(perm => {
+            const checked = selectedPermissionIds.includes(perm.id) ? 'checked' : '';
+            const div = document.createElement("div");
+            div.className = "form-check form-check-inline";
+            div.innerHTML = `
+      <input class="form-check-input" type="checkbox" id="${containerId}_${perm.id}" value="${perm.id}" ${checked}>
+      <label class="form-check-label" for="${containerId}_${perm.id}">${perm.name} <small class="text-muted">(${perm.key})</small></label>
+    `;
+            container.appendChild(div);
+        });
+    }
+
+    // Open Edit modal
+    $(document).on('click', '.edit-btn', function() {
+        const role = JSON.parse($(this).attr('data-role'));
+        $('#editRoleId').val(role.id);
+        $('#editRoleName').val(role.name);
+        $('#editRoleDescription').val(role.description || '');
+        $('#editIsSystemRole').prop('checked', role.isSystemRole);
+
+        const selectedPermIds = role.rolePermissions?.map(rp => rp.permission.id) || [];
+        renderPermissions('editPermissionsList', selectedPermIds);
+
+        $('#editRoleModal').modal('show');
+    });
+
+    // Add Role
+    // ADD ROLE – FIX ĐỂ ĐẢM BẢO THÀNH CÔNG
+    $('#addRoleForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const name = $('#addRoleName').val().trim();
+        const description = $('#addRoleDescription').val().trim() || null;
+        const isSystemRole = $('#addIsSystemRole').is(':checked');
+
+        const checkedPerms = $('#addPermissionsList input[type="checkbox"]:checked')
+            .map(function() { return this.value; })
+            .get();
+
+        if (!name) {
+            alert("Tên vai trò là bắt buộc!");
+            return;
+        }
+        if (checkedPerms.length === 0) {
+            alert("Vui lòng chọn ít nhất một quyền!");
+            return;
+        }
+
+        // === THỬ NHIỀU CÁCH GỬI PERMISSIONS ĐỂ BẮT TRƯỜNG HỢP BACKEND ===
+        const payload = {
+            name,
+            description,
+            isSystemRole,
+            permissionIds: checkedPerms,     // Cách 1: phổ biến nhất
+            // permissions: checkedPerms,    // Cách 2: nếu backend dùng key này (bỏ comment nếu cần)
+            // permissions: checkedPerms.map(id => ({ id }))  // Cách 3: nếu expect object
+        };
+
+        console.log("Payload gửi đi khi thêm Role:", payload);
+
+        try {
+            const res = await fetch(`${BASE_URL}/roles`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            let responseBody;
+            try {
+                responseBody = await res.json();
+            } catch {
+                responseBody = await res.text();
+            }
+
+            if (res.ok || res.status === 201) {
+                alert('Thêm vai trò thành công!');
+                $('#addRoleModal').modal('hide');
+                $('#addRoleForm')[0].reset();
+                renderPermissions('addPermissionsList', []); // reset checkbox
+                loadRoles(); // reload bảng
+            } else {
+                console.error("Lỗi backend khi thêm Role:", res.status, responseBody);
+                alert(`Thêm vai trò thất bại!\nMã lỗi: ${res.status}\nChi tiết: ${JSON.stringify(responseBody)}`);
+            }
+        } catch (err) {
+            console.error("Lỗi mạng:", err);
+            alert('Lỗi kết nối server!');
+        }
+    });
+
+    // Edit Role
+    // EDIT ROLE – CŨNG FIX TƯƠNG TỰ
+    $('#editRoleForm').on('submit', async function(e) {
+        e.preventDefault();
+
+        const id = $('#editRoleId').val();
+        const name = $('#editRoleName').val().trim();
+        const description = $('#editRoleDescription').val().trim() || null;
+
+        const checkedPerms = $('#editPermissionsList input[type="checkbox"]:checked')
+            .map(function() { return this.value; })
+            .get();
+
+        if (!name) {
+            alert("Tên vai trò là bắt buộc!");
+            return;
+        }
+
+        const payload = {
+            name,
+            description,
+            permissionIds: checkedPerms
+        };
+
+        try {
+            const res = await fetch(`${BASE_URL}/roles/${id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                alert("Cập nhật thành công!");
+                $('#editRoleModal').modal('hide');
+                loadRoles();
+            } else {
+                const err = await res.json();
+                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Delete Role
+    $(document).on('click', '.delete-btn', async function() {
+        const id = $(this).data('id');
+        if (!confirm("Xóa vai trò này? Thao tác không thể khôi phục!")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/roles/${id}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (res.ok) {
+                alert("Xóa thành công!");
+                loadRoles();
+            } else {
+                alert("Xóa thất bại!");
+            }
+        } catch (err) {
+            alert("Lỗi kết nối!");
+        }
+    });
+
+    // Khi mở modal Add → load permissions
+    $('#addRoleModal').on('show.bs.modal', function () {
+        renderPermissions('addPermissionsList', []);
+    });
+
+    // Load khi trang mở
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+</script>
 </body>
 </html>
