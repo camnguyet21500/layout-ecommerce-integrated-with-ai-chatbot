@@ -393,7 +393,6 @@
     // EDIT CATEGORY – CŨNG TẠO SLUG MỚI NẾU NAME THAY ĐỔI
     $('#editCategoryForm').on('submit', async function(e) {
         e.preventDefault();
-
         const id = $('#editId').val();
         const name = $('#editName').val().trim();
 
@@ -408,12 +407,23 @@
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
 
+        // LẤY URL ẢNH MỚI NẾU NGƯỜI DÙNG NHẬP
+        const newImageUrl = $('#editImageUrl').val().trim();
+        const imageUrl = newImageUrl || null; // nếu rỗng thì gửi null (backend sẽ giữ nguyên hoặc xóa)
+
         const payload = {
             name: name,
             slug: slug,
             description: $('#editDescription').val().trim() || null,
-            parentID: $('#editParentID').val() || null
+            parentID: $('#editParentID').val() || null,
+            imageUrl: imageUrl  // ← THÊM DÒNG NÀY
         };
+
+        console.log("Payload cập nhật category:", payload); // DEBUG: kiểm tra có imageUrl không
+
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalHtml = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang cập nhật...');
 
         try {
             const res = await fetch(`${BASE_URL}/categories/${id}`, {
@@ -428,13 +438,29 @@
             if (res.ok) {
                 alert("Cập nhật danh mục thành công!");
                 $('#editCategoryModal').modal('hide');
-                loadCategories();
+
+                // Cập nhật nhanh giao diện mà không cần reload toàn bộ (tối ưu hơn)
+                const updatedCat = await res.json();
+                const data = updatedCat.data;
+
+                // Cập nhật trong mảng currentCategories
+                const index = currentCategories.findIndex(c => c.id === id);
+                if (index !== -1) {
+                    currentCategories[index] = data;
+                }
+
+                // Render lại bảng + cập nhật select parent
+                renderTable(currentCategories);
+                loadParentOptions();
             } else {
                 const err = await res.json();
                 alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            console.error(err);
+            alert("Lỗi kết nối server!");
+        } finally {
+            submitBtn.prop('disabled', false).html(originalHtml);
         }
     });
 
