@@ -181,7 +181,7 @@
 </footer>
 
 <script>
-    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentCategories = [];
 
@@ -435,16 +435,32 @@
         try {
             const res = await fetch(`${BASE_URL}/categories/${id}`, {
                 method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${authToken}` }
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
             });
+
             if (res.ok) {
                 alert("Xóa thành công!");
-                loadCategories();
+
+                // === PHẦN SỬA CHÍNH Ở ĐÂY ===
+                // Xóa khỏi mảng currentCategories (trong bộ nhớ)
+                currentCategories = currentCategories.filter(cat => cat.id !== id);
+
+                // Render lại bảng ngay lập tức mà không cần reload từ server
+                renderTable(currentCategories);
+
+                // Cập nhật lại danh sách option cho select Parent (trong modal Edit và Add nếu mở)
+                loadParentOptions();
+                // =================================
+
             } else {
-                alert("Xóa thất bại!");
+                const err = await res.json();
+                alert("Xóa thất bại! " + (err.message || ""));
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            console.error(err);
+            alert("Lỗi kết nối server!");
         }
     });
 

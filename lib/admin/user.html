@@ -402,7 +402,7 @@
 
 <!--END FOOTER-->
 <script>
-    const BASE_URL = "https://ecommerce-integrated-with-ai-chatbot.onrender.com/api";
+    const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentUsers = []; // Biến lưu danh sách user hiện tại
 
@@ -471,23 +471,24 @@
             const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-';
 
             const row = document.createElement("tr");
+            // Trong renderTable, sửa dòng row.innerHTML thành:
             row.innerHTML = `
-            <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
-            <td>${displayName}</td>
-            <td>${user.fullAddress || "-"}</td>
-            <td>${user.email}</td>
-            <td>${user.phone || "-"}</td>
-            <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
-            <td><span class="badge badge-info">${createdDate}</span></td>
-            <td class="text-center" style="width:130px;">
-                <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        `;
+    <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
+    <td>${displayName}</td>
+    <td>${user.fullAddress || "-"}</td>
+    <td>${user.email}</td>
+    <td>${user.phone || "-"}</td>
+    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
+    <td><span class="badge badge-info">User</span></td> <!-- Tạm hardcode, sau này lấy từ backend -->
+    <td class="text-center" style="width:130px;">
+        <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </td>
+`;
             tbody.appendChild(row);
         });
     }
@@ -620,6 +621,40 @@
             alert("Lỗi kết nối server!");
         } finally {
             $('#btnUpdateUser').prop('disabled', false).html('<i class="fas fa-save"></i> Cập nhật người dùng');
+        }
+    });
+
+    // XÓA USER – HOÀN CHỈNH + HIỂN THỊ NGAY SAU KHI XÓA
+    $(document).on('click', '.delete-btn', async function() {
+        const userId = $(this).data('id');
+        const userEmail = $(this).closest('tr').find('td:nth-child(4)').text().trim(); // Lấy email để confirm
+
+        // Confirm xóa (hỏi kỹ để tránh nhầm)
+        if (!confirm(`Bạn có chắc muốn XÓA người dùng "${userEmail}"?\nHành động này KHÔNG THỂ hoàn tác!`)) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`${BASE_URL}/users/${userId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            if (res.ok || res.status === 204) {
+                alert("Xóa người dùng thành công!");
+
+                // XÓA NGAY KHỎI DANH SÁCH HIỆN TẠI VÀ RERENDER
+                currentUsers = currentUsers.filter(user => user.id !== userId);
+                renderTable(currentUsers);
+            } else {
+                const err = await res.json();
+                alert("Xóa thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            console.error("Lỗi khi xóa user:", err);
+            alert("Lỗi kết nối server!");
         }
     });
 
