@@ -131,6 +131,14 @@ body {
     background-color: #6c757d;
 }
 
+#categoryTableBody img {
+    transition: transform 0.2s;
+}
+#categoryTableBody img:hover {
+    transform: scale(1.5);
+    z-index: 10;
+}
+
 /*FOOTER*/
 .footer{
     padding: 50px;

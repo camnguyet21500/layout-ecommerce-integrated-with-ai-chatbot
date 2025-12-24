@@ -57,6 +57,7 @@
             <thead class="thead-light">
             <tr>
                 <th>STT</th>
+                <th>ẢNH</th>          <!-- Cột mới -->
                 <th>CATEGORY</th>
                 <th>PARENT CATEGORY</th>
                 <th>DESCRIPTION</th>
@@ -241,21 +242,28 @@
                 : '<span class="badge badge-secondary">Ẩn</span>';
 
             const row = document.createElement("tr");
+            const imageUrl = cat.imageUrl || "https://via.placeholder.com/60"; // ảnh mặc định nếu không có
+
             row.innerHTML = `
-            <td class="text-center">${index + 1}</td>
-            <td><strong>${cat.name}</strong></td>
-            <td>${parentName}</td>
-            <td>${cat.description || '-'}</td>
-            <td>${statusBadge}</td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${cat.id}">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        `;
+  <td class="text-center">${index + 1}</td>
+  <td class="text-center">
+    <img src="${imageUrl}" width="60" height="60"
+         style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
+         alt="${cat.name}">
+  </td>
+  <td><strong>${cat.name}</strong></td>
+  <td>${parentName}</td>
+  <td>${cat.description || '-'}</td>
+  <td>${statusBadge}</td>
+  <td class="text-center">
+    <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
+      <i class="fas fa-edit"></i>
+    </button>
+    <button class="btn btn-sm btn-danger delete-btn" data-id="${cat.id}">
+      <i class="fas fa-trash-alt"></i>
+    </button>
+  </td>
+`;
             tbody.appendChild(row);
         });
     }
@@ -375,7 +383,10 @@
         $('#editName').val(cat.name);
         $('#editDescription').val(cat.description || '');
         $('#editParentID').val(cat.parentID || '');
-        $('#currentImage').attr('src', cat.imageUrl || 'https://via.placeholder.com/150');
+
+        // SỬA ĐÚNG ID ẢNH
+        $('#editCurrentImage').attr('src', cat.imageUrl || 'https://via.placeholder.com/200');
+
         $('#editCategoryModal').modal('show');
     });
 
