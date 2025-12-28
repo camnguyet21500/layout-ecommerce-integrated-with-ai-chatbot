@@ -54,9 +54,9 @@
 
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
-        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addRoleModal">
-            Add Role
-        </a>
+        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addRoleModal"> Add Role </a>
+        <button class="btn btn-success ml-2" onclick="importRolesFromExcel()">Import Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportRolesToExcel()">Export Excel</button>
     </div>
 
     <!-- Roles Table -->
@@ -342,10 +342,16 @@
             if (!res.ok) throw new Error("Lỗi load role");
             const json = await res.json();
             currentRoles = json.data.list.filter(r => !r.deletedAt);
+
+            // === SẮP XẾP: CŨ NHẤT Ở TRÊN, MỚI NHẤT Ở DƯỚI ===
+            currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            // ========================================================
+
             renderRoleTable(currentRoles);
         } catch (err) {
             console.error(err);
-            document.getElementById("roleTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+            document.getElementById("roleTableBody").innerHTML =
+                `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
         }
     }
 
@@ -427,8 +433,64 @@
         $('#editRoleModal').modal('show');
     });
 
-    // Add Role
-    // ADD ROLE – FIX ĐỂ ĐẢM BẢO THÀNH CÔNG
+    // ==================== EXPORT EXCEL ====================
+    async function exportRolesToExcel() {
+        try {
+            const res = await fetch(`${BASE_URL}/roles/export`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi export");
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'roles_export.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            alert("Export thành công!");
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi export Excel! Kiểm tra xem backend có endpoint /roles/export chưa.");
+        }
+    }
+
+    // ==================== IMPORT EXCEL ====================
+    function importRolesFromExcel() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx, .xls';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch(`${BASE_URL}/roles/import`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: formData
+                });
+
+                if (res.ok) {
+                    alert("Import vai trò thành công!");
+                    await loadRoles(); // Reload danh sách
+                } else {
+                    const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
+                    alert(`Import thất bại!\n${err.message || err.error || ''}`);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Lỗi kết nối khi import!");
+            }
+        };
+        input.click();
+    }
+
+    // THÊM ROLE MỚI – Hiển thị ngay lập tức + nằm dưới cùng bảng
     $('#addRoleForm').on('submit', async function(e) {
         e.preventDefault();
 
@@ -449,52 +511,99 @@
             return;
         }
 
-        // === THỬ NHIỀU CÁCH GỬI PERMISSIONS ĐỂ BẮT TRƯỜNG HỢP BACKEND ===
-        const payload = {
-            name,
-            description,
-            isSystemRole,
-            permissionIds: checkedPerms,     // Cách 1: phổ biến nhất
-            // permissions: checkedPerms,    // Cách 2: nếu backend dùng key này (bỏ comment nếu cần)
-            // permissions: checkedPerms.map(id => ({ id }))  // Cách 3: nếu expect object
-        };
-
-        console.log("Payload gửi đi khi thêm Role:", payload);
+        // Payload tạo role (chỉ gửi field cơ bản)
+        const createPayload = { name, description, isSystemRole };
 
         try {
-            const res = await fetch(`${BASE_URL}/roles`, {
+            // Bước 1: Tạo role
+            const createRes = await fetch(`${BASE_URL}/roles`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify(createPayload)
             });
 
-            let responseBody;
-            try {
-                responseBody = await res.json();
-            } catch {
-                responseBody = await res.text();
+            if (!createRes.ok) {
+                const err = await createRes.json().catch(() => ({ message: "Lỗi không rõ" }));
+                alert(`Tạo role thất bại!\nMã lỗi: ${createRes.status}\n${err.message || err.error || ''}`);
+                return;
             }
 
-            if (res.ok || res.status === 201) {
-                alert('Thêm vai trò thành công!');
-                $('#addRoleModal').modal('hide');
-                $('#addRoleForm')[0].reset();
-                renderPermissions('addPermissionsList', []); // reset checkbox
-                loadRoles(); // reload bảng
-            } else {
-                console.error("Lỗi backend khi thêm Role:", res.status, responseBody);
-                alert(`Thêm vai trò thất bại!\nMã lỗi: ${res.status}\nChi tiết: ${JSON.stringify(responseBody)}`);
+            // Lấy role mới từ response (đảm bảo có dữ liệu đầy đủ)
+            const createJson = await createRes.json();
+            let newRole = createJson.data;
+
+            // Nếu backend không trả về rolePermissions, tạm để trống (sẽ cập nhật sau khi gán quyền)
+            if (!newRole.rolePermissions) {
+                newRole.rolePermissions = [];
             }
+
+            // Bước 2: Gán permissions (nếu có)
+            const assignEndpoints = [
+                { url: `${BASE_URL}/roles/${newRole.id}/permissions`, body: { permissionIds: checkedPerms } },
+                { url: `${BASE_URL}/roles/${newRole.id}/permissions`, body: { permissions: checkedPerms } },
+                { url: `${BASE_URL}/role-permissions`, body: checkedPerms.map(permissionID => ({ roleID: newRole.id, permissionID })) },
+            ];
+
+            let assignSuccess = false;
+            for (const endpoint of assignEndpoints) {
+                try {
+                    const assignRes = await fetch(endpoint.url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(endpoint.body)
+                    });
+
+                    if (assignRes.ok || assignRes.status === 201) {
+                        assignSuccess = true;
+                        // Nếu gán thành công, lấy lại role mới nhất để có permissions đầy đủ
+                        try {
+                            const updatedRes = await fetch(`${BASE_URL}/roles/${newRole.id}`, {
+                                headers: { 'Authorization': `Bearer ${authToken}` }
+                            });
+                            if (updatedRes.ok) {
+                                const updatedJson = await updatedRes.json();
+                                newRole = updatedJson.data;
+                            }
+                        } catch (e) {
+                            console.warn("Không thể reload role mới sau khi gán quyền:", e);
+                        }
+                        break;
+                    }
+                } catch (err) {
+                    console.warn("Lỗi khi gán quyền:", endpoint.url, err);
+                }
+            }
+
+            // Thông báo kết quả
+            alert(assignSuccess
+                ? "Thêm vai trò và phân quyền thành công!"
+                : "Thêm vai trò thành công nhưng gán quyền thất bại!\nBạn có thể sửa role để gán quyền sau.");
+
+            // Đóng modal + reset form
+            $('#addRoleModal').modal('hide');
+            $('#addRoleForm')[0].reset();
+
+            // === THÊM ROLE MỚI VÀO DANH SÁCH HIỆN TẠI ===
+            currentRoles.push(newRole);
+
+            // === SẮP XẾP ĐỂ ROLE MỚI NHẤT LUÔN NẰM DƯỚI CÙNG ===
+            currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+            // === RENDER LẠI BẢNG NGAY LẬP TỨC ===
+            renderRoleTable(currentRoles);
+
         } catch (err) {
-            console.error("Lỗi mạng:", err);
-            alert('Lỗi kết nối server!');
+            console.error("Lỗi khi tạo role:", err);
+            alert("Lỗi kết nối server!");
         }
     });
 
-    // Edit Role
     // EDIT ROLE – CŨNG FIX TƯƠNG TỰ
     $('#editRoleForm').on('submit', async function(e) {
         e.preventDefault();
@@ -541,24 +650,34 @@
         }
     });
 
-    // Delete Role
+    // Delete Role – Xóa ngay lập tức trên table mà không reload trang
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa vai trò này? Thao tác không thể khôi phục!")) return;
+        if (!confirm("Xóa vai trò này? Thao tác KHÔNG THỂ khôi phục!")) return;
 
         try {
             const res = await fetch(`${BASE_URL}/roles/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
+
             if (res.ok) {
-                alert("Xóa thành công!");
-                loadRoles();
+                alert("Xóa vai trò thành công!");
+
+                // Tìm và xóa role khỏi mảng currentRoles
+                const index = currentRoles.findIndex(role => role.id === id);
+                if (index !== -1) {
+                    currentRoles.splice(index, 1);
+                }
+
+                // Render lại table ngay lập tức với dữ liệu đã cập nhật
+                renderRoleTable(currentRoles);
             } else {
-                alert("Xóa thất bại!");
+                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
+                alert(`Xóa thất bại! ${err.message || ''}`);
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            alert("Lỗi kết nối khi xóa!");
         }
     });
 
