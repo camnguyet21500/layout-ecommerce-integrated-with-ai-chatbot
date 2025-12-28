@@ -65,8 +65,8 @@
             </thead>
             <tbody id="orderTableBody">
             <tr><td colspan="8" class="text-center py-5 text-muted">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải đơn hàng...
-                </td>
+                <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải đơn hàng...
+            </td>
             </tr>
             </tbody>
         </table>
@@ -91,16 +91,150 @@
     </div>
 </div>
 
-<!-- FOOTER giữ nguyên -->
+<!--FOOTER-->
 <footer class="footer mt-5">
-    <!-- Giữ nguyên code footer của bạn -->
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/logowhite.png" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        University of Information Technology (VNUHCM – UIT)<br>
+                        (028) 372 52002 <br>
+                        (028) 372 52148 <br>
+                        info@uit.edu.vn</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Help & Information <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Pagination</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Terms & Conditions</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Contact</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Accessories</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Term of use</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            About Us <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Help Center</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Address Store</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Receivers & Amplifiers</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Profile <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">My Account</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Checkout</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Order Tracking</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2025 |
+                    <a href="" class="underline_hover bold">
+                        Designed
+                    </a>
+                    by
+                    <a href="" class="underline_hover link">
+                        Lazashoes
+                    </a>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    </div>
 </footer>
-
-<!-- SCRIPT JS để connect data thực -->
+<!--END FOOTER-->
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
-    let currentOrders = []; // Sửa từ currentProducts thành currentOrders
+    let currentOrders = [];
 
     // TỰ ĐỘNG LOGIN VÀ LOAD ORDERS
     async function autoLoginAndLoad() {
@@ -115,7 +249,7 @@
             if (loginData.data?.accessToken) {
                 authToken = loginData.data.accessToken;
                 console.log("Đăng nhập thành công!");
-                loadOrders(); // Sửa từ loadProducts thành loadOrders
+                await loadOrders();
             } else {
                 alert("Không đăng nhập được – kiểm tra email/pass");
             }
@@ -141,9 +275,9 @@
             const json = await res.json();
             currentOrders = json.data.list.filter(order => !order.deletedAt);
 
-            // === SORT CHỈ 1 LẦN KHI LOAD DỮ LIỆU ===
-            //currentOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            // ======================================
+            // === SẮP XẾP MỘT LẦN DUY NHẤT: cũ nhất lên đầu (STT tăng dần hợp lý) ===
+            currentOrders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            // ================================================================
 
             await renderOrderTable(currentOrders);
         } catch (err) {
@@ -152,24 +286,45 @@
         }
     }
 
+    // RENDER BẢNG – ĐỒNG BỘ HOÀN TOÀN ĐỂ GIỮ THỨ TỰ
     async function renderOrderTable(orders) {
         const tbody = document.getElementById("orderTableBody");
-
-        // Hiển thị loading ban đầu
-        tbody.innerHTML = "<tr><td colspan='9' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải thông tin khách hàng...</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='9' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải thông tin...</td></tr>";
 
         if (!orders || orders.length === 0) {
             tbody.innerHTML = `<tr><td colspan="9" class="text-center py-5 text-muted">Không có đơn hàng nào</td></tr>`;
             return;
         }
 
-        // Sắp xếp theo createdAt (cũ nhất lên đầu → STT tăng dần hợp lý)
-        //orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        // Thu thập tất cả userID cần fetch (nếu order chưa có user object)
+        const userIdsToFetch = [];
+        orders.forEach(order => {
+            if (!order.user && order.userID) {
+                userIdsToFetch.push(order.userID);
+            }
+        });
 
-        // Xóa loading và bắt đầu render
+        // Fetch tất cả user cùng lúc (nếu có)
+        const userMap = new Map(); // Map<userID, userObject>
+        if (userIdsToFetch.length > 0) {
+            await Promise.all(userIdsToFetch.map(async (userID) => {
+                try {
+                    const userRes = await fetch(`${BASE_URL}/users/${userID}`, {
+                        headers: { 'Authorization': `Bearer ${authToken}` }
+                    });
+                    if (userRes.ok) {
+                        const userJson = await userRes.json();
+                        userMap.set(userID, userJson.data);
+                    }
+                } catch (err) {
+                    console.error(`Lỗi fetch user ${userID}:`, err);
+                }
+            }));
+        }
+
+        // Xóa loading và render từng row ĐỒNG BỘ (theo thứ tự trong mảng orders)
         tbody.innerHTML = "";
-
-        orders.forEach(async (order, index) => {  // ← Thêm index ở đây
+        orders.forEach((order, index) => {
             let fullName = 'Khách ẩn danh';
             let email = '-';
             let phone = '-';
@@ -178,21 +333,11 @@
                 fullName = `${order.user.firstName} ${order.user.lastName || ''}`.trim();
                 email = order.user.email || '-';
                 phone = order.user.phone || '-';
-            } else if (order.userID) {
-                try {
-                    const userRes = await fetch(`${BASE_URL}/users/${order.userID}`, {
-                        headers: { 'Authorization': `Bearer ${authToken}` }
-                    });
-                    if (userRes.ok) {
-                        const userJson = await userRes.json();
-                        const user = userJson.data;
-                        fullName = `${user.firstName} ${user.lastName || ''}`.trim();
-                        email = user.email || '-';
-                        phone = user.phone || '-';
-                    }
-                } catch (err) {
-                    console.error(`Lỗi fetch user ${order.userID}:`, err);
-                }
+            } else if (order.userID && userMap.has(order.userID)) {
+                const user = userMap.get(order.userID);
+                fullName = `${user.firstName} ${user.lastName || ''}`.trim();
+                email = user.email || '-';
+                phone = user.phone || '-';
             }
 
             const total = Number(order.totalAmount).toLocaleString('vi-VN') + 'đ';
@@ -200,31 +345,31 @@
             const statusBadge = getStatusBadge(order.status);
 
             const actionButtons = order.status === 'pending' ? `
-      <button class="btn btn-sm btn-success btn-confirm" data-id="${order.id}" title="Xác nhận">
-        <i class="fas fa-check"></i>
-      </button>
-      <button class="btn btn-sm btn-danger btn-cancel" data-id="${order.id}" title="Hủy đơn">
-        <i class="fas fa-times"></i>
-      </button>
-    ` : '';
+            <button class="btn btn-sm btn-success btn-confirm" data-id="${order.id}" title="Xác nhận">
+                <i class="fas fa-check"></i>
+            </button>
+            <button class="btn btn-sm btn-danger btn-cancel" data-id="${order.id}" title="Hủy đơn">
+                <i class="fas fa-times"></i>
+            </button>
+        ` : '';
 
             const row = document.createElement("tr");
             row.innerHTML = `
-      <td class="text-center">${index + 1}</td>                     <!-- STT MỚI -->
-      <td>${order.orderNumber}</td>
-      <td>${fullName}</td>
-      <td>${email}</td>
-      <td>${phone}</td>
-      <td class="text-danger font-weight-bold">${total}</td>
-      <td>${date}</td>
-      <td>${statusBadge}</td>
-      <td class="text-center">
-        ${actionButtons}
-        <button class="btn btn-sm btn-info text-white view-detail" data-id="${order.id}" title="Xem chi tiết">
-          <i class="fas fa-eye"></i>
-        </button>
-      </td>
-    `;
+            <td class="text-center">${index + 1}</td>
+            <td>${order.orderNumber}</td>
+            <td>${fullName}</td>
+            <td>${email}</td>
+            <td>${phone}</td>
+            <td class="text-danger font-weight-bold">${total}</td>
+            <td>${date}</td>
+            <td>${statusBadge}</td>
+            <td class="text-center">
+                ${actionButtons}
+                <button class="btn btn-sm btn-info text-white view-detail" data-id="${order.id}" title="Xem chi tiết">
+                    <i class="fas fa-eye"></i>
+                </button>
+            </td>
+        `;
             tbody.appendChild(row);
         });
     }
@@ -245,32 +390,25 @@
         return `<span class="badge ${className}">${text}</span>`;
     }
 
-    // XEM CHI TIẾT ORDER – PHIÊN BẢN HOÀN CHỈNH, AN TOÀN VÀ HIỂN THỊ ĐẦY ĐỦ THÔNG TIN
+    // XEM CHI TIẾT ORDER
     $(document).on('click', '.view-detail', async function() {
         const id = $(this).data('id');
         const modalTitle = document.getElementById("orderDetailTitle");
         const modalBody = document.getElementById("orderDetailBody");
-
         modalTitle.innerText = "Đang tải chi tiết đơn hàng...";
         modalBody.innerHTML = `<p class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</p>`;
         $('#orderDetailModal').modal('show');
-
         try {
-            // Lấy chi tiết order
             const orderRes = await fetch(`${BASE_URL}/orders/${id}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-
             if (!orderRes.ok) throw new Error(`Lỗi server: ${orderRes.status}`);
-
             const orderJson = await orderRes.json();
             const order = orderJson.data;
 
-            // Lấy thông tin user nếu chưa có (backend có thể không include user)
             let fullName = 'Khách ẩn danh';
             let email = '-';
             let phone = '-';
-
             if (order.user) {
                 fullName = `${order.user.firstName} ${order.user.lastName || ''}`.trim();
                 email = order.user.email || '-';
@@ -292,58 +430,48 @@
                 }
             }
 
-            // Địa chỉ giao hàng
             const shippingAddress = order.orderAddresses?.find(a => a.type === 'shipping') || {};
             const fullAddress = shippingAddress.fullAddress || 'Không có thông tin địa chỉ';
 
-            // Danh sách sản phẩm
-            const itemsHtml = order.orderItems?.length > 0
-                ? order.orderItems.map(item => {
-                    const variantName = item.productVariant?.name || item.productVariantSnapshot?.name || 'Sản phẩm không xác định';
-                    const qty = item.quantity || 1;
-                    const price = Number(item.totalPrice || item.unitPrice * qty).toLocaleString('vi-VN');
-                    return `<li class="mb-2">
-            <strong>${variantName}</strong> × ${qty}<br>
-            <small class="text-muted">Đơn giá: ${Number(item.unitPrice).toLocaleString('vi-VN')}đ</small><br>
-            <span class="font-weight-bold">Thành tiền: ${price}đ</span>
-          </li>`;
-                }).join('')
-                : '<li>Không có sản phẩm</li>';
+            const itemsHtml = order.orderItems?.length > 0 ? order.orderItems.map(item => {
+                const variantName = item.productVariant?.name || item.productVariantSnapshot?.name || 'Sản phẩm không xác định';
+                const qty = item.quantity || 1;
+                const price = Number(item.totalPrice || item.unitPrice * qty).toLocaleString('vi-VN');
+                return `<li class="mb-2">
+                <strong>${variantName}</strong> × ${qty}<br>
+                <small class="text-muted">Đơn giá: ${Number(item.unitPrice).toLocaleString('vi-VN')}đ</small><br>
+                <span class="font-weight-bold">Thành tiền: ${price}đ</span>
+            </li>`;
+            }).join('') : '<li>Không có sản phẩm</li>';
 
-            // Cập nhật modal
             modalTitle.innerText = `Chi tiết đơn hàng #${order.orderNumber}`;
-
             modalBody.innerHTML = `
-      <div class="row">
-        <div class="col-md-6">
-          <h6><strong>Thông tin khách hàng</strong></h6>
-          <p><strong>Họ tên:</strong> ${fullName}</p>
-          <p><strong>Email:</strong> ${email}</p>
-          <p><strong>Số điện thoại:</strong> ${phone}</p>
-          <p><strong>Ngày đặt hàng:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
-          <p><strong>Trạng thái:</strong> ${getStatusBadge(order.status)}</p>
-          ${order.notes ? `<p><strong>Ghi chú:</strong> ${order.notes}</p>` : ''}
-        </div>
-        <div class="col-md-6">
-          <h6><strong>Địa chỉ giao hàng</strong></h6>
-          <p>${fullAddress.replace(/\n/g, '<br>')}</p>
-          ${order.shippingAmount > 0 ? `<p><strong>Phí vận chuyển:</strong> ${Number(order.shippingAmount).toLocaleString('vi-VN')}đ</p>` : ''}
-          ${order.discountAmount > 0 ? `<p><strong>Giảm giá:</strong> -${Number(order.discountAmount).toLocaleString('vi-VN')}đ</p>` : ''}
-        </div>
-      </div>
-
-      <hr>
-
-      <h6><strong>Danh sách sản phẩm</strong></h6>
-      <ul>${itemsHtml}</ul>
-
-      <div class="text-right mt-4">
-        <h5><strong>Tạm tính:</strong> ${Number(order.subtotal).toLocaleString('vi-VN')}đ</h5>
-        ${order.taxAmount > 0 ? `<h5><strong>Thuế:</strong> ${Number(order.taxAmount).toLocaleString('vi-VN')}đ</h5>` : ''}
-        <h4 class="text-danger"><strong>TỔNG CỘNG: ${Number(order.totalAmount).toLocaleString('vi-VN')}đ</strong></h4>
-      </div>
-    `;
-
+            <div class="row">
+                <div class="col-md-6">
+                    <h6><strong>Thông tin khách hàng</strong></h6>
+                    <p><strong>Họ tên:</strong> ${fullName}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Số điện thoại:</strong> ${phone}</p>
+                    <p><strong>Ngày đặt hàng:</strong> ${new Date(order.createdAt).toLocaleString('vi-VN')}</p>
+                    <p><strong>Trạng thái:</strong> ${getStatusBadge(order.status)}</p>
+                    ${order.notes ? `<p><strong>Ghi chú:</strong> ${order.notes}</p>` : ''}
+                </div>
+                <div class="col-md-6">
+                    <h6><strong>Địa chỉ giao hàng</strong></h6>
+                    <p>${fullAddress.replace(/\n/g, '<br>')}</p>
+                    ${order.shippingAmount > 0 ? `<p><strong>Phí vận chuyển:</strong> ${Number(order.shippingAmount).toLocaleString('vi-VN')}đ</p>` : ''}
+                    ${order.discountAmount > 0 ? `<p><strong>Giảm giá:</strong> -${Number(order.discountAmount).toLocaleString('vi-VN')}đ</p>` : ''}
+                </div>
+            </div>
+            <hr>
+            <h6><strong>Danh sách sản phẩm</strong></h6>
+            <ul>${itemsHtml}</ul>
+            <div class="text-right mt-4">
+                <h5><strong>Tạm tính:</strong> ${Number(order.subtotal).toLocaleString('vi-VN')}đ</h5>
+                ${order.taxAmount > 0 ? `<h5><strong>Thuế:</strong> ${Number(order.taxAmount).toLocaleString('vi-VN')}đ</h5>` : ''}
+                <h4 class="text-danger"><strong>TỔNG CỘNG: ${Number(order.totalAmount).toLocaleString('vi-VN')}đ</strong></h4>
+            </div>
+        `;
         } catch (err) {
             console.error("Lỗi khi tải chi tiết đơn hàng:", err);
             modalTitle.innerText = "Lỗi tải chi tiết";
@@ -358,33 +486,30 @@
         await updateOrderStatus(id, 'confirmed');
     });
 
-    // HỦY ORDER – COPY 100% LOGIC TỪ NÚT CONFIRM
+    // HỦY ORDER
     $(document).on('click', '.btn-cancel', async function() {
         const id = $(this).data('id');
         if (!confirm("Xác nhận hủy đơn hàng này?")) return;
-        await updateOrderStatus(id, 'canceled');  // ← sửa thành 'canceled'
+        await updateOrderStatus(id, 'canceled');
     });
 
-    // Helper: Update status - PHIÊN BẢN ĐÃ FIX HOÀN TOÀN VẤN ĐỀ RELOAD MẤT TRẠNG THÁI
+    // Helper: Update status
     async function updateOrderStatus(id, newStatus) {
         let statusText = '';
         if (newStatus === 'confirmed') statusText = 'XÁC NHẬN';
         else if (newStatus === 'cancelled') statusText = 'HỦY';
         else statusText = newStatus.toUpperCase();
 
-        // Loading trên các nút trong dòng đó
         const actionCell = $(`[data-id="${id}"]`).closest('td');
         const buttons = actionCell.find('button');
         const originalHtmls = buttons.map(function() { return $(this).html(); }).get();
         buttons.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i>');
 
         try {
-            // Gửi PATCH để cập nhật status
             let payload = { status: newStatus };
             if (newStatus === 'cancelled') {
                 payload.notes = 'Hủy bởi admin từ giao diện quản trị vào ngày ' + new Date().toLocaleString('vi-VN');
             }
-
             const patchRes = await fetch(`${BASE_URL}/orders/${id}`, {
                 method: 'PATCH',
                 headers: {
@@ -394,62 +519,44 @@
                 body: JSON.stringify(payload)
             });
 
-            // Nếu PATCH thất bại → báo lỗi chi tiết
             if (!patchRes.ok) {
                 let errorMessage = `${statusText} đơn hàng thất bại! (PATCH lỗi)\nMã lỗi: ${patchRes.status}`;
                 try {
                     const errorText = await patchRes.text();
                     let errorJson;
-                    try {
-                        errorJson = JSON.parse(errorText);
-                        errorMessage += `\nLý do: ${errorJson.message || errorJson.error || 'Không rõ'}`;
-                    } catch {
-                        errorMessage += `\nResponse: ${errorText.substring(0, 300)}...`;
-                    }
+                    try { errorJson = JSON.parse(errorText); errorMessage += `\nLý do: ${errorJson.message || errorJson.error || 'Không rõ'}`; } catch {}
                 } catch {}
                 alert(errorMessage);
                 return;
             }
 
-            // === QUAN TRỌNG: FETCH LẠI ORDER MỚI NHẤT TỪ SERVER ===
             const getRes = await fetch(`${BASE_URL}/orders/${id}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-
             if (!getRes.ok) {
                 alert(`Cập nhật thành công nhưng không thể tải lại chi tiết đơn hàng để xác nhận. Vui lòng reload trang.`);
-                // Vẫn reload bảng để an toàn
-                loadOrders();
+                await loadOrders();
                 return;
             }
-
             const orderJson = await getRes.json();
             const updatedOrder = orderJson.data;
 
-            // Cập nhật chính xác vào currentOrders theo dữ liệu thật từ server
             const index = currentOrders.findIndex(o => o.id === id);
             if (index !== -1) {
                 currentOrders[index] = updatedOrder;
             } else {
-                // Nếu không tìm thấy (hiếm), reload toàn bộ
-                loadOrders();
+                await loadOrders();
                 alert(`${statusText} thành công! (Đã reload danh sách để đồng bộ)`);
                 return;
             }
 
-            // Render lại bảng với dữ liệu chính xác từ server
             await renderOrderTable(currentOrders);
-
             alert(`Đơn hàng đã được ${statusText} thành công!`);
-
         } catch (err) {
             console.error("Lỗi mạng khi cập nhật trạng thái:", err);
             alert(`Lỗi kết nối khi ${statusText.toLowerCase()} đơn hàng!\nVui lòng thử lại.`);
         } finally {
-            // Khôi phục nút
-            buttons.each(function(i) {
-                $(this).prop('disabled', false).html(originalHtmls[i]);
-            });
+            buttons.each(function(i) { $(this).prop('disabled', false).html(originalHtmls[i]); });
         }
     }
 

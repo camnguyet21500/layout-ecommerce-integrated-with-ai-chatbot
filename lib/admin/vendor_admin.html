@@ -406,6 +406,8 @@
             return;
         }
 
+        vendors.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
         vendors.forEach((vendor, index) => {
             const logo = vendor.logoUrl || "https://via.placeholder.com/60";
             const statusBadge = vendor.status === 'active'
@@ -436,7 +438,7 @@
         });
     }
 
-    // ADD VENDOR – GỬI KÈM userID (lấy từ token hoặc hardcode tạm)
+    // ADD VENDOR – FIX THEO CreateVendorDto (KHÔNG GỬI userID)
     $('#addVendorForm').on('submit', async function(e) {
         e.preventDefault();
 
@@ -446,6 +448,7 @@
             return;
         }
 
+        // Tạo slug tự động
         const slug = name
             .toLowerCase()
             .normalize('NFD')
@@ -458,7 +461,7 @@
             .replace(/-+/g, '-');
 
         if (!slug) {
-            alert("Không thể tạo slug!");
+            alert("Không thể tạo slug hợp lệ từ tên!");
             return;
         }
 
@@ -468,16 +471,16 @@
             description: $('#addDescription').val().trim() || null,
             logoUrl: $('#addLogoUrl').val().trim() || null,
             taxCode: $('#addTaxCode').val().trim() || null,
-            status: $('#addStatus').val(),
-            userID: "CURRENT_USER_ID"  // ← QUAN TRỌNG: PHẢI GỬI userID
+            status: $('#addStatus').val()
+            // KHÔNG GỬI userID → backend tự xử lý hoặc không cần
+            // totalProducts và totalOrders backend tự set = 0
         };
 
-        // Tạm thời: dùng userID của tài khoản đang login (nvo28@example.com)
-        // Em có thể lấy từ token hoặc hardcode tạm ID của user admin
-        // Giả sử em biết ID của user nvo28 là cái này (em cần kiểm tra trong DB hoặc API /users)
-        payload.userID = "some-known-user-uuid-here"; // THAY BẰNG USER ID THẬT
+        console.log("Payload tạo vendor:", payload);
 
-        // HOẶC: nếu backend cho phép không gửi userID (nullable), thì bỏ field này đi
+        const submitBtn = $(this).find('button[type="submit"]');
+        const originalHtml = submitBtn.html();
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
 
         try {
             const res = await fetch(`${BASE_URL}/vendors`, {
@@ -489,20 +492,28 @@
                 body: JSON.stringify(payload)
             });
 
-            const result = await res.json();
-            console.log("Response từ backend:", result); // DEBUG
+            let responseData;
+            try {
+                responseData = await res.json();
+            } catch {
+                responseData = await res.text();
+            }
 
             if (res.ok || res.status === 201) {
                 alert("Thêm vendor thành công!");
                 $('#addVendorModal').modal('hide');
                 $('#addVendorForm')[0].reset();
-                loadVendors();
+                $('#addSlug').val(''); // reset slug
+                loadVendors(); // reload danh sách
             } else {
-                alert("Thêm thất bại! Lý do: " + (result.message || JSON.stringify(result.errors)));
+                console.error("Lỗi backend khi thêm vendor:", res.status, responseData);
+                alert(`Thêm vendor thất bại!\nMã lỗi: ${res.status}\nChi tiết: ${responseData.message || JSON.stringify(responseData)}`);
             }
         } catch (err) {
-            console.error(err);
+            console.error("Lỗi kết nối:", err);
             alert("Lỗi kết nối server!");
+        } finally {
+            submitBtn.prop('disabled', false).html(originalHtml);
         }
     });
 
@@ -578,9 +589,64 @@
         }
     });
 
-    // Export Excel
+    // EXPORT EXCEL CHO VENDOR – TỰ TẠO FILE TỪ DỮ LIỆU HIỆN TẠI (GIỐNG USER.HTML)
     function exportVendorsToExcel() {
-        window.location.href = `${BASE_URL}/vendors/export`;
+        if (currentVendors.length === 0) {
+            alert("Không có dữ liệu vendor để export!");
+            return;
+        }
+
+        // Tải thư viện SheetJS nếu chưa có
+        if (typeof XLSX === 'undefined') {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+            script.onload = generateVendorExcelFile;
+            script.onerror = () => alert("Không tải được thư viện export Excel!");
+            document.head.appendChild(script);
+        } else {
+            generateVendorExcelFile();
+        }
+
+        function generateVendorExcelFile() {
+            // Chuẩn bị dữ liệu từ currentVendors
+            const data = currentVendors.map((vendor, index) => {
+                return {
+                    'STT': index + 1,
+                    'Tên Vendor': vendor.name,
+                    'Slug': vendor.slug,
+                    'Mô tả': vendor.description || '-',
+                    'Mã số thuế': vendor.taxCode || '-',
+                    'Tổng sản phẩm': vendor.totalProducts || 0,
+                    'Tổng đơn hàng': vendor.totalOrders || 0,
+                    'Trạng thái': vendor.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
+                    'Ngày tạo': vendor.createdAt ? new Date(vendor.createdAt).toLocaleDateString('vi-VN') : '-'
+                };
+            });
+
+            // Tạo workbook
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Vendors");
+
+            // Tự động điều chỉnh độ rộng cột
+            const colWidths = [
+                { wch: 8 },   // STT
+                { wch: 25 },  // Tên Vendor
+                { wch: 20 },  // Slug
+                { wch: 40 },  // Mô tả
+                { wch: 20 },  // Mã số thuế
+                { wch: 15 },  // Tổng sản phẩm
+                { wch: 15 },  // Tổng đơn hàng
+                { wch: 15 },  // Trạng thái
+                { wch: 15 }   // Ngày tạo
+            ];
+            ws['!cols'] = colWidths;
+
+            // Xuất file
+            XLSX.writeFile(wb, 'vendors_export.xlsx');
+
+            alert("Export danh sách vendor thành công! File đã được tải về.");
+        }
     }
 
     // Run when page loads

@@ -1,48 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Management | Mabu Store</title>
-
-    <head>
-        ...
-        <!-- CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-
-        <!-- FONT AWESOME -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
-        <!-- ION ICON (cập nhật theo khuyến cáo) -->
-        <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.js"></script>
-
-        <!-- JQUERY ĐẦU TIÊN -->
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>  <!-- Dùng full jQuery, không dùng slim -->
-
-        <!-- POPPER -->
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
-
-        <!-- BOOTSTRAP JS (sau jQuery) -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
-
-        <!-- Angular -->
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
-        <!-- CSS & JS custom -->
-        <link rel="stylesheet" href="../../css/product_admin.css">
-        <script src="../../js/cart.js"></script>
-    </head>
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <link rel="stylesheet" href="../../css/product_admin.css">
+    <script src="../../js/cart.js"></script>
 </head>
-
 <body ng-app="myApp">
-<!-- HEADER -->
+<!-- HEADER giữ nguyên -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
-
-            <!-- MENU -->
             <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="../customer/index.html">HOME</a></li>
@@ -53,28 +31,21 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
                 </ul>
             </div>
-
-            <!-- LOGO -->
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
                 <img src="../../img/logoblack.png" alt="Logo" width="80" class="d-inline-block align-top">
             </a>
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
 <!-- PRODUCT MANAGEMENT SECTION -->
 <div class="container" style="margin-top: 120px;">
     <h3 class="text-center my-4">Product Management</h3>
-
     <div class="text-right mb-3">
-        <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">
-            Add Product
-        </button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal"> Add Product </button>
         <button class="btn btn-success ml-2">Import Excel</button>
-        <button class="btn btn-info ml-2">Export Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportProductsToExcel()">Export Excel</button>
     </div>
-
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
         <tr>
@@ -98,9 +69,9 @@
     </table>
 </div>
 
-<!-- Add Product Modal -->
+<!-- ==================== ADD PRODUCT MODAL ==================== -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
                 <h5 class="modal-title">Thêm sản phẩm mới</h5>
@@ -118,35 +89,40 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Giá (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="addPrice" required min="0">
+                                <input type="number" class="form-control" id="addPrice" required min="0" step="1000">
                             </div>
                         </div>
                     </div>
-
-                    <div class="form-group">
-                        <label>Mô tả</label>
-                        <textarea class="form-control" id="addDescription" rows="3"></textarea>
-                    </div>
-
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Số lượng tồn kho</label>
-                                <input type="number" class="form-control" id="addStock" value="0" min="0">
+                                <label>SKU <small>(mã nội bộ, optional)</small></label>
+                                <input type="text" class="form-control" id="addSku" placeholder="SKU-001">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Mô tả</label>
+                        <textarea class="form-control" id="addDescription" rows="4"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Số lượng tồn kho <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="addStock" value="0" min="0" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Trạng thái</label>
-                                <select class="form-control" id="addStatus">
+                                <label>Trạng thái <span class="text-danger">*</span></label>
+                                <select class="form-control" id="addStatus" required>
                                     <option value="active">Active</option>
-                                    <option value="draft">Draft</option>
+                                    <option value="draft" selected>Draft</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-
                     <div class="form-group">
                         <label>Ảnh sản phẩm (chọn nhiều)</label>
                         <input type="file" class="form-control" id="addImages" multiple accept="image/*">
@@ -161,17 +137,17 @@
     </div>
 </div>
 
-<!-- Edit Product Modal -->
+<!-- ==================== EDIT PRODUCT MODAL ==================== -->
 <div class="modal fade" id="editProductModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header bg-warning text-white">
+            <div class="modal-header bg-warning text-dark">
                 <h5 class="modal-title">Chỉnh sửa sản phẩm</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="editProductForm">
+                <input type="hidden" id="editId">
                 <div class="modal-body">
-                    <input type="hidden" id="editId">
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
@@ -182,25 +158,33 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Giá (VNĐ) <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="editPrice" required min="0">
+                                <input type="number" class="form-control" id="editPrice" required min="0" step="1000">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>SKU</label>
+                                <input type="text" class="form-control" id="editSku">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Mô tả</label>
-                        <textarea class="form-control" id="editDescription" rows="3"></textarea>
+                        <textarea class="form-control" id="editDescription" rows="4"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Số lượng tồn kho</label>
-                                <input type="number" class="form-control" id="editStock" value="0" min="0">
+                                <label>Số lượng tồn kho <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="editStock" required min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Trạng thái</label>
-                                <select class="form-control" id="editStatus">
+                                <label>Trạng thái <span class="text-danger">*</span></label>
+                                <select class="form-control" id="editStatus" required>
                                     <option value="active">Active</option>
                                     <option value="draft">Draft</option>
                                     <option value="inactive">Inactive</option>
@@ -208,12 +192,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Ảnh hiện tại (chỉ hiển thị, chưa hỗ trợ thay đổi ảnh ở phiên bản đơn giản) -->
                     <div class="form-group">
                         <label>Ảnh hiện tại</label>
                         <div id="currentImages" class="d-flex flex-wrap"></div>
                     </div>
-                    <!-- Nếu muốn thêm ảnh mới (tùy chọn) -->
                     <div class="form-group">
                         <label>Thêm ảnh mới (nếu cần)</label>
                         <input type="file" class="form-control" id="editImages" multiple accept="image/*">
@@ -228,63 +210,72 @@
     </div>
 </div>
 
-<!-- Footer giữ nguyên -->
-<footer class="footer mt-5"> ... (giữ nguyên) ... </footer>
+<!-- FOOTER giữ nguyên -->
+<footer class="footer mt-5"> ... </footer>
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentProducts = [];
+    let currentVendorID = "cf9a9e5d-88d0-4891-99f2-e2862fc86679";
 
-    // Auto login + load
     async function autoLoginAndLoad() {
         try {
-            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+            const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
             });
-            const data = await res.json();
-            if (data.data?.accessToken) {
-                authToken = data.data.accessToken;
-                loadProducts();
-            } else {
+            const loginData = await loginRes.json();
+            if (!loginData.data?.accessToken) {
                 alert("Login thất bại!");
+                return;
             }
+            authToken = loginData.data.accessToken;
+            await loadProductsAndSetVendorID();
         } catch (err) {
             alert("Không kết nối được server");
         }
     }
 
-    async function loadProducts() {
+    async function loadProductsAndSetVendorID() {
         try {
-            // Thử cách đơn giản nhất trước
-            const res = await fetch(`${BASE_URL}/products`, {
+            const res = await fetch(`${BASE_URL}/products?itemPerPage=200&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
 
             if (!res.ok) {
-                // Nếu lỗi, thử với limit/page chuẩn
-                const res2 = await fetch(`${BASE_URL}/products?limit=100&page=1`, {
-                    headers: { 'Authorization': `Bearer ${authToken}` }
-                });
-                if (!res2.ok) throw new Error("Lỗi load sản phẩm");
-                const json = await res2.json();
-                currentProducts = json.data?.list?.filter(p => !p.deletedAt) || [];
-            } else {
-                const json = await res.json();
-                currentProducts = json.data?.list?.filter(p => !p.deletedAt) || [];
+                const errorText = await res.text();
+                throw new Error(`HTTP ${res.status} - ${errorText.substring(0, 200)}`);
             }
 
-            renderProductTable(currentProducts);
+            const json = await res.json();
+            console.log("Load products thành công:", json);
+
+            let products = json.data?.list?.filter(p => !p.deletedAt) || [];
+
+            // SORT CHỈ 1 LẦN DUY NHẤT TẠI ĐÂY
+            products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+            currentProducts = products; // Lưu mảng đã sort
+
+            if (currentProducts.length > 0 && currentProducts[0].vendorID) {
+                currentVendorID = currentProducts[0].vendorID;
+            }
+
+            renderProductTable(currentProducts, false); // Không sort nữa
+
         } catch (err) {
-            console.error(err);
+            console.error("Lỗi load products:", err);
             document.getElementById("productTableBody").innerHTML =
-                `<tr><td colspan="8" class="text-danger text-center">Lỗi tải dữ liệu: ${err.message}</td></tr>`;
+                `<tr><td colspan="8" class="text-danger text-center p-4">
+                <strong>Không tải được danh sách sản phẩm</strong><br>
+                Lỗi: ${err.message}
+            </td></tr>`;
         }
     }
 
-    function renderProductTable(products) {
+    function renderProductTable(products, sort = true) {
         const tbody = document.getElementById("productTableBody");
         tbody.innerHTML = "";
 
@@ -293,37 +284,40 @@
             return;
         }
 
-        products.forEach((product, index) => {
-            const mainImage = product.productImages?.[0]?.imageUrl || "https://via.placeholder.com/60";
-            const variantCount = product.productVariants?.length || 0;
+        let displayProducts = [...products];
 
+        // Chỉ sort khi được yêu cầu (load lần đầu hoặc reload)
+        if (sort) {
+            displayProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+        }
+
+        displayProducts.forEach((product, index) => {
+            const mainImage = product.productImages?.[0]?.imageUrl || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ddd'/%3E%3Ctext x='30' y='35' font-size='12' text-anchor='middle' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E";
             const row = document.createElement("tr");
             row.innerHTML = `
-          <td class="text-center">${index + 1}</td>
-          <td><img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px;"></td>
-          <td><strong>${product.name}</strong></td>
-          <td><strong>${product.description}</strong></td>
-          <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
-          <td>${product.stockQuantity}</td>
-          <td><span class="badge badge-${product.status === 'active' ? 'success' : 'secondary'}">${product.status}</span></td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-warning edit-btn" data-product='${JSON.stringify(product)}'>
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn btn-sm btn-danger delete-btn" data-id="${product.id}">
-              <i class="fas fa-trash-alt"></i>
-            </button>
-          </td>
+            <td class="text-center">${index + 1}</td>
+            <td><img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px;"></td>
+            <td><strong>${product.name}</strong></td>
+            <td>${product.description || ''}</td>
+            <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
+            <td>${product.stockQuantity}</td>
+            <td><span class="badge badge-${product.status === 'active' ? 'success' : 'secondary'}">${product.status}</span></td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-warning edit-btn" data-product='${JSON.stringify(product)}'>
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="btn btn-sm btn-danger delete-btn" data-id="${product.id}">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
+            </td>
         `;
             tbody.appendChild(row);
         });
     }
 
-    // XÓA SẢN PHẨM
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
         if (!confirm("Xóa sản phẩm này? Không thể khôi phục!")) return;
-
         try {
             const res = await fetch(`${BASE_URL}/products/${id}`, {
                 method: 'DELETE',
@@ -341,64 +335,116 @@
         }
     });
 
-    // CHẠY KHI LOAD TRANG
-    $(document).ready(function() {
-        autoLoginAndLoad();
-    });
-
-    // EDIT PRODUCT - Click nút edit
     $(document).on('click', '.edit-btn', function() {
         const product = JSON.parse($(this).attr('data-product'));
-
-        // Đổ dữ liệu vào modal edit
         $('#editId').val(product.id);
         $('#editName').val(product.name);
+        $('#editSku').val(product.sku || '');
         $('#editPrice').val(product.price);
         $('#editDescription').val(product.description || '');
         $('#editStock').val(product.stockQuantity);
         $('#editStatus').val(product.status);
 
-        // Hiển thị ảnh hiện tại
         const currentImagesDiv = $('#currentImages');
         currentImagesDiv.empty();
-        if (product.productImages && product.productImages.length > 0) {
+        if (product.productImages?.length > 0) {
             product.productImages.forEach(img => {
-                currentImagesDiv.append(`
-        <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px;">
-      `);
+                currentImagesDiv.append(`<img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px;">`);
             });
         } else {
             currentImagesDiv.append('<p class="text-muted">Chưa có ảnh</p>');
         }
-
-        // Mở modal
         $('#editProductModal').modal('show');
     });
 
-    // SUBMIT FORM EDIT
-    $('#editProductForm').on('submit', async function(e) {
+    $('#addProductForm').on('submit', async function(e) {
         e.preventDefault();
 
-        const id = $('#editId').val();
-        const name = $('#editName').val().trim();
-        const price = parseFloat($('#editPrice').val());
-        const description = $('#editDescription').val().trim();
-        const stockQuantity = parseInt($('#editStock').val()) || 0;
-        const status = $('#editStatus').val();
-
-        if (!name || isNaN(price) || price < 0) {
-            alert('Vui lòng nhập đầy đủ tên và giá hợp lệ!');
+        if (!currentVendorID || currentVendorID.includes("PASTE_") || currentVendorID.includes("THAY_")) {
+            alert("VendorID chưa hợp lệ! Vui lòng thay ID thật từ database vào code.");
             return;
         }
 
+        const name = $('#addName').val().trim();
+        const price = parseFloat($('#addPrice').val());
+        const stockQuantity = parseInt($('#addStock').val()) || 0;
+        const status = $('#addStatus').val();
+        const description = $('#addDescription').val().trim() || null;
+        const sku = $('#addSku').val().trim() || null;
+
+        if (!name || isNaN(price) || price <= 0) {
+            alert("Tên sản phẩm và Giá là bắt buộc, giá phải lớn hơn 0!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('vendorID', currentVendorID);
+        formData.append('name', name);
+        formData.append('price', price);
+        formData.append('stockQuantity', stockQuantity);
+        formData.append('status', status);
+
+        if (description) formData.append('description', description);
+        if (sku) formData.append('sku', sku);
+
+        const images = $('#addImages')[0].files;
+        for (let i = 0; i < images.length; i++) {
+            formData.append('images', images[i]);
+        }
+
+        console.log("Đang tạo sản phẩm với dữ liệu:", { name, price, stockQuantity, status, sku, vendorID: currentVendorID });
+
+        try {
+            // Fix: Gửi dummy itemPerPage=1 để backend không crash
+            const res = await fetch(`${BASE_URL}/products?itemPerPage=1`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: formData
+            });
+
+            const text = await res.text();
+            console.log("Create status:", res.status);
+            console.log("Create response:", text);
+
+            if (res.ok) {
+                alert("Thêm sản phẩm thành công!");
+                $('#addProductModal').modal('hide');
+                $('#addProductForm')[0].reset();
+                loadProductsAndSetVendorID(); // ← ĐÃ SORT QUA renderProductTable(true)
+            } else {
+                try {
+                    const json = JSON.parse(text);
+                    alert("Thêm thất bại: " + (json.errors?.[0]?.message || json.message || "Lỗi không xác định"));
+                } catch {
+                    alert("Thêm thất bại (lỗi server): " + text.substring(0, 500));
+                }
+            }
+        } catch (err) {
+            console.error("Lỗi mạng:", err);
+            alert("Lỗi kết nối server!");
+        }
+    });
+
+    $('#editProductForm').on('submit', async function(e) {
+        e.preventDefault();
+        const id = $('#editId').val();
+
         const body = {
-            name,
-            description: description || null,
-            price,
-            stockQuantity,
-            status
-            // Các trường khác nếu cần: slug, sku, vendorID...
+            name: $('#editName').val().trim(),
+            price: parseFloat($('#editPrice').val()),
+            stockQuantity: parseInt($('#editStock').val()) || 0,
+            status: $('#editStatus').val(),
         };
+
+        const description = $('#editDescription').val().trim();
+        if (description) body.description = description;
+        else body.description = null;
+
+        const sku = $('#editSku').val().trim();
+        if (sku) body.sku = sku;
+        else body.sku = null;
 
         try {
             const res = await fetch(`${BASE_URL}/products/${id}`, {
@@ -411,77 +457,54 @@
             });
 
             if (res.ok) {
-                alert('Cập nhật sản phẩm thành công!');
+                const result = await res.json();
+                const updatedProduct = result.data; // dữ liệu sản phẩm mới từ server
+
+                // Tìm và cập nhật trực tiếp trong mảng currentProducts
+                const index = currentProducts.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    currentProducts[index] = updatedProduct;
+                }
+
+                alert('Cập nhật thành công!');
                 $('#editProductModal').modal('hide');
-                loadProducts(); // Reload lại danh sách
+
+                // Render lại bảng mà KHÔNG sort → giữ nguyên thứ tự hiện tại
+                renderProductTable(currentProducts, false);
+
             } else {
-                const error = await res.json();
-                alert('Cập nhật thất bại: ' + (error.message || 'Lỗi server'));
+                const err = await res.json();
+                alert('Cập nhật thất bại: ' + (err.message || 'Lỗi server'));
             }
         } catch (err) {
             console.error(err);
-            alert('Lỗi kết nối server!');
+            alert('Lỗi kết nối!');
         }
     });
 
-    $('#addProductForm').on('submit', async function(e) {
-        e.preventDefault();
-
-        const name = $('#addName').val().trim();
-        const price = parseFloat($('#addPrice').val());
-        const description = $('#addDescription').val().trim();
-        const stockQuantity = parseInt($('#addStock').val()) || 0;
-        const status = $('#addStatus').val();
-        const images = $('#addImages')[0].files;
-
-        if (!name || isNaN(price) || price < 0) {
-            alert('Vui lòng nhập đầy đủ tên sản phẩm và giá hợp lệ!');
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('price', price);
-        if (description) formData.append('description', description);
-        formData.append('stockQuantity', stockQuantity);
-        formData.append('status', status);
-
-        // THÊM DÒNG NÀY: cố gắng lấy vendorID từ sản phẩm đầu tiên (nếu có)
-        if (currentProducts.length > 0 && currentProducts[0].vendorID) {
-            formData.append('vendorID', currentProducts[0].vendorID);
-        }
-
-        // Thử cả 2 key ảnh phổ biến
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i]);     // key phổ biến 1
-            formData.append('files', images[i]);       // key phổ biến 2 (nếu backend dùng multer khác)
-        }
-
+    async function exportProductsToExcel() {
         try {
-            const res = await fetch(`${BASE_URL}/products`, {
+            const res = await fetch(`${BASE_URL}/products/export`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                },
-                body: formData
+                headers: { 'Authorization': `Bearer ${authToken}` }
             });
-
-            const result = await res.json();
-            if (res.ok) {
-                alert('Thêm sản phẩm thành công!');
-                $('#addProductModal').modal('hide');
-                $('#addProductForm')[0].reset();
-                loadProducts();
-            } else {
-                alert('Thêm thất bại: ' + (result.message || JSON.stringify(result)));
-                console.error('Full error:', result);
-            }
+            if (!res.ok) throw new Error("Lỗi export");
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'products_export.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
         } catch (err) {
-            console.error(err);
-            alert('Lỗi kết nối server!');
+            alert("Lỗi export Excel!");
         }
+    }
+
+    $(document).ready(function() {
+        autoLoginAndLoad();
     });
 </script>
 </body>
-
 </html>
