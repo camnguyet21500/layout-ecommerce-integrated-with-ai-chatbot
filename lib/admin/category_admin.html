@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="../../css/category_admin.css">
 </head>
 <body>
-<!-- HEADER giữ nguyên -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
@@ -27,6 +26,8 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="user.html">USER</a></li>
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="order_admin.html">ORDER</a></li>
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="permission_admin.html">PERMISSION</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="vendor_admin.html">VENDOR</a></li>
                 </ul>
             </div>
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
@@ -36,7 +37,7 @@
     </nav>
 </header>
 
-<!-- CATEGORY MANAGEMENT SECTION -->
+<!-- CATEGORY MANAGEMENT -->
 <div class="category-management container" style="margin-top: 120px;">
     <div class="text-center mb-4">
         <h3 class="title-heading">Category Management</h3>
@@ -57,7 +58,7 @@
             <thead class="thead-light">
             <tr>
                 <th>STT</th>
-                <th>ẢNH</th>          <!-- Cột mới -->
+                <th>ẢNH</th>
                 <th>CATEGORY</th>
                 <th>PARENT CATEGORY</th>
                 <th>DESCRIPTION</th>
@@ -68,7 +69,7 @@
             <tbody id="categoryTableBody">
             <tr>
                 <td colspan="6" class="text-center">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải danh mục...
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
             </tr>
             </tbody>
@@ -77,38 +78,45 @@
 </div>
 
 
-<!-- Add Category Modal – ĐÃ BỎ DANH MỤC CHA -->
+<!-- Category Modal -->
 <div class="modal fade" id="addCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Thêm danh mục mới</h5>
+                <h5 class="modal-title">Add new category</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="addCategoryForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên danh mục <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="addName" required placeholder="Ví dụ: Sneakers, Giày thể thao, Áo thun...">
-                        <small class="text-muted mt-1 d-block">Slug sẽ tự động được tạo từ tên này</small>
+                        <label>Category <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addName" required placeholder="Examples: Sneakers, Athletic shoes, T-shirts...">
+<!--                        <small class="text-muted mt-1 d-block">Slug sẽ tự động được tạo từ tên này</small>-->
                     </div>
 
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
-                        <textarea class="form-control" id="addDescription" rows="4" placeholder="Mô tả ngắn về danh mục này..."></textarea>
+                        <label>Description</label>
+                        <textarea class="form-control" id="addDescription" rows="4" placeholder="Description of this item"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>URL ảnh danh mục (tùy chọn)</label>
+                        <label>Parent category</label>
+                        <select class="form-control" id="addParentID">
+                            <option value="">-- None --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Category image URL (optional)</label>
                         <input type="url" class="form-control" id="addImageUrl" placeholder="https://example.com/image.jpg">
-                        <small class="text-muted">Dán link ảnh từ bên ngoài (tạm thời chưa hỗ trợ upload file)</small>
+                        <small class="text-muted">Paste the image link from an external source</small>
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i> Thêm danh mục
+                        <i class="fas fa-save"></i> Add category
                     </button>
                 </div>
             </form>
@@ -116,7 +124,7 @@
     </div>
 </div>
 
-<!-- Edit Category Modal – ĐẦY ĐỦ FIELD -->
+<!-- Edit Category Modal -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -130,45 +138,40 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Tên danh mục <span class="text-danger">*</span></label>
+                                <label>Category <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="editName" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Danh mục cha</label>
+                                <label>Parent category</label>
                                 <select class="form-control" id="editParentID">
-                                    <option value="">-- Không có --</option>
+                                    <option value="">-- None --</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Mô tả</label>
+                        <label>Description</label>
                         <textarea class="form-control" id="editDescription" rows="4"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>Ảnh hiện tại</label><br>
+                        <label>Current image</label><br>
                         <img id="editCurrentImage" src="" width="200" class="img-thumbnail mb-2" style="max-height: 150px;">
                     </div>
 
-<!--                    <div class="form-group">-->
-<!--                        <label>Thay ảnh mới (tùy chọn)</label>-->
-<!--                        <input type="file" class="form-control" id="editImageFile" accept="image/*">-->
-<!--                    </div>-->
-
                     <div class="form-group">
-                        <label>Hoặc nhập URL ảnh mới</label>
+                        <label>New URL image</label>
                         <input type="url" class="form-control" id="editImageUrl" placeholder="https://example.com/new-image.jpg">
                     </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-warning">
-                        <i class="fas fa-save"></i> Cập nhật
+                        <i class="fas fa-save"></i> Update
                     </button>
                 </div>
             </form>
@@ -176,10 +179,147 @@
     </div>
 </div>
 
-<!-- FOOTER giữ nguyên -->
+<!--FOOTER-->
 <footer class="footer mt-5">
-    <!-- Giữ nguyên footer của bạn -->
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/logowhite.png" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        University of Information Technology (VNUHCM – UIT)<br>
+                        (028) 372 52002 <br>
+                        (028) 372 52148 <br>
+                        info@uit.edu.vn</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Help & Information <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Pagination</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Terms & Conditions</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Contact</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Accessories</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Term of use</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            About Us <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Help Center</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Address Store</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Receivers & Amplifiers</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Profile <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">My Account</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Checkout</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Order Tracking</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2025 |
+                    <a href="" class="underline_hover bold">
+                        Designed
+                    </a>
+                    by
+                    <a href="" class="underline_hover link">
+                        Lazashoes
+                    </a>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    </div>
 </footer>
+
+<!--END FOOTER-->
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
@@ -216,9 +356,10 @@
             const json = await res.json();
             currentCategories = json.data.list.filter(c => !c.deletedAt);
             renderTable(currentCategories);
-            loadParentOptions(); // Load cho select parent
+            loadParentOptions();
         } catch (err) {
-            document.getElementById("categoryTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+            document.getElementById("categoryTableBody").innerHTML =
+                `<tr><td colspan="7" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
         }
     }
 
@@ -226,61 +367,69 @@
     function renderTable(categories) {
         const tbody = document.getElementById("categoryTableBody");
         tbody.innerHTML = "";
-
         if (categories.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có danh mục nào</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">Chưa có danh mục nào</td></tr>`;
             return;
         }
 
-        // SẮP XẾP THEO createdAt TĂNG DẦN → MỚI NHẤT Ở DƯỚI CÙNG
+        // Tạo map ID -> name để tra cứu nhanh parent
+        const categoryMap = new Map();
+        categories.forEach(cat => {
+            categoryMap.set(cat.id, cat.name);
+        });
+
         categories.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         categories.forEach((cat, index) => {
-            const parentName = cat.parent ? cat.parent.name : '-';
+            // Tìm tên parent từ map (nếu có parentID)
+            let parentName = '-';
+            if (cat.parentID) {
+                parentName = categoryMap.get(cat.parentID) || 'Không tìm thấy';
+            }
+
             const statusBadge = cat.status === 'active'
                 ? '<span class="badge badge-success">Hoạt động</span>'
                 : '<span class="badge badge-secondary">Ẩn</span>';
 
-            const row = document.createElement("tr");
-            const imageUrl = cat.imageUrl || "https://via.placeholder.com/60"; // ảnh mặc định nếu không có
+            const imageUrl = cat.imageUrl || "https://via.placeholder.com/60";
 
+            const row = document.createElement("tr");
             row.innerHTML = `
-  <td class="text-center">${index + 1}</td>
-  <td class="text-center">
-    <img src="${imageUrl}" width="60" height="60"
-         style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);"
-         alt="${cat.name}">
-  </td>
-  <td><strong>${cat.name}</strong></td>
-  <td>${parentName}</td>
-  <td>${cat.description || '-'}</td>
-  <td>${statusBadge}</td>
-  <td class="text-center">
-    <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
-      <i class="fas fa-edit"></i>
-    </button>
-    <button class="btn btn-sm btn-danger delete-btn" data-id="${cat.id}">
-      <i class="fas fa-trash-alt"></i>
-    </button>
-  </td>
-`;
+      <td class="text-center">${index + 1}</td>
+      <td class="text-center">
+        <img src="${imageUrl}" width="60" height="60" style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" alt="${cat.name}">
+      </td>
+      <td><strong>${cat.name}</strong></td>
+      <td>${parentName}</td>
+      <td>${cat.description || '-'}</td>
+      <td>${statusBadge}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
+          <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger delete-btn" data-id="${cat.id}">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </td>
+    `;
             tbody.appendChild(row);
         });
     }
 
-    // Load options cho select Parent Category
-    async function loadParentOptions() {
+    // Load options for select Parent Category
+    function loadParentOptions(excludeId = null) {
         const selectAdd = document.getElementById("addParentID");
         const selectEdit = document.getElementById("editParentID");
-        selectAdd.innerHTML = '<option value="">-- Không có --</option>';
-        selectEdit.innerHTML = '<option value="">-- Không có --</option>';
+        selectAdd.innerHTML = '<option value="">-- None --</option>';
+        selectEdit.innerHTML = '<option value="">-- None --</option>';
 
         currentCategories.forEach(cat => {
+            if (excludeId && cat.id === excludeId) return; // không thêm chính nó
             const option = document.createElement("option");
             option.value = cat.id;
             option.textContent = cat.name;
             selectAdd.appendChild(option.cloneNode(true));
-            selectEdit.appendChild(option);
+            selectEdit.appendChild(option.cloneNode(true));
         });
     }
 
@@ -326,7 +475,8 @@
             name: name,
             slug: finalSlug,
             description: description,
-            imageUrl: imageUrl
+            imageUrl: imageUrl,
+            parentID: $('#addParentID').val() || null
         };
 
         console.log("Payload gửi đi:", payload);
@@ -351,7 +501,7 @@
 
                 alert("Thêm danh mục thành công!");
 
-                // ĐÓNG MODAL + RESET FORM
+                // Close MODAL + RESET FORM
                 $('#addCategoryModal').modal('hide');
                 $('#addCategoryForm')[0].reset();
 
@@ -382,11 +532,12 @@
         $('#editId').val(cat.id);
         $('#editName').val(cat.name);
         $('#editDescription').val(cat.description || '');
+
+        // Tải lại options, loại trừ chính category đang edit
+        loadParentOptions(cat.id);
+
         $('#editParentID').val(cat.parentID || '');
-
-        // SỬA ĐÚNG ID ẢNH
         $('#editCurrentImage').attr('src', cat.imageUrl || 'https://via.placeholder.com/200');
-
         $('#editCategoryModal').modal('show');
     });
 

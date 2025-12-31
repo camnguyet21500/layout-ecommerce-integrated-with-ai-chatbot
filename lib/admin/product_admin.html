@@ -17,7 +17,6 @@
     <script src="../../js/cart.js"></script>
 </head>
 <body ng-app="myApp">
-<!-- HEADER giữ nguyên -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
@@ -29,10 +28,12 @@
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="user.html">USER</a></li>
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="order_admin.html">ORDER</a></li>
                     <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="permission_admin.html">PERMISSION</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="vendor_admin.html">VENDOR</a></li>
                 </ul>
             </div>
             <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
-                <img src="../../img/logoblack.png" alt="Logo" width="80" class="d-inline-block align-top">
+                <img src="../../img/logoblack.png" alt="Logo" width="80">
             </a>
         </div>
     </nav>
@@ -124,8 +125,13 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Ảnh sản phẩm (chọn nhiều)</label>
-                        <input type="file" class="form-control" id="addImages" multiple accept="image/*">
+                        <label>URL ảnh sản phẩm (nhập nhiều, cách nhau bằng dấu phẩy hoặc Enter)</label>
+                        <textarea class="form-control" id="addImageUrls" rows="3" placeholder="Ví dụ:&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"></textarea>
+                        <small class="text-muted">Mỗi dòng 1 URL hoặc cách nhau bằng dấu phẩy (,)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Xem trước ảnh</label>
+                        <div id="addImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -197,8 +203,13 @@
                         <div id="currentImages" class="d-flex flex-wrap"></div>
                     </div>
                     <div class="form-group">
-                        <label>Thêm ảnh mới (nếu cần)</label>
-                        <input type="file" class="form-control" id="editImages" multiple accept="image/*">
+                        <label>URL ảnh mới (tùy chọn, nhập nhiều cách nhau bằng dấu phẩy hoặc Enter)</label>
+                        <textarea class="form-control" id="editNewImageUrls" rows="3" placeholder="Nhập thêm URL ảnh mới..."></textarea>
+                        <small class="text-muted">Để trống nếu không muốn thêm ảnh mới</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Xem trước ảnh mới</label>
+                        <div id="editImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -210,8 +221,147 @@
     </div>
 </div>
 
-<!-- FOOTER giữ nguyên -->
-<footer class="footer mt-5"> ... </footer>
+<!--FOOTER-->
+<footer class="footer mt-5">
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/logowhite.png" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        University of Information Technology (VNUHCM – UIT)<br>
+                        (028) 372 52002 <br>
+                        (028) 372 52148 <br>
+                        info@uit.edu.vn</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Help & Information <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Pagination</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Terms & Conditions</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Contact</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Accessories</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Term of use</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            About Us <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Help Center</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Address Store</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Receivers & Amplifiers</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Profile <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">My Account</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Checkout</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Order Tracking</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2025 |
+                    <a href="" class="underline_hover bold">
+                        Designed
+                    </a>
+                    by
+                    <a href="" class="underline_hover link">
+                        Lazashoes
+                    </a>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!--END FOOTER-->
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
@@ -387,16 +537,23 @@
         if (description) formData.append('description', description);
         if (sku) formData.append('sku', sku);
 
-        const images = $('#addImages')[0].files;
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images', images[i]);
+        const imageUrlsText = $('#addImageUrls').val().trim();
+        if (imageUrlsText) {
+            const imageUrls = imageUrlsText
+                .split(/[\n,]+/)
+                .map(u => u.trim())
+                .filter(u => u.length > 0 && u.startsWith('http'));
+
+            imageUrls.forEach((url, index) => {
+                formData.append(`imageUrls[${index}]`, url);
+            });
         }
 
         console.log("Đang tạo sản phẩm với dữ liệu:", { name, price, stockQuantity, status, sku, vendorID: currentVendorID });
 
         try {
             // Fix: Gửi dummy itemPerPage=1 để backend không crash
-            const res = await fetch(`${BASE_URL}/products?itemPerPage=1`, {
+            const res = await fetch(`${BASE_URL}/products`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${authToken}`
@@ -431,7 +588,8 @@
         e.preventDefault();
         const id = $('#editId').val();
 
-        const body = {
+        // Dữ liệu cơ bản của sản phẩm (PATCH)
+        const basicPayload = {
             name: $('#editName').val().trim(),
             price: parseFloat($('#editPrice').val()),
             stockQuantity: parseInt($('#editStock').val()) || 0,
@@ -439,46 +597,71 @@
         };
 
         const description = $('#editDescription').val().trim();
-        if (description) body.description = description;
-        else body.description = null;
+        if (description) basicPayload.description = description;
 
         const sku = $('#editSku').val().trim();
-        if (sku) body.sku = sku;
-        else body.sku = null;
+        if (sku) basicPayload.sku = sku;
 
         try {
-            const res = await fetch(`${BASE_URL}/products/${id}`, {
+            // Bước 1: Cập nhật thông tin sản phẩm
+            const patchRes = await fetch(`${BASE_URL}/products/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                body: JSON.stringify(body)
+                body: JSON.stringify(basicPayload)
             });
 
-            if (res.ok) {
-                const result = await res.json();
-                const updatedProduct = result.data; // dữ liệu sản phẩm mới từ server
-
-                // Tìm và cập nhật trực tiếp trong mảng currentProducts
-                const index = currentProducts.findIndex(p => p.id === id);
-                if (index !== -1) {
-                    currentProducts[index] = updatedProduct;
-                }
-
-                alert('Cập nhật thành công!');
-                $('#editProductModal').modal('hide');
-
-                // Render lại bảng mà KHÔNG sort → giữ nguyên thứ tự hiện tại
-                renderProductTable(currentProducts, false);
-
-            } else {
-                const err = await res.json();
-                alert('Cập nhật thất bại: ' + (err.message || 'Lỗi server'));
+            if (!patchRes.ok) {
+                const err = await patchRes.json().catch(() => ({ message: "Lỗi không rõ" }));
+                alert(`Cập nhật thông tin sản phẩm thất bại!\n${err.message || ''}`);
+                return;
             }
+
+            // Bước 2: Lưu ảnh mới (nếu có)
+            const newImageUrlsText = $('#editNewImageUrls').val().trim();
+            if (newImageUrlsText) {
+                const imageUrls = newImageUrlsText
+                    .split(/[\n,]+/)
+                    .map(u => u.trim())
+                    .filter(u => u.length > 0 && u.startsWith('http'));
+
+                if (imageUrls.length > 0) {
+                    // Tạo từng ảnh bằng POST /product-images
+                    for (const url of imageUrls) {
+                        const imagePayload = {
+                            name: "Ảnh từ admin",
+                            description: "Ảnh sản phẩm thêm từ trang quản trị",
+                            productID: id,           // Gắn vào product
+                            productVariantID: null,  // Không gắn variant
+                            imageUrl: url,
+                            sortOrder: 0             // Có thể thay đổi sau
+                        };
+
+                        const imageRes = await fetch(`${BASE_URL}/product-images`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
+                            body: JSON.stringify(imagePayload)
+                        });
+
+                        if (!imageRes.ok) {
+                            console.warn("Không lưu được 1 ảnh:", url);
+                        }
+                    }
+                }
+            }
+
+            alert("Cập nhật sản phẩm thành công! (bao gồm ảnh mới nếu có)");
+            $('#editProductModal').modal('hide');
+            await loadProductsAndSetVendorID(); // Reload để lấy dữ liệu mới nhất
+
         } catch (err) {
-            console.error(err);
-            alert('Lỗi kết nối!');
+            console.error("Lỗi khi cập nhật:", err);
+            alert("Lỗi kết nối server!");
         }
     });
 
@@ -501,6 +684,54 @@
             alert("Lỗi export Excel!");
         }
     }
+
+    // Hàm chung để preview ảnh từ URL (dùng cho cả Add và Edit)
+    function previewImagesFromUrls(textareaId, previewDivId) {
+        const textarea = document.getElementById(textareaId);
+        const previewDiv = document.getElementById(previewDivId);
+
+        textarea.addEventListener('input', function() {
+            const urlsText = textarea.value.trim();
+            const urls = urlsText
+                .split(/[\n,]+/)  // Tách theo Enter hoặc dấu phẩy
+                .map(u => u.trim())
+                .filter(u => u.length > 0 && u.startsWith('http'));
+
+            previewDiv.innerHTML = '';
+            if (urls.length === 0) {
+                previewDiv.innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+                return;
+            }
+
+            urls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                img.width = 100;
+                img.height = 100;
+                img.style.objectFit = 'cover';
+                img.style.margin = '5px';
+                img.style.borderRadius = '8px';
+                img.onerror = () => {
+                    img.src = 'https://via.placeholder.com/100?text=Invalid+URL';
+                };
+                previewDiv.appendChild(img);
+            });
+        });
+    }
+
+    // Gọi preview khi mở modal Add
+    $('#addProductModal').on('show.bs.modal', function() {
+        document.getElementById('addImageUrls').value = '';
+        document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+        previewImagesFromUrls('addImageUrls', 'addImagePreview');
+    });
+
+    // Gọi preview khi mở modal Edit
+    $('#editProductModal').on('show.bs.modal', function() {
+        document.getElementById('editNewImageUrls').value = '';
+        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh mới</p>';
+        previewImagesFromUrls('editNewImageUrls', 'editImagePreview');
+    });
 
     $(document).ready(function() {
         autoLoginAndLoad();

@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Role Management | Mabu Store Admin</title>
-
+    <title>Permission Management | Mabu Store Admin</title>
     <!-- Bootstrap 4 + jQuery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="../../css/role_admin.css">
+    <link rel="stylesheet" href="../../css/permission_admin.css">
 </head>
-
 <body>
 <!-- HEADER -->
 <header class="fixed-top">
@@ -42,38 +37,35 @@
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
-<!-- ROLE MANAGEMENT SECTION -->
+<!-- PERMISSION MANAGEMENT SECTION -->
 <div class="role-management container mt-5 pt-4">
     <div class="text-center mb-4">
-        <h3 class="title-heading">Role Management</h3>
+        <h3 class="title-heading">Permission Management</h3>
     </div>
-
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
-        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addRoleModal"> Add Role </a>
-        <button class="btn btn-success ml-2" onclick="importRolesFromExcel()">Import Excel</button>
-        <button class="btn btn-info ml-2" onclick="exportRolesToExcel()">Export Excel</button>
+        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addPermissionModal"> Add Permission </a>
+        <button class="btn btn-success ml-2" onclick="importPermissionsFromExcel()">Import Excel</button>
+        <button class="btn btn-info ml-2" onclick="exportPermissionsToExcel()">Export Excel</button>
     </div>
-
-    <!-- Roles Table -->
+    <!-- Permissions Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
             <tr>
                 <th>STT</th>
-                <th>ROLE</th>
+                <th>NAME</th>
+                <th>KEY</th>
                 <th>DESCRIPTION</th>
-                <th>IS SYSTEM ROLE</th>
-                <th>PERMISSIONS</th>
+                <th>IS SYSTEM</th>
                 <th>ACTION</th>
             </tr>
             </thead>
-            <tbody id="roleTableBody">
+            <tbody id="permissionTableBody">
             <tr>
                 <td colspan="6" class="text-center">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải vai trò...
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải quyền...
                 </td>
             </tr>
             </tbody>
@@ -81,76 +73,83 @@
     </div>
 </div>
 
-<!-- Add Role Modal -->
-<!-- Add Role Modal -->
-<div class="modal fade" id="addRoleModal" tabindex="-1">
+<!-- Add Permission Modal -->
+<div class="modal fade" id="addPermissionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Thêm vai trò mới</h5>
+                <h5 class="modal-title">Thêm quyền mới</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="addRoleForm">
+            <form id="addPermissionForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên vai trò <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="addRoleName" required placeholder="Ví dụ: Moderator, Staff...">
+                        <label>Tên quyền <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addName" required placeholder="Ví dụ: Xem sản phẩm">
                     </div>
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
-                        <input type="text" class="form-control" id="addRoleDescription" placeholder="Mô tả ngắn về vai trò">
+                        <label>Key <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addKey" required placeholder="Ví dụ: /product_read, /role_create, /user_manage">
+                        <small class="form-text text-muted">
+                            Format: /resource_action (action phải là: read, create, update, delete, manage)
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Mô tả <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addDescription" required placeholder="Mô tả ngắn về quyền">
                     </div>
                     <div class="form-group">
                         <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" id="addIsSystemRole">
-                            Là vai trò hệ thống (không thể xóa/sửa sau khi tạo)
+                            <input type="checkbox" class="form-check-input" id="addIsSystemPermission">
+                            Là quyền hệ thống (không thể xóa/sửa)
                         </label>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Thêm vai trò</button>
+                    <button type="submit" class="btn btn-primary">Thêm quyền</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Role Modal -->
-<div class="modal fade" id="editRoleModal" tabindex="-1">
+<!-- Edit Permission Modal -->
+<div class="modal fade" id="editPermissionModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Chỉnh sửa vai trò</h5>
+                <h5 class="modal-title">Chỉnh sửa quyền</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <form id="editRoleForm">
-                <input type="hidden" id="editRoleId">
+            <form id="editPermissionForm">
+                <input type="hidden" id="editId">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên vai trò <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="editRoleName" required>
+                        <label>Tên quyền <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editName" required>
                     </div>
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
-                        <input type="text" class="form-control" id="editRoleDescription">
+                        <label>Key <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editKey" required>
+                        <small class="form-text text-muted">
+                            Format: /resource_action (action phải là: read, create, update, delete, manage)
+                        </small>
+                    </div>
+                    <div class="form-group">
+                        <label>Mô tả <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="editDescription" required>
                     </div>
                     <div class="form-group">
                         <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" id="editIsSystemRole" disabled>
-                            Là vai trò hệ thống
+                            <input type="checkbox" class="form-check-input" id="editIsSystemPermission" disabled>
+                            Là quyền hệ thống
                         </label>
-                    </div>
-                    <div class="form-group">
-                        <label>Phân quyền</label>
-                        <div id="editPermissionsList" class="border p-3" style="max-height: 300px; overflow-y: auto;">
-                            <p class="text-muted">Đang tải quyền...</p>
-                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning">Cập nhật vai trò</button>
+                    <button type="submit" class="btn btn-warning">Cập nhật quyền</button>
                 </div>
             </form>
         </div>
@@ -298,13 +297,12 @@
 </footer>
 
 <!--END FOOTER-->
+
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
-    let currentRoles = [];
     let currentPermissions = [];
 
-    // Auto login
     async function autoLoginAndLoad() {
         try {
             const res = await fetch(`${BASE_URL}/auth/sign-in`, {
@@ -316,33 +314,11 @@
             if (data.data?.accessToken) {
                 authToken = data.data.accessToken;
                 await loadPermissions();
-                await loadRoles();
             } else {
                 alert("Login thất bại!");
             }
         } catch (err) {
             alert("Không kết nối được server");
-        }
-    }
-
-    async function loadRoles() {
-        try {
-            const res = await fetch(`${BASE_URL}/roles?itemPerPage=100&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (!res.ok) throw new Error("Lỗi load role");
-            const json = await res.json();
-            currentRoles = json.data.list.filter(r => !r.deletedAt);
-
-            // === SẮP XẾP: CŨ NHẤT Ở TRÊN, MỚI NHẤT Ở DƯỚI ===
-            currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            // ========================================================
-
-            renderRoleTable(currentRoles);
-        } catch (err) {
-            console.error(err);
-            document.getElementById("roleTableBody").innerHTML =
-                `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
         }
     }
 
@@ -354,150 +330,89 @@
             if (!res.ok) throw new Error("Lỗi load permission");
             const json = await res.json();
             currentPermissions = json.data.list.filter(p => !p.deletedAt);
+
+            currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+            renderPermissionTable(currentPermissions);
         } catch (err) {
             console.error(err);
-            alert("Không thể load danh sách quyền!");
+            document.getElementById("permissionTableBody").innerHTML =
+                `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
         }
     }
 
-    function renderRoleTable(roles) {
-        const tbody = document.getElementById("roleTableBody");
+    function renderPermissionTable(permissions) {
+        const tbody = document.getElementById("permissionTableBody");
         tbody.innerHTML = "";
-        if (roles.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có vai trò nào</td></tr>`;
+        if (permissions.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có quyền nào</td></tr>`;
             return;
         }
-        roles.forEach((role, index) => {
-            const permNames = role.rolePermissions?.map(rp => rp.permission.name).join(', ') || '-';
-            const isSystem = role.isSystemRole ? '<span class="badge badge-danger">Có</span>' : '<span class="badge badge-secondary">Không</span>';
+        permissions.forEach((perm, index) => {
+            const isSystem = perm.isSystemPermission ? '<span class="badge badge-danger">Có</span>' : '<span class="badge badge-secondary">Không</span>';
             const row = document.createElement("tr");
             row.innerHTML = `
-      <td class="text-center">${index + 1}</td>
-      <td><strong>${role.name}</strong></td>
-      <td>${role.description || '-'}</td>
-      <td class="text-center">${isSystem}</td>
-      <td>${permNames}</td>
-      <td class="text-center">
-        <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
-          <i class="fas fa-edit"></i>
-        </button>
-        ${role.isSystemRole ? '' : `<button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
-          <i class="fas fa-trash-alt"></i>
-        </button>`}
-      </td>
-    `;
+                    <td class="text-center">${index + 1}</td>
+                    <td><strong>${perm.name}</strong></td>
+                    <td>${perm.key}</td>
+                    <td>${perm.description || '-'}</td>
+                    <td class="text-center">${isSystem}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-primary edit-btn mr-1" data-perm='${JSON.stringify(perm)}'>
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        ${perm.isSystemPermission ? '' : `
+                        <button class="btn btn-sm btn-danger delete-btn" data-id="${perm.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>`}
+                    </td>
+                `;
             tbody.appendChild(row);
-        });
-    }
-
-    // Render permissions checkbox
-    function renderPermissions(containerId, selectedPermissionIds = []) {
-        const container = document.getElementById(containerId);
-        container.innerHTML = "";
-        if (currentPermissions.length === 0) {
-            container.innerHTML = "<p class='text-muted'>Không có quyền nào</p>";
-            return;
-        }
-        currentPermissions.forEach(perm => {
-            const checked = selectedPermissionIds.includes(perm.id) ? 'checked' : '';
-            const div = document.createElement("div");
-            div.className = "form-check form-check-inline";
-            div.innerHTML = `
-      <input class="form-check-input" type="checkbox" id="${containerId}_${perm.id}" value="${perm.id}" ${checked}>
-      <label class="form-check-label" for="${containerId}_${perm.id}">${perm.name} <small class="text-muted">(${perm.key})</small></label>
-    `;
-            container.appendChild(div);
         });
     }
 
     // Open Edit modal
     $(document).on('click', '.edit-btn', function() {
-        const role = JSON.parse($(this).attr('data-role'));
-        $('#editRoleId').val(role.id);
-        $('#editRoleName').val(role.name);
-        $('#editRoleDescription').val(role.description || '');
-        $('#editIsSystemRole').prop('checked', role.isSystemRole);
-
-        const selectedPermIds = role.rolePermissions?.map(rp => rp.permission.id) || [];
-        renderPermissions('editPermissionsList', selectedPermIds);
-
-        $('#editRoleModal').modal('show');
+        const perm = JSON.parse($(this).attr('data-perm'));
+        $('#editId').val(perm.id);
+        $('#editName').val(perm.name);
+        $('#editKey').val(perm.key);
+        $('#editDescription').val(perm.description || '');
+        $('#editIsSystemPermission').prop('checked', perm.isSystemPermission);
+        $('#editPermissionModal').modal('show');
     });
 
-    // ==================== EXPORT EXCEL ====================
-    async function exportRolesToExcel() {
-        try {
-            const res = await fetch(`${BASE_URL}/roles/export`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (!res.ok) throw new Error("Lỗi export");
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'roles_export.xlsx';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            alert("Export thành công!");
-        } catch (err) {
-            console.error(err);
-            alert("Lỗi export Excel! Kiểm tra xem backend có endpoint /roles/export chưa.");
-        }
-    }
-
-    // ==================== IMPORT EXCEL ====================
-    function importRolesFromExcel() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.xlsx, .xls';
-        input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-                const res = await fetch(`${BASE_URL}/roles/import`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: formData
-                });
-
-                if (res.ok) {
-                    alert("Import vai trò thành công!");
-                    await loadRoles(); // Reload danh sách
-                } else {
-                    const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                    alert(`Import thất bại!\n${err.message || err.error || ''}`);
-                }
-            } catch (err) {
-                console.error(err);
-                alert("Lỗi kết nối khi import!");
-            }
-        };
-        input.click();
-    }
-
-    // THÊM ROLE MỚI – Chỉ tạo role cơ bản (không có phân quyền)
-    $('#addRoleForm').on('submit', async function(e) {
+    // Add Permission – Validation key pattern
+    $('#addPermissionForm').on('submit', async function(e) {
         e.preventDefault();
+        const name = $('#addName').val().trim();
+        const key = $('#addKey').val().trim();
+        const description = $('#addDescription').val().trim();
+        const isSystemPermission = $('#addIsSystemPermission').is(':checked');
 
-        const name = $('#addRoleName').val().trim();
-        const description = $('#addRoleDescription').val().trim() || null;
-        const isSystemRole = $('#addIsSystemRole').is(':checked');
-
-        if (!name) {
-            alert("Tên vai trò là bắt buộc!");
+        if (!name || !key || !description) {
+            alert("Tên quyền, Key và Mô tả là bắt buộc! Không được để trống.");
             return;
         }
 
-        const payload = { name, description, isSystemRole };
+        // Validation pattern key (strict lowercase + hyphen)
+        const keyPattern = /^\/[a-z-]+_(read|create|update|delete|manage)$/;
+        if (!keyPattern.test(key)) {
+            alert("Key không hợp lệ!\n" +
+                "Phải có định dạng: /resource_action (lowercase, hyphen allowed in resource, action phải là: read, create, update, delete, manage)\n" +
+                "Ví dụ hợp lệ:\n" +
+                "- /product_read\n" +
+                "- /role-create_update\n" +  // If hyphen in resource
+                "- /user_manage\n" +
+                "- /permission_update\n" +
+                "- /order_delete");
+            return;
+        }
+
+        const payload = { name, key, description, isSystemPermission };
 
         try {
-            const res = await fetch(`${BASE_URL}/roles`, {
+            const res = await fetch(`${BASE_URL}/permissions`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -508,54 +423,59 @@
 
             if (!res.ok) {
                 const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Tạo role thất bại!\nMã lỗi: ${res.status}\n${err.message || err.error || ''}`);
+                alert(`Thêm quyền thất bại!\nMã lỗi: ${res.status}\n${JSON.stringify(err)}`);
                 return;
             }
 
             const json = await res.json();
-            const newRole = json.data;
+            const newPerm = json.data;
 
-            alert("Thêm vai trò thành công!\nBạn có thể chỉnh sửa role để gán quyền sau.");
+            alert("Thêm quyền thành công!");
 
-            $('#addRoleModal').modal('hide');
-            $('#addRoleForm')[0].reset();
+            $('#addPermissionModal').modal('hide');
+            $('#addPermissionForm')[0].reset();
 
-            // Thêm vào danh sách + sắp xếp + render ngay
-            currentRoles.push(newRole);
-            currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            renderRoleTable(currentRoles);
+            currentPermissions.push(newPerm);
+            currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            renderPermissionTable(currentPermissions);
 
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi kết nối server khi tạo role!");
+            console.error(err);
+            alert("Lỗi kết nối server!");
         }
     });
 
-    // EDIT ROLE – CŨNG FIX TƯƠNG TỰ
-    $('#editRoleForm').on('submit', async function(e) {
+    // Edit Permission – Validation key pattern
+    $('#editPermissionForm').on('submit', async function(e) {
         e.preventDefault();
+        const id = $('#editId').val();
+        const name = $('#editName').val().trim();
+        const key = $('#editKey').val().trim();
+        const description = $('#editDescription').val().trim();
 
-        const id = $('#editRoleId').val();
-        const name = $('#editRoleName').val().trim();
-        const description = $('#editRoleDescription').val().trim() || null;
-
-        const checkedPerms = $('#editPermissionsList input[type="checkbox"]:checked')
-            .map(function() { return this.value; })
-            .get();
-
-        if (!name) {
-            alert("Tên vai trò là bắt buộc!");
+        if (!name || !key || !description) {
+            alert("Tên quyền, Key và Mô tả là bắt buộc! Không được để trống.");
             return;
         }
 
-        const payload = {
-            name,
-            description,
-            permissionIds: checkedPerms
-        };
+        // Validation pattern key
+        const keyPattern = /^\/[a-z-]+_(read|create|update|delete|manage)$/;
+        if (!keyPattern.test(key)) {
+            alert("Key không hợp lệ!\n" +
+                "Phải có định dạng: /resource_action (lowercase, hyphen allowed in resource, action phải là: read, create, update, delete, manage)\n" +
+                "Ví dụ hợp lệ:\n" +
+                "- /product_read\n" +
+                "- /role-create_update\n" +
+                "- /user_manage\n" +
+                "- /permission_update\n" +
+                "- /order_delete");
+            return;
+        }
+
+        const payload = { name, key, description };
 
         try {
-            const res = await fetch(`${BASE_URL}/roles/${id}`, {
+            const res = await fetch(`${BASE_URL}/permissions/${id}`, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
@@ -566,49 +486,90 @@
 
             if (res.ok) {
                 alert("Cập nhật thành công!");
-                $('#editRoleModal').modal('hide');
-                loadRoles();
+                $('#editPermissionModal').modal('hide');
+                await loadPermissions();
             } else {
-                const err = await res.json();
-                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
+                alert(`Cập nhật thất bại!\nMã lỗi: ${res.status}\n${JSON.stringify(err)}`);
             }
         } catch (err) {
             alert("Lỗi kết nối!");
         }
     });
 
-    // Delete Role – Xóa ngay lập tức trên table mà không reload trang
+    // Delete Permission (giữ nguyên)
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa vai trò này? Thao tác KHÔNG THỂ khôi phục!")) return;
+        if (!confirm("Xóa quyền này? Không thể khôi phục!")) return;
 
         try {
-            const res = await fetch(`${BASE_URL}/roles/${id}`, {
+            const res = await fetch(`${BASE_URL}/permissions/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
 
             if (res.ok) {
-                alert("Xóa vai trò thành công!");
-
-                // Tìm và xóa role khỏi mảng currentRoles
-                const index = currentRoles.findIndex(role => role.id === id);
-                if (index !== -1) {
-                    currentRoles.splice(index, 1);
-                }
-
-                // Render lại table ngay lập tức với dữ liệu đã cập nhật
-                renderRoleTable(currentRoles);
+                alert("Xóa thành công!");
+                currentPermissions = currentPermissions.filter(p => p.id !== id);
+                renderPermissionTable(currentPermissions);
             } else {
-                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Xóa thất bại! ${err.message || ''}`);
+                alert("Xóa thất bại!");
             }
         } catch (err) {
-            alert("Lỗi kết nối khi xóa!");
+            alert("Lỗi kết nối!");
         }
     });
 
-    // Load khi trang mở
+    // Export & Import (giữ nguyên)
+    async function exportPermissionsToExcel() {
+        try {
+            const res = await fetch(`${BASE_URL}/permissions/export`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Lỗi export");
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'permissions_export.xlsx';
+            a.click();
+            a.remove();
+            alert("Export thành công!");
+        } catch (err) {
+            alert("Lỗi export Excel!");
+        }
+    }
+
+    function importPermissionsFromExcel() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.xlsx, .xls';
+        input.onchange = async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const formData = new FormData();
+            formData.append('file', file);
+            try {
+                const res = await fetch(`${BASE_URL}/permissions/import`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${authToken}` },
+                    body: formData
+                });
+                if (res.ok) {
+                    alert("Import thành công!");
+                    await loadPermissions();
+                } else {
+                    const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
+                    alert(`Import thất bại!\n${err.message || ''}`);
+                }
+            } catch (err) {
+                alert("Lỗi kết nối!");
+            }
+        };
+        input.click();
+    }
+
     $(document).ready(function() {
         autoLoginAndLoad();
     });

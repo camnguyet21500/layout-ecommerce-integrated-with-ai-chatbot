@@ -314,27 +314,33 @@ font-weight: 600;">SOLE MATES</h3>
                                                 </div>
                                             </form>
                                         </div>
-                                        <div id="signup" class=" tab-pane fade"><br>
-                                            <h3 style="font-size: 36px;
-font-weight: 600;">SOLE MATES</h3>
+                                        <div id="signup" class="tab-pane fade"><br>
+                                            <h3 style="font-size: 36px; font-weight: 600;">SOLE MATES</h3>
                                             <hr>
                                             <p>Sign up for an account for a better experience!</p>
-                                            <form>
+                                            <form id="signupForm">
                                                 <div class="form-group">
-                                                    <input type="email" class="form-control" id="exampleInputEmail1"
-                                                        aria-describedby="emailHelp" placeholder="Email address">
+                                                    <input type="email" class="form-control" id="signupEmail" required placeholder="Email address *">
                                                 </div>
                                                 <div class="form-group">
-                                                    <input type="password" class="form-control"
-                                                        id="exampleInputPassword1" placeholder="Password">
+                                                    <input type="text" class="form-control" id="signupFirstName" required placeholder="First Name *">
                                                 </div>
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="signupFullAddress" required placeholder="Full Address *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control" id="signupPassword" required placeholder="Password *">
+                                                </div>
+                                                <div class="form-group">
+                                                    <input type="password" class="form-control" id="signupConfirmPassword" required placeholder="Confirm Password *">
+                                                </div>
+                                                <div id="signupError" class="text-danger mb-3" style="display:none;"></div>
                                                 <div class="login">
-                                                    <input type="submit" class="button" value="LOG IN"
-                                                        name="update_cart">
+                                                    <button type="submit" class="button w-100">SIGN UP</button>
                                                 </div>
-                                                <div>
+                                                <div class="mt-3">
                                                     <p>or sign up with</p>
-                                                    <img src="../../img/logo_google.png" alt="" style="width: 8%;">
+                                                    <img src="../../img/logo_google.png" alt="Google" style="width: 8%;">
                                                 </div>
                                             </form>
                                         </div>
@@ -739,6 +745,73 @@ font-weight: 600;">SOLE MATES</h3>
     </footer>
 
     <!--END FOOTER-->
+    <script>
+        const BASE_URL = "http://localhost:8888/api";
+
+        // Xử lý form Sign Up
+        $('#signupForm').on('submit', async function(e) {
+            e.preventDefault();
+
+            const email = $('#signupEmail').val().trim();
+            const firstName = $('#signupFirstName').val().trim();
+            const fullAddress = $('#signupFullAddress').val().trim();
+            const password = $('#signupPassword').val();
+            const confirmPassword = $('#signupConfirmPassword').val();
+
+            // Reset lỗi
+            $('#signupError').hide().text('');
+
+            // Validation cơ bản
+            if (!email || !firstName || !fullAddress || !password) {
+                $('#signupError').text('Vui lòng điền đầy đủ các trường bắt buộc!').show();
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                $('#signupError').text('Mật khẩu xác nhận không khớp!').show();
+                return;
+            }
+
+            if (password.length < 6) {
+                $('#signupError').text('Mật khẩu phải ít nhất 6 ký tự!').show();
+                return;
+            }
+
+            const payload = {
+                email,
+                password,
+                firstName,
+                fullAddress
+            };
+
+            try {
+                const res = await fetch(`${BASE_URL}/auth/sign-up`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
+                    // Chuyển sang tab Login
+                    $('.nav-tabs a[href="#home"]').tab('show');
+                    // Reset form
+                    $('#signupForm')[0].reset();
+                } else {
+                    // Hiển thị lỗi từ backend
+                    const errorMsg = data.message || data.errors?.[0]?.message || 'Đăng ký thất bại!';
+                    $('#signupError').text(errorMsg).show();
+                }
+            } catch (err) {
+                console.error(err);
+                $('#signupError').text('Lỗi kết nối server! Vui lòng thử lại sau.').show();
+            }
+        });
+    </script>
 </body>
 
 </html>
