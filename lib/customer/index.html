@@ -746,7 +746,34 @@ font-weight: 600;">MEGA MALL</h3>
 
     <!--END FOOTER-->
     <script>
+
         const BASE_URL = "http://localhost:8888/api";
+        let authToken = null;
+
+        // Auto login để lấy token
+        async function autoLogin() {
+            try {
+                const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: "nvo28@example.com", // Thay bằng email tồn tại trong DB
+                        password: "nvo28" // Password đúng
+                    })
+                });
+                if (res.ok) {
+                    const data = await res.json();
+                    authToken = data.data.accessToken;
+                    console.log("Login thành công! Token:", authToken);
+                } else {
+                    console.error("Login thất bại:", await res.text());
+                }
+            } catch (err) {
+                console.error("Lỗi kết nối login:", err);
+            }
+        }
+
+        autoLogin();
 
         // Xử lý form Sign Up
         $('#signupForm').on('submit', async function(e) {
@@ -854,23 +881,37 @@ font-weight: 600;">MEGA MALL</h3>
                 const typing = appendChatMessage('Đang suy nghĩ...', 'bot');
                 typing.classList.add('typing');
 
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                if (authToken) {
+                    headers['Authorization'] = `Bearer ${authToken}`;
+                }
+
                 try {
                     const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers: headers,
                         body: JSON.stringify({
                             question: message,
-                            sessionID: 'homepage-' + Date.now()
+                            sessionID: localStorage.getItem('chatSessionID') || 'homepage-' + Date.now()
                         })
                     });
+
                     const data = await res.json();
 
                     typing.remove();
-                    const reply = data.message || "Xin lỗi, tôi chưa hiểu. Bạn có thể hỏi lại không?";
-                    appendChatMessage(reply, 'bot');
+
+                    if (res.ok) {
+                        const botReply = data.message || "Xin lỗi, tôi chưa hiểu rõ.";
+                        appendChatMessage(botReply, 'bot');
+                    } else {
+                        appendChatMessage(`Lỗi: ${data.message || res.status}`, 'bot');
+                    }
                 } catch (err) {
                     typing.remove();
-                    appendChatMessage("Lỗi kết nối. Vui lòng thử lại!", 'bot');
+                    appendChatMessage("Lỗi kết nối server!", 'bot');
+                    console.error(err);
                 }
             }
 

@@ -82,7 +82,6 @@
 </div>
 
 <!-- Add Role Modal -->
-<!-- Add Role Modal -->
 <div class="modal fade" id="addRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -543,7 +542,7 @@
             return;
         }
 
-        const payload = { name, description }; // Chỉ gửi name và description
+        const payload = { name, description,  };
 
         try {
             const res = await fetch(`${BASE_URL}/roles/${id}`, {
@@ -559,17 +558,14 @@
                 const updatedJson = await res.json();
                 const updatedRole = updatedJson.data;
 
-                // Cập nhật permissions riêng (nếu cần)
                 await updateRolePermissions(id, checkedPerms);
 
                 alert("Cập nhật vai trò thành công!");
                 $('#editRoleModal').modal('hide');
 
-                // Cập nhật nhanh trong bộ nhớ
                 const index = currentRoles.findIndex(r => r.id === id);
                 if (index !== -1) {
                     currentRoles[index] = { ...currentRoles[index], ...updatedRole };
-                    // Cập nhật permissions nếu có
                     currentRoles[index].rolePermissions = checkedPerms.map(pid => ({
                         permission: currentPermissions.find(p => p.id === pid)
                     }));
