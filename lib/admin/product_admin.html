@@ -425,9 +425,9 @@
         }
     }
 
-    function renderProductTable(products, sort = true) {
+    async function renderProductTable(products, sort = true) {
         const tbody = document.getElementById("productTableBody");
-        tbody.innerHTML = "";
+        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải ảnh sản phẩm...</td></tr>";
 
         if (products.length === 0) {
             tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Chưa có sản phẩm nào</td></tr>`;
@@ -435,34 +435,79 @@
         }
 
         let displayProducts = [...products];
-
-        // Chỉ sort khi được yêu cầu (load lần đầu hoặc reload)
         if (sort) {
             displayProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
         }
 
-        displayProducts.forEach((product, index) => {
-            const mainImage = product.productImages?.[0]?.imageUrl || "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23ddd'/%3E%3Ctext x='30' y='35' font-size='12' text-anchor='middle' fill='%23999'%3ENo Image%3C/text%3E%3C/svg%3E";
-            const row = document.createElement("tr");
-            row.innerHTML = `
-            <td class="text-center">${index + 1}</td>
-            <td><img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px;"></td>
-            <td><strong>${product.name}</strong></td>
-            <td>${product.description || ''}</td>
-            <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
-            <td>${product.stockQuantity}</td>
-            <td><span class="badge badge-${product.status === 'active' ? 'success' : 'secondary'}">${product.status}</span></td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-warning edit-btn" data-product='${JSON.stringify(product)}'>
-                    <i class="fas fa-edit"></i>
-                </button>
-                <button class="btn btn-sm btn-danger delete-btn" data-id="${product.id}">
-                    <i class="fas fa-trash-alt"></i>
-                </button>
-            </td>
-        `;
-            tbody.appendChild(row);
-        });
+        try {
+            const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            const imagesJson = await imagesRes.json();
+            console.log("API product-images response:", imagesJson);
+            const allImages = imagesJson.data?.list || [];
+            console.log("Số ảnh load được:", allImages.length);
+
+            if (!imagesRes.ok) {
+                throw new Error(`Lỗi load ảnh: ${imagesRes.status}`);
+            }
+
+
+            const imagesMap = {};
+            console.log("Images Map:", imagesMap);
+            console.log("Product ID mẫu:", products[0]?.id, "có ảnh:", imagesMap[products[0]?.id]);
+            allImages.forEach(img => {
+                const pid = img.productID;
+                if (pid) {
+                    if (!imagesMap[pid]) {
+                        imagesMap[pid] = [];
+                    }
+                    imagesMap[pid].push(img);
+                }
+            });
+
+            tbody.innerHTML = "";
+            displayProducts.forEach((product, index) => {
+                const productImages = imagesMap[product.id] || [];
+                const imageCount = productImages.length;
+
+                let mainImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23dee2e6'/%3E%3Ctext x='30' y='30' font-size='10' text-anchor='middle' fill='%238d98a5' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
+
+                if (imageCount > 0) {
+                    productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                    mainImage = productImages[0].imageUrl;
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                <td class="text-center">${index + 1}</td>
+                <td class="position-relative text-center">
+                    <img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    ${imageCount > 1 ? `<span class="badge badge-primary position-absolute" style="bottom: -8px; right: 8px; font-size: 9px; padding: 4px 6px;">+${imageCount - 1}</span>` : ''}
+                    ${imageCount === 0 ? '' : `<small class="d-block text-muted mt-1" style="font-size: 10px;">${imageCount} ảnh</small>`}
+                </td>
+                <td><strong>${product.name}</strong></td>
+                <td>${product.description || '-'}</td>
+                <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
+                <td>${product.stockQuantity}</td>
+                <td><span class="badge badge-${product.status === 'active' ? 'success' : product.status === 'draft' ? 'warning' : 'secondary'}">${product.status}</span></td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-warning edit-btn" data-product='${JSON.stringify({ ...product, productImages: productImages })}'>
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${product.id}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            `;
+                tbody.appendChild(row);
+            });
+
+        } catch (err) {
+            console.error("Lỗi khi load hoặc hiển thị ảnh:", err);
+            tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Lỗi tải ảnh sản phẩm<br><small>${err.message}</small></td></tr>`;
+        }
     }
 
     $(document).on('click', '.delete-btn', async function() {
@@ -509,12 +554,10 @@
 
     $('#addProductForm').on('submit', async function(e) {
         e.preventDefault();
-
         if (!currentVendorID || currentVendorID.includes("PASTE_") || currentVendorID.includes("THAY_")) {
             alert("VendorID chưa hợp lệ! Vui lòng thay ID thật từ database vào code.");
             return;
         }
-
         const name = $('#addName').val().trim();
         const price = parseFloat($('#addPrice').val());
         const stockQuantity = parseInt($('#addStock').val()) || 0;
@@ -527,83 +570,110 @@
             return;
         }
 
-        const formData = new FormData();
-        formData.append('vendorID', currentVendorID);
-        formData.append('name', name);
-        formData.append('price', price);
-        formData.append('stockQuantity', stockQuantity);
-        formData.append('status', status);
-
-        if (description) formData.append('description', description);
-        if (sku) formData.append('sku', sku);
-
         const imageUrlsText = $('#addImageUrls').val().trim();
-        if (imageUrlsText) {
-            const imageUrls = imageUrlsText
+        const imageUrls = imageUrlsText
+            ? imageUrlsText
                 .split(/[\n,]+/)
                 .map(u => u.trim())
-                .filter(u => u.length > 0 && u.startsWith('http'));
+                .filter(u => u.length > 0 && u.startsWith('http'))
+            : [];
 
-            imageUrls.forEach((url, index) => {
-                formData.append(`imageUrls[${index}]`, url);
-            });
-        }
+        const payload = {
+            vendorID: currentVendorID,
+            name,
+            price,
+            stockQuantity,
+            status,
+            description: description || undefined,
+            sku: sku || undefined
+        };
 
-        console.log("Đang tạo sản phẩm với dữ liệu:", { name, price, stockQuantity, status, sku, vendorID: currentVendorID });
+        console.log("Payload tạo sản phẩm (bước 1 - không ảnh):", payload);
 
         try {
-            // Fix: Gửi dummy itemPerPage=1 để backend không crash
             const res = await fetch(`${BASE_URL}/products`, {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${authToken}`
                 },
-                body: formData
+                body: JSON.stringify(payload)
             });
 
             const text = await res.text();
-            console.log("Create status:", res.status);
-            console.log("Create response:", text);
+            console.log("Response status bước 1:", res.status);
+            console.log("Response body bước 1:", text);
 
-            if (res.ok) {
-                alert("Thêm sản phẩm thành công!");
-                $('#addProductModal').modal('hide');
-                $('#addProductForm')[0].reset();
-                loadProductsAndSetVendorID(); // ← ĐÃ SORT QUA renderProductTable(true)
-            } else {
+            if (!res.ok) {
                 try {
                     const json = JSON.parse(text);
-                    alert("Thêm thất bại: " + (json.errors?.[0]?.message || json.message || "Lỗi không xác định"));
+                    alert("Tạo sản phẩm thất bại: " + (json.errors?.[0]?.message || json.message || "Lỗi server"));
                 } catch {
-                    alert("Thêm thất bại (lỗi server): " + text.substring(0, 500));
+                    alert("Tạo sản phẩm thất bại: " + text.substring(0, 500));
+                }
+                return;
+            }
+
+            const json = JSON.parse(text);
+            const newProduct = json.data;
+            const productId = newProduct.id;
+
+            if (imageUrls.length > 0) {
+                for (const url of imageUrls) {
+                    const imagePayload = {
+                        name: "Ảnh sản phẩm từ admin",
+                        description: "Ảnh thêm khi tạo sản phẩm",
+                        productID: productId,
+                        imageUrl: url,
+                        sortOrder: 0
+                    };
+
+                    const imageRes = await fetch(`${BASE_URL}/product-images`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(imagePayload)
+                    });
+
+                    if (!imageRes.ok) {
+                        console.warn("Không lưu được ảnh:", url);
+                    }
                 }
             }
+
+            alert("Thêm sản phẩm thành công! (và ảnh nếu có)");
+            $('#addProductModal').modal('hide');
+            $('#addProductForm')[0].reset();
+            $('#addImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+
+            setTimeout(async () => {
+                await loadProductsAndSetVendorID();
+            }, 1000); // 1 giây
+
+            await loadProductsAndSetVendorID(); // Reload để thấy sản phẩm mới
         } catch (err) {
-            console.error("Lỗi mạng:", err);
-            alert("Lỗi kết nối server!");
+            console.error("Lỗi kết nối:", err);
+            alert("Lỗi mạng khi tạo sản phẩm!");
         }
     });
 
     $('#editProductForm').on('submit', async function(e) {
         e.preventDefault();
         const id = $('#editId').val();
-
-        // Dữ liệu cơ bản của sản phẩm (PATCH)
         const basicPayload = {
             name: $('#editName').val().trim(),
             price: parseFloat($('#editPrice').val()),
             stockQuantity: parseInt($('#editStock').val()) || 0,
             status: $('#editStatus').val(),
         };
-
         const description = $('#editDescription').val().trim();
         if (description) basicPayload.description = description;
-
         const sku = $('#editSku').val().trim();
         if (sku) basicPayload.sku = sku;
 
         try {
-            // Bước 1: Cập nhật thông tin sản phẩm
             const patchRes = await fetch(`${BASE_URL}/products/${id}`, {
                 method: 'PATCH',
                 headers: {
@@ -612,33 +682,27 @@
                 },
                 body: JSON.stringify(basicPayload)
             });
-
             if (!patchRes.ok) {
                 const err = await patchRes.json().catch(() => ({ message: "Lỗi không rõ" }));
                 alert(`Cập nhật thông tin sản phẩm thất bại!\n${err.message || ''}`);
                 return;
             }
 
-            // Bước 2: Lưu ảnh mới (nếu có)
             const newImageUrlsText = $('#editNewImageUrls').val().trim();
             if (newImageUrlsText) {
                 const imageUrls = newImageUrlsText
                     .split(/[\n,]+/)
                     .map(u => u.trim())
                     .filter(u => u.length > 0 && u.startsWith('http'));
-
                 if (imageUrls.length > 0) {
-                    // Tạo từng ảnh bằng POST /product-images
                     for (const url of imageUrls) {
                         const imagePayload = {
                             name: "Ảnh từ admin",
                             description: "Ảnh sản phẩm thêm từ trang quản trị",
-                            productID: id,           // Gắn vào product
-                            productVariantID: null,  // Không gắn variant
+                            productID: id,
                             imageUrl: url,
-                            sortOrder: 0             // Có thể thay đổi sau
+                            sortOrder: 0
                         };
-
                         const imageRes = await fetch(`${BASE_URL}/product-images`, {
                             method: 'POST',
                             headers: {
@@ -647,7 +711,6 @@
                             },
                             body: JSON.stringify(imagePayload)
                         });
-
                         if (!imageRes.ok) {
                             console.warn("Không lưu được 1 ảnh:", url);
                         }
@@ -658,7 +721,6 @@
             alert("Cập nhật sản phẩm thành công! (bao gồm ảnh mới nếu có)");
             $('#editProductModal').modal('hide');
             await loadProductsAndSetVendorID(); // Reload để lấy dữ liệu mới nhất
-
         } catch (err) {
             console.error("Lỗi khi cập nhật:", err);
             alert("Lỗi kết nối server!");

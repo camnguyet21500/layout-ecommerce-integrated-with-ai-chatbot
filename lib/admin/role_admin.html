@@ -534,25 +534,16 @@
     // EDIT ROLE – CŨNG FIX TƯƠNG TỰ
     $('#editRoleForm').on('submit', async function(e) {
         e.preventDefault();
-
         const id = $('#editRoleId').val();
         const name = $('#editRoleName').val().trim();
         const description = $('#editRoleDescription').val().trim() || null;
-
-        const checkedPerms = $('#editPermissionsList input[type="checkbox"]:checked')
-            .map(function() { return this.value; })
-            .get();
 
         if (!name) {
             alert("Tên vai trò là bắt buộc!");
             return;
         }
 
-        const payload = {
-            name,
-            description,
-            permissionIds: checkedPerms
-        };
+        const payload = { name, description }; // Chỉ gửi name và description
 
         try {
             const res = await fetch(`${BASE_URL}/roles/${id}`, {
@@ -565,14 +556,32 @@
             });
 
             if (res.ok) {
-                alert("Cập nhật thành công!");
+                const updatedJson = await res.json();
+                const updatedRole = updatedJson.data;
+
+                // Cập nhật permissions riêng (nếu cần)
+                await updateRolePermissions(id, checkedPerms);
+
+                alert("Cập nhật vai trò thành công!");
                 $('#editRoleModal').modal('hide');
-                loadRoles();
+
+                // Cập nhật nhanh trong bộ nhớ
+                const index = currentRoles.findIndex(r => r.id === id);
+                if (index !== -1) {
+                    currentRoles[index] = { ...currentRoles[index], ...updatedRole };
+                    // Cập nhật permissions nếu có
+                    currentRoles[index].rolePermissions = checkedPerms.map(pid => ({
+                        permission: currentPermissions.find(p => p.id === pid)
+                    }));
+                }
+
+                renderRoleTable(currentRoles);
             } else {
-                const err = await res.json();
-                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
+                alert(`Cập nhật thất bại!\nMã lỗi: ${res.status}\n${err.message || ''}`);
             }
         } catch (err) {
+            console.error(err);
             alert("Lỗi kết nối!");
         }
     });
