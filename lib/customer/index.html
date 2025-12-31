@@ -262,7 +262,7 @@
                         </div>
                     </ul>
                 </div>
-                <img src="../../img/logoblack.png" width="6%" style="margin-right: 450px;">
+                <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
                 <div class="icon" style="display: inherit">
                     <i class="fas fa-search"></i>
 
@@ -292,7 +292,7 @@
                                     <div class="tab-content">
                                         <div id="home" class=" tab-pane active"><br>
                                             <h3 style="font-size: 36px;
-font-weight: 600;">SOLE MATES</h3>
+font-weight: 600;">MEGA MALL</h3>
                                             <hr>
                                             <p>Great to have you back!</p>
                                             <form>
@@ -315,7 +315,7 @@ font-weight: 600;">SOLE MATES</h3>
                                             </form>
                                         </div>
                                         <div id="signup" class="tab-pane fade"><br>
-                                            <h3 style="font-size: 36px; font-weight: 600;">SOLE MATES</h3>
+                                            <h3 style="font-size: 36px; font-weight: 600;">MEGA MALL</h3>
                                             <hr>
                                             <p>Sign up for an account for a better experience!</p>
                                             <form id="signupForm">
@@ -612,7 +612,7 @@ font-weight: 600;">SOLE MATES</h3>
                     <div class="info_footer end">
                         <div class="logo-top">
                             <a href="" class="logo">
-                                <img src="../../img/logowhite.png" style="width: 50%;">
+                                <img src="../../img/mega_mall_logo_black.png" style="width: 50%;">
                             </a>
                         </div>
                         <div class="mb-0 content_footer" style="margin-top: 23px;">
@@ -735,7 +735,7 @@ font-weight: 600;">SOLE MATES</h3>
                         </a>
                         by
                         <a href="" class="underline_hover link">
-                            Lazashoes
+                            Mega Mall
                         </a>
                     </div>
                     <p></p>
@@ -811,7 +811,121 @@ font-weight: 600;">SOLE MATES</h3>
                 $('#signupError').text('Lỗi kết nối server! Vui lòng thử lại sau.').show();
             }
         });
+        // Đảm bảo DOM đã load xong trước khi chạy
+        document.addEventListener('DOMContentLoaded', function() {
+            const chatbotToggler = document.getElementById('chatbot-toggler');
+            const chatbotBox = document.getElementById('chatbot-box');
+            const chatbotClose = document.getElementById('chatbot-close');
+            const chatbotInput = document.getElementById('chatbot-input');
+            const chatbotSend = document.getElementById('chatbot-send');
+            const chatbotMessages = document.getElementById('chatbot-messages');
+
+            if (!chatbotToggler || !chatbotBox) {
+                console.error("Không tìm thấy phần tử chatbot!");
+                return;
+            }
+
+            // Toggle chatbox
+            chatbotToggler.addEventListener('click', () => {
+                const isVisible = chatbotBox.style.display === 'flex';
+                chatbotBox.style.display = isVisible ? 'none' : 'flex';
+                if (!isVisible) {
+                    chatbotInput.focus();
+                }
+            });
+
+            chatbotClose.addEventListener('click', () => {
+                chatbotBox.style.display = 'none';
+            });
+
+            // Gửi tin nhắn
+            chatbotSend.addEventListener('click', sendChatMessage);
+            chatbotInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+
+            async function sendChatMessage() {
+                const message = chatbotInput.value.trim();
+                if (!message) return;
+
+                appendChatMessage(message, 'user');
+                chatbotInput.value = '';
+
+                const typing = appendChatMessage('Đang suy nghĩ...', 'bot');
+                typing.classList.add('typing');
+
+                try {
+                    const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            question: message,
+                            sessionID: 'homepage-' + Date.now()
+                        })
+                    });
+                    const data = await res.json();
+
+                    typing.remove();
+                    const reply = data.message || "Xin lỗi, tôi chưa hiểu. Bạn có thể hỏi lại không?";
+                    appendChatMessage(reply, 'bot');
+                } catch (err) {
+                    typing.remove();
+                    appendChatMessage("Lỗi kết nối. Vui lòng thử lại!", 'bot');
+                }
+            }
+
+            function appendChatMessage(text, sender) {
+                const div = document.createElement('div');
+                div.className = `chatbot-message ${sender}`;
+                const bubble = document.createElement('div');
+                bubble.className = 'chatbot-bubble';
+                bubble.textContent = text;
+                div.appendChild(bubble);
+                chatbotMessages.appendChild(div);
+                chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+                return div;
+            }
+        });
     </script>
+    <!-- AI Chatbot giống ACB Bank -->
+    <!-- AI Chatbot giống ACB Bank -->
+    <div id="chatbot-container">
+        <!-- Icon floating -->
+        <div id="chatbot-toggler" class="chatbot-toggler">
+            <i class="fas fa-comment-dots chatbot-icon"></i>
+            <span class="chatbot-badge">Chat với AI</span>
+        </div>
+
+        <!-- Chatbox popup -->
+        <div id="chatbot-box" class="chatbot-box">
+            <!-- Header -->
+            <div class="chatbot-header">
+                <div class="chatbot-header-left">
+                    <i class="fas fa-robot chatbot-avatar"></i>
+                    <div class="chatbot-info">
+                        <h5>Mega Mall AI Assistant</h5>
+                        <span class="online-status">● Đang online</span>
+                    </div>
+                </div>
+                <span id="chatbot-close" class="chatbot-close">&times;</span>
+            </div>
+
+            <!-- Messages area -->
+            <div id="chatbot-messages" class="chatbot-messages">
+                <div class="chatbot-message bot">
+                    <div class="chatbot-bubble">
+                        Xin chào! Tôi là AI Assistant của Mega Mall Store. Bạn cần hỗ trợ gì hôm nay? 😊
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="chatbot-input-area">
+                <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn của bạn..." autocomplete="off" />
+                <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>
