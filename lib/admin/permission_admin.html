@@ -46,7 +46,9 @@
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
         <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addPermissionModal"> Add Permission </a>
-        <button class="btn btn-success ml-2" onclick="importPermissionsFromExcel()">Import Excel</button>
+        <button class="btn btn-success ml-2" onclick="importPermissionsFromExcel()">
+            <i class="fas fa-file-import mr-1"></i> Import Excel
+        </button>
         <button class="btn btn-info ml-2" onclick="exportPermissionsToExcel()">Export Excel</button>
     </div>
     <!-- Permissions Table -->
@@ -89,9 +91,11 @@
                     </div>
                     <div class="form-group">
                         <label>Key <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="addKey" required placeholder="Ví dụ: /product_read, /role_create, /user_manage">
+                        <input type="text" class="form-control" id="addKey" required placeholder="Ví dụ: [/product]_[read], [/user]_[manage]">
                         <small class="form-text text-muted">
-                            Format: /resource_action (action phải là: read, create, update, delete, manage)
+                            Bắt buộc định dạng: [/resource]_[action]<br>
+                            Action chỉ được: read, create, update, delete, manage<br>
+                            Ví dụ: [/category]_[create], [/order-item]_[delete]
                         </small>
                     </div>
                     <div class="form-group">
@@ -99,10 +103,12 @@
                         <input type="text" class="form-control" id="addDescription" required placeholder="Mô tả ngắn về quyền">
                     </div>
                     <div class="form-group">
-                        <label class="form-check-label">
+                        <div class="form-check">
                             <input type="checkbox" class="form-check-input" id="addIsSystemPermission">
-                            Là quyền hệ thống (không thể xóa/sửa)
-                        </label>
+                            <label class="form-check-label" for="addIsSystemPermission">
+                                Là quyền hệ thống (không thể xóa/sửa)
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -131,9 +137,11 @@
                     </div>
                     <div class="form-group">
                         <label>Key <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="editKey" required>
+                        <input type="text" class="form-control" id="editKey" required placeholder="Ví dụ: [/product]_[read], [/user]_[manage]">
                         <small class="form-text text-muted">
-                            Format: /resource_action (action phải là: read, create, update, delete, manage)
+                            Bắt buộc định dạng: [/resource]_[action]<br>
+                            Action chỉ được: read, create, update, delete, manage<br>
+                            Ví dụ: [/category]_[create], [/order-item]_[delete]
                         </small>
                     </div>
                     <div class="form-group">
@@ -141,10 +149,12 @@
                         <input type="text" class="form-control" id="editDescription" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" id="editIsSystemPermission" disabled>
-                            Là quyền hệ thống
-                        </label>
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input" id="editIsSystemPermission">
+                            <label class="form-check-label" for="editIsSystemPermission">
+                                Là quyền hệ thống
+                            </label>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -295,7 +305,7 @@
         </div>
     </div>
 </footer>
-
+<input type="file" id="importPermissionExcelInput" accept=".xlsx, .xls" style="display: none;">
 <!--END FOOTER-->
 
 <script>
@@ -396,16 +406,30 @@
         }
 
         // Validation pattern key (strict lowercase + hyphen)
-        const keyPattern = /^\/[a-z-]+_(read|create|update|delete|manage)$/;
+        // Validation key đúng chuẩn [/resource]_[action] với ngoặc vuông đầy đủ
+        const keyPattern = /^\[\/[a-z-]+\]_\[(read|create|update|delete|manage)\]$/;
+
         if (!keyPattern.test(key)) {
-            alert("Key không hợp lệ!\n" +
-                "Phải có định dạng: /resource_action (lowercase, hyphen allowed in resource, action phải là: read, create, update, delete, manage)\n" +
-                "Ví dụ hợp lệ:\n" +
-                "- /product_read\n" +
-                "- /role-create_update\n" +  // If hyphen in resource
-                "- /user_manage\n" +
-                "- /permission_update\n" +
-                "- /order_delete");
+            alert(
+                "Key không đúng định dạng bắt buộc!\n\n" +
+                "Yêu cầu nghiêm ngặt:\n" +
+                "• Phải có đúng 2 cặp ngoặc vuông []\n" +
+                "• Phần resource: bắt đầu bằng /, chỉ chữ thường a-z và gạch ngang -\n" +
+                "• Dấu phân cách: đúng 1 dấu gạch dưới _\n" +
+                "• Phần action: chỉ được bao trong [] và là một trong: read, create, update, delete, manage\n\n" +
+                "Ví dụ ĐÚNG:\n" +
+                "✓ [/product]_[read]\n" +
+                "✓ [/user]_[manage]\n" +
+                "✓ [/category-item]_[create]\n" +
+                "✓ [/order]_[delete]\n" +
+                "✓ [/role-permission]_[update]\n\n" +
+                "Ví dụ SAI:\n" +
+                "✗ /product_read\n" +
+                "✗ [/product]_read\n" +
+                "✗ [/product]_[read\n" +
+                "✗ [/Product]_[read]\n" +
+                "✗ [/product]_[view]"
+            );
             return;
         }
 
@@ -459,20 +483,39 @@
         }
 
         // Validation pattern key
-        const keyPattern = /^\/[a-z-]+_(read|create|update|delete|manage)$/;
+        const keyPattern = /^\[\/[a-z-]+\]_\[(read|create|update|delete|manage)\]$/;
+
         if (!keyPattern.test(key)) {
-            alert("Key không hợp lệ!\n" +
-                "Phải có định dạng: /resource_action (lowercase, hyphen allowed in resource, action phải là: read, create, update, delete, manage)\n" +
-                "Ví dụ hợp lệ:\n" +
-                "- /product_read\n" +
-                "- /role-create_update\n" +
-                "- /user_manage\n" +
-                "- /permission_update\n" +
-                "- /order_delete");
+            alert(
+                "Key không đúng định dạng bắt buộc!\n\n" +
+                "Yêu cầu nghiêm ngặt:\n" +
+                "• Phải có đúng 2 cặp ngoặc vuông []\n" +
+                "• Phần resource: bắt đầu bằng /, chỉ chữ thường a-z và gạch ngang -\n" +
+                "• Dấu phân cách: đúng 1 dấu gạch dưới _\n" +
+                "• Phần action: chỉ được bao trong [] và là một trong: read, create, update, delete, manage\n\n" +
+                "Ví dụ ĐÚNG:\n" +
+                "✓ [/product]_[read]\n" +
+                "✓ [/user]_[manage]\n" +
+                "✓ [/category-item]_[create]\n" +
+                "✓ [/order]_[delete]\n" +
+                "✓ [/role-permission]_[update]\n\n" +
+                "Ví dụ SAI:\n" +
+                "✗ /product_read\n" +
+                "✗ [/product]_read\n" +
+                "✗ [/product]_[read\n" +
+                "✗ [/Product]_[read]\n" +
+                "✗ [/product]_[view]"
+            );
             return;
         }
 
-        const payload = { name, key, description };
+        const isSystemPermission = $('#editIsSystemPermission').is(':checked');
+        const payload = {
+            name,
+            key,
+            description,
+            isSystemPermission
+        };
 
         try {
             const res = await fetch(`${BASE_URL}/permissions/${id}`, {
@@ -485,9 +528,23 @@
             });
 
             if (res.ok) {
+                const updatedJson = await res.json();
+                const updatedPerm = updatedJson.data;
+
                 alert("Cập nhật thành công!");
                 $('#editPermissionModal').modal('hide');
-                await loadPermissions();
+
+                // Cập nhật nhanh trong bộ nhớ
+                const index = currentPermissions.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    currentPermissions[index] = updatedPerm;
+                }
+
+                // Giữ thứ tự sắp xếp
+                currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+                // Render lại bảng ngay lập tức
+                renderPermissionTable(currentPermissions);
             } else {
                 const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
                 alert(`Cập nhật thất bại!\nMã lỗi: ${res.status}\n${JSON.stringify(err)}`);
@@ -541,34 +598,62 @@
         }
     }
 
-    function importPermissionsFromExcel() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.xlsx, .xls';
-        input.onchange = async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const formData = new FormData();
-            formData.append('file', file);
-            try {
-                const res = await fetch(`${BASE_URL}/permissions/import`, {
-                    method: 'POST',
-                    headers: { 'Authorization': `Bearer ${authToken}` },
-                    body: formData
-                });
-                if (res.ok) {
-                    alert("Import thành công!");
-                    await loadPermissions();
-                } else {
-                    const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                    alert(`Import thất bại!\n${err.message || ''}`);
-                }
-            } catch (err) {
-                alert("Lỗi kết nối!");
-            }
-        };
-        input.click();
+    // IMPORT EXCEL CHO PERMISSION
+    async function importPermissionsFromExcel() {
+        document.getElementById('importPermissionExcelInput').click();
     }
+
+    // Xử lý khi chọn file
+    document.getElementById('importPermissionExcelInput').addEventListener('change', async function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Kiểm tra định dạng
+        const fileName = file.name.toLowerCase();
+        if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+            alert("Vui lòng chọn file Excel (.xlsx hoặc .xls)!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        // Lấy nút Import để hiển thị loading
+        const importBtn = document.querySelector('.btn-success.ml-2'); // nút Import Excel
+        const originalText = importBtn.innerHTML;
+        importBtn.disabled = true;
+        importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang import...';
+
+        try {
+            const res = await fetch(`${BASE_URL}/permissions/import`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                    // Không set Content-Type → browser tự set multipart/form-data
+                },
+                body: formData
+            });
+
+            if (res.ok) {
+                const result = await res.json();
+                alert(`Import quyền thành công!\nĐã xử lý: ${result.data?.imported || 'nhiều'} quyền.`);
+                // Reload danh sách từ server để đồng bộ chính xác nhất
+                await loadPermissions();
+            } else {
+                const err = await res.json().catch(() => ({}));
+                alert("Import thất bại!\nLý do: " + (err.message || "Lỗi server. Vui lòng kiểm tra file Excel."));
+                console.error("Import error:", err);
+            }
+        } catch (err) {
+            console.error("Lỗi kết nối khi import:", err);
+            alert("Không thể kết nối đến server!");
+        } finally {
+            // Reset button và input
+            importBtn.disabled = false;
+            importBtn.innerHTML = originalText;
+            e.target.value = ''; // cho phép chọn lại cùng file
+        }
+    });
 
     $(document).ready(function() {
         autoLoginAndLoad();

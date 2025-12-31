@@ -48,7 +48,9 @@
         <button class="btn-admin btn-add" data-toggle="modal" data-target="#addCategoryModal">
             Add Category
         </button>
-        <button class="btn btn-success ml-2">Import Excel</button>
+        <button class="btn btn-success ml-2" onclick="importCategoriesFromExcel()">
+            <i class="fas fa-file-excel mr-1"></i> Import Excel
+        </button>
         <button class="btn btn-info ml-2" onclick="exportCategoriesToExcel()">Export Excel</button>
     </div>
 
@@ -320,6 +322,8 @@
 </footer>
 
 <!--END FOOTER-->
+<!-- Thêm input file ẩn để chọn Excel -->
+<input type="file" id="importExcelInput" accept=".xlsx, .xls" style="display: none;">
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
@@ -688,6 +692,64 @@
             alert("Export thất bại! Vui lòng kiểm tra console (F12) hoặc liên hệ dev backend.\nChi tiết: " + err.message);
         }
     }
+            // IMPORT EXCEL CHO CATEGORY
+            async function importCategoriesFromExcel() {
+            // Kích hoạt input file ẩn
+            document.getElementById('importExcelInput').click();
+        }
+
+            // Khi người dùng chọn file
+            document.getElementById('importExcelInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Kiểm tra định dạng file
+            const fileName = file.name.toLowerCase();
+            if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
+            alert("Vui lòng chọn file Excel (.xlsx hoặc .xls)!");
+            return;
+        }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Hiển thị loading
+            const importBtn = document.querySelector('.btn-success'); // nút Import Excel
+            const originalText = importBtn.innerHTML;
+            importBtn.disabled = true;
+            importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang import...';
+
+            try {
+            const res = await fetch(`${BASE_URL}/categories/import`, {
+            method: 'POST',
+            headers: {
+            'Authorization': `Bearer ${authToken}`
+            // KHÔNG set Content-Type → browser sẽ tự set multipart/form-data với boundary
+        },
+            body: formData
+        });
+
+            if (res.ok) {
+            const result = await res.json();
+            alert(`Import thành công!\nĐã thêm/sửa: ${result.data?.imported || 'nhiều'} danh mục.`);
+
+            // Reload lại danh sách từ server để đồng bộ dữ liệu mới nhất
+            await loadCategories();
+        } else {
+            const err = await res.json().catch(() => ({}));
+            alert("Import thất bại!\nLý do: " + (err.message || "Lỗi server. Vui lòng kiểm tra file Excel."));
+            console.error("Import error:", err);
+        }
+        } catch (err) {
+            console.error("Lỗi kết nối khi import:", err);
+            alert("Không thể kết nối đến server. Vui lòng thử lại!");
+        } finally {
+            // Reset button và input file
+            importBtn.disabled = false;
+            importBtn.innerHTML = originalText;
+            e.target.value = ''; // reset input để có thể chọn lại cùng file
+        }
+        });
 
     $(document).ready(function() {
         autoLoginAndLoad();
