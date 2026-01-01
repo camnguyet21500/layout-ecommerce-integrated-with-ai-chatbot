@@ -481,75 +481,92 @@
             loadProducts(); // Vẫn thử gọi API dù không có token
         }
     }
+    let allProductImages = []; // Lưu toàn bộ ảnh để dùng chung
 
-    // Load sản phẩm
     async function loadProducts() {
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-            const res = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, { headers });
 
-            if (!res.ok) {
-                if (res.status === 401) {
-                    document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Không thể tải sản phẩm (chưa đăng nhập hoặc API bị chặn)</p>';
-                } else {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-                return;
+            // 1. Load danh sách sản phẩm
+            const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, { headers });
+            if (!productsRes.ok) throw new Error("Không tải được sản phẩm");
+            const productsJson = await productsRes.json();
+            let products = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
+
+            // 2. Load tất cả ảnh sản phẩm
+            const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, { headers });
+            if (!imagesRes.ok) {
+                console.warn("Không load được ảnh, dùng ảnh default");
+                allProductImages = [];
+            } else {
+                const imagesJson = await imagesRes.json();
+                allProductImages = imagesJson.data?.list || [];
             }
 
-            const json = await res.json();
-            const products = json.data.list.filter(p => !p.deletedAt && p.status === 'active');
+            // 3. Map ảnh theo productID
+            const imagesMap = {};
+            allProductImages.forEach(img => {
+                if (!imagesMap[img.productID]) imagesMap[img.productID] = [];
+                imagesMap[img.productID].push(img);
+            });
+
+            // 4. Gắn ảnh vào từng sản phẩm
+            products = products.map(product => {
+                const imgs = imagesMap[product.id] || [];
+                if (imgs.length > 0) {
+                    // Sắp xếp theo sortOrder nếu có, nếu không thì lấy cái đầu
+                    imgs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                }
+                product.mainImage = imgs.length > 0 ? imgs[0].imageUrl : "../../img/default-product.jpg";
+                product.allImages = imgs; // Dùng cho modal chi tiết
+                return product;
+            });
+
             renderProducts(products);
+
         } catch (err) {
             console.error("Lỗi load sản phẩm:", err);
             document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Lỗi tải sản phẩm từ server</p>';
         }
     }
 
-    // Render sản phẩm (giữ nguyên hàm cũ của em)
     function renderProducts(products) {
         const grid = document.getElementById("productGrid");
         grid.innerHTML = "";
-
         if (products.length === 0) {
             grid.innerHTML = '<p class="text-center">Chưa có sản phẩm nào</p>';
             return;
         }
 
         products.forEach(product => {
-            const mainImage = product.productImages?.[0]?.imageUrl || "../../img/default-product.jpg";
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
 
             const item = document.createElement("div");
             item.className = "col-lg-3 col-md-4 col-sm-6 col-6 product-tab-pd";
-            item.style.display = "flex";
             item.innerHTML = `
-                <div class="product-item-v1">
-                    <div class="product mb-30 engoj_grid_parent relative">
-                        <div class="img-product relative">
-                            <div class="engoj_find_img">
-                                <img src="${mainImage}" alt="${product.name}" style="width: 100%;">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="info-product">
-                        <h4 class="des-font capital title-product mb-0 flex">
-                            <a href="#" class="product-detail-link" data-toggle="modal" data-target="#productModal" data-id="${product.id}">
-                                ${product.name}
-                            </a>
-                        </h4>
-                        <p class="price-product">
-                            <span class="price">${price}</span>
-                        </p>
-                    </div>
-                </div>
-            `;
+      <div class="product-item-v1">
+        <div class="product mb-30 engoj_grid_parent relative">
+          <div class="img-product relative">
+            <div class="engoj_find_img">
+              <img src="${product.mainImage}" alt="${product.name}" style="width: 100%; height: 300px; object-fit: cover;">
+            </div>
+          </div>
+        </div>
+        <div class="info-product">
+          <h4 class="des-font capital title-product mb-0 flex">
+            <a href="#" class="product-detail-link" data-id="${product.id}">
+              ${product.name}
+            </a>
+          </h4>
+          <p class="price-product">
+            <span class="price">${price}</span>
+          </p>
+        </div>
+      </div>
+    `;
             grid.appendChild(item);
         });
     }
-
-    // Chi tiết sản phẩm (giữ nguyên)
-    // Chi tiết sản phẩm – ĐỔ DỮ LIỆU GIỐNG TEST.HTML
     $(document).on('click', '.product-detail-link', async function(e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -560,21 +577,27 @@
             if (!res.ok) throw new Error("Lỗi load chi tiết");
 
             const json = await res.json();
-            const product = json.data;
+            let product = json.data;
 
-            // Ảnh chính
-            const mainImage = product.productImages?.[0]?.imageUrl || "../../img/default-product.jpg";
+            // Nếu chi tiết không có ảnh → dùng từ allProductImages
+            if (!product.productImages || product.productImages.length === 0) {
+                const imgs = allProductImages.filter(img => img.productID === id);
+                if (imgs.length > 0) {
+                    imgs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                    product.mainImage = imgs[0].imageUrl;
+                } else {
+                    product.mainImage = "../../img/default-product.jpg";
+                }
+            } else {
+                product.mainImage = product.productImages[0]?.imageUrl || "../../img/default-product.jpg";
+            }
 
-            // Giá (giả sử không có giảm giá → không hiện old_price)
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
 
-            // Đổ dữ liệu vào modal
-            $('#modalProductImage').attr('src', mainImage);
+            $('#modalProductImage').attr('src', product.mainImage);
             $('#modalProductName').text(product.name);
             $('#modalNewPrice').text(price);
             $('#modalDescription').text(product.description || 'Không có mô tả sản phẩm.');
-
-            // Nếu có giá cũ/giảm giá thì mở rộng sau
             $('#modalOldPrice').hide();
 
             $('#productModal').modal('show');
