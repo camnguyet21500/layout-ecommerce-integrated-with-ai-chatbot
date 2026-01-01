@@ -43,6 +43,20 @@
         <h3 class="title-heading">Category Management</h3>
     </div>
 
+    <!-- SEARCH -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-6">
+            <div class="input-group">
+                <input type="text" id="searchCategoryInput" class="form-control" placeholder="Search categories by name..." aria-label="Search categories">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
         <button class="btn-admin btn-add" data-toggle="modal" data-target="#addCategoryModal">
@@ -60,7 +74,7 @@
             <thead class="thead-light">
             <tr>
                 <th>STT</th>
-                <th>ẢNH</th>
+                <th>IMAGE</th>
                 <th>CATEGORY</th>
                 <th>PARENT CATEGORY</th>
                 <th>DESCRIPTION</th>
@@ -93,7 +107,6 @@
                     <div class="form-group">
                         <label>Category <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="addName" required placeholder="Examples: Sneakers, Athletic shoes, T-shirts...">
-<!--                        <small class="text-muted mt-1 d-block">Slug sẽ tự động được tạo từ tên này</small>-->
                     </div>
 
                     <div class="form-group">
@@ -131,7 +144,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Chỉnh sửa danh mục</h5>
+                <h5 class="modal-title">Edit categories</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="editCategoryForm">
@@ -320,9 +333,7 @@
         </div>
     </div>
 </footer>
-
 <!--END FOOTER-->
-<!-- Thêm input file ẩn để chọn Excel -->
 <input type="file" id="importExcelInput" accept=".xlsx, .xls" style="display: none;">
 
 <script>
@@ -343,40 +354,46 @@
                 authToken = data.data.accessToken;
                 loadCategories();
             } else {
-                alert("Login thất bại!");
+                alert("Login failed!");
             }
         } catch (err) {
-            alert("Không kết nối server");
+            alert("Cannot connect server");
         }
     }
 
-    // Load danh sách category
+    // Load list category
     async function loadCategories() {
         try {
             const res = await fetch(`${BASE_URL}/categories?itemPerPage=100&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi load");
+            if (!res.ok) throw new Error("Loading error");
             const json = await res.json();
             currentCategories = json.data.list.filter(c => !c.deletedAt);
             renderTable(currentCategories);
             loadParentOptions();
         } catch (err) {
             document.getElementById("categoryTableBody").innerHTML =
-                `<tr><td colspan="7" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+                `<tr><td colspan="7" class="text-danger text-center">Error loading data</td></tr>`;
         }
     }
 
-    // Render bảng – SẮP XẾP THEO createdAt TĂNG DẦN (mới nhất ở dưới cùng)
+    // Render table
     function renderTable(categories) {
         const tbody = document.getElementById("categoryTableBody");
         tbody.innerHTML = "";
         if (categories.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">Chưa có danh mục nào</td></tr>`;
+            const searchQuery = $('#searchCategoryInput').val().trim();
+            if (searchQuery) {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">
+      No categories were found containing "<strong>${searchQuery}</strong>"
+    </td></tr>`;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">No categories yet.</td></tr>`;
+            }
             return;
         }
 
-        // Tạo map ID -> name để tra cứu nhanh parent
         const categoryMap = new Map();
         categories.forEach(cat => {
             categoryMap.set(cat.id, cat.name);
@@ -385,15 +402,14 @@
         categories.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
         categories.forEach((cat, index) => {
-            // Tìm tên parent từ map (nếu có parentID)
             let parentName = '-';
             if (cat.parentID) {
-                parentName = categoryMap.get(cat.parentID) || 'Không tìm thấy';
+                parentName = categoryMap.get(cat.parentID) || 'Cannot find';
             }
 
             const statusBadge = cat.status === 'active'
-                ? '<span class="badge badge-success">Hoạt động</span>'
-                : '<span class="badge badge-secondary">Ẩn</span>';
+                ? '<span class="badge badge-success">Activity</span>'
+                : '<span class="badge badge-secondary">Hide</span>';
 
             const imageUrl = cat.imageUrl || "https://via.placeholder.com/60";
 
@@ -428,7 +444,7 @@
         selectEdit.innerHTML = '<option value="">-- None --</option>';
 
         currentCategories.forEach(cat => {
-            if (excludeId && cat.id === excludeId) return; // không thêm chính nó
+            if (excludeId && cat.id === excludeId) return;
             const option = document.createElement("option");
             option.value = cat.id;
             option.textContent = cat.name;
@@ -437,13 +453,13 @@
         });
     }
 
-    // ADD CATEGORY – HIỂN THỊ NGAY LẬP TỨC SAU KHI THÊM (KHÔNG CẦN RELOAD)
+    // ADD CATEGORY
     $('#addCategoryForm').on('submit', async function(e) {
         e.preventDefault();
 
         const name = $('#addName').val().trim();
         if (!name) {
-            alert("Vui lòng nhập tên danh mục!");
+            alert("Please enter the category name!");
             return;
         }
 
@@ -460,11 +476,10 @@
             .replace(/-+/g, '-');
 
         if (!slug) {
-            alert("Không thể tạo slug hợp lệ!");
+            alert("Cannot create a valid slug!");
             return;
         }
 
-        // Tránh trùng slug
         let finalSlug = slug;
         let counter = 1;
         while (currentCategories.some(cat => cat.slug === finalSlug)) {
@@ -483,11 +498,11 @@
             parentID: $('#addParentID').val() || null
         };
 
-        console.log("Payload gửi đi:", payload);
+        console.log("Outgoing payload:", payload);
 
         const submitBtn = $(this).find('button[type="submit"]');
         const originalHtml = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
 
         try {
             const res = await fetch(`${BASE_URL}/categories`, {
@@ -501,30 +516,29 @@
 
             if (res.ok || res.status === 201) {
                 const result = await res.json();
-                const newCategory = result.data; // LẤY CATEGORY MỚI TỪ RESPONSE BACKEND
+                const newCategory = result.data;
 
-                alert("Thêm danh mục thành công!");
+                alert("Category added successfully!");
 
                 // Close MODAL + RESET FORM
                 $('#addCategoryModal').modal('hide');
                 $('#addCategoryForm')[0].reset();
 
-                // THÊM NGAY VÀO DANH SÁCH HIỆN TẠI
+                // ADD TO CURRENT LIST
                 currentCategories.push(newCategory);
 
-                // RERENDER BẢNG → CATEGORY MỚI HIỆN NGAY DƯỚI CÙNG
+                // RERENDER TABLE
                 renderTable(currentCategories);
 
-                // Cập nhật lại select parent trong modal Edit (nếu mở)
                 loadParentOptions();
             } else {
                 const err = await res.json();
-                console.log("Lỗi từ backend:", err);
-                alert("Thêm thất bại!\nLý do: " + (err.message || JSON.stringify(err.errors)));
+                console.log("Error from backend:", err);
+                alert("Add failed!\nReason: " + (err.message || JSON.stringify(err.errors)));
             }
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi kết nối server!");
+            console.error("Connection error:", err);
+            alert("Server connection error!");
         } finally {
             submitBtn.prop('disabled', false).html(originalHtml);
         }
@@ -537,7 +551,6 @@
         $('#editName').val(cat.name);
         $('#editDescription').val(cat.description || '');
 
-        // Tải lại options, loại trừ chính category đang edit
         loadParentOptions(cat.id);
 
         $('#editParentID').val(cat.parentID || '');
@@ -545,13 +558,12 @@
         $('#editCategoryModal').modal('show');
     });
 
-    // EDIT CATEGORY – CŨNG TẠO SLUG MỚI NẾU NAME THAY ĐỔI
+    // EDIT CATEGORY
     $('#editCategoryForm').on('submit', async function(e) {
         e.preventDefault();
         const id = $('#editId').val();
         const name = $('#editName').val().trim();
 
-        // Tạo slug mới từ name
         const slug = name
             .toLowerCase()
             .normalize('NFD')
@@ -562,23 +574,23 @@
             .replace(/\s+/g, '-')
             .replace(/-+/g, '-');
 
-        // LẤY URL ẢNH MỚI NẾU NGƯỜI DÙNG NHẬP
+        // GET URL NEW IMG
         const newImageUrl = $('#editImageUrl').val().trim();
-        const imageUrl = newImageUrl || null; // nếu rỗng thì gửi null (backend sẽ giữ nguyên hoặc xóa)
+        const imageUrl = newImageUrl || null;
 
         const payload = {
             name: name,
             slug: slug,
             description: $('#editDescription').val().trim() || null,
             parentID: $('#editParentID').val() || null,
-            imageUrl: imageUrl  // ← THÊM DÒNG NÀY
+            imageUrl: imageUrl
         };
 
-        console.log("Payload cập nhật category:", payload); // DEBUG: kiểm tra có imageUrl không
+        console.log("Payload updated category:", payload);
 
         const submitBtn = $(this).find('button[type="submit"]');
         const originalHtml = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang cập nhật...');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Loading...');
 
         try {
             const res = await fetch(`${BASE_URL}/categories/${id}`, {
@@ -591,29 +603,26 @@
             });
 
             if (res.ok) {
-                alert("Cập nhật danh mục thành công!");
+                alert("Catalog update successful!");
                 $('#editCategoryModal').modal('hide');
 
-                // Cập nhật nhanh giao diện mà không cần reload toàn bộ (tối ưu hơn)
                 const updatedCat = await res.json();
                 const data = updatedCat.data;
 
-                // Cập nhật trong mảng currentCategories
                 const index = currentCategories.findIndex(c => c.id === id);
                 if (index !== -1) {
                     currentCategories[index] = data;
                 }
 
-                // Render lại bảng + cập nhật select parent
                 renderTable(currentCategories);
                 loadParentOptions();
             } else {
                 const err = await res.json();
-                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+                alert("Update failed: " + (err.message || "Server error"));
             }
         } catch (err) {
             console.error(err);
-            alert("Lỗi kết nối server!");
+            alert("Server connection error!");
         } finally {
             submitBtn.prop('disabled', false).html(originalHtml);
         }
@@ -622,7 +631,7 @@
     // Delete Category
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa danh mục này? Các sản phẩm liên quan sẽ bị ảnh hưởng!")) return;
+        if (!confirm("Deleting this category will affect related products!")) return;
 
         try {
             const res = await fetch(`${BASE_URL}/categories/${id}`, {
@@ -633,38 +642,31 @@
             });
 
             if (res.ok) {
-                alert("Xóa thành công!");
+                alert("Deleted successfully!");
 
-                // === PHẦN SỬA CHÍNH Ở ĐÂY ===
-                // Xóa khỏi mảng currentCategories (trong bộ nhớ)
                 currentCategories = currentCategories.filter(cat => cat.id !== id);
 
-                // Render lại bảng ngay lập tức mà không cần reload từ server
                 renderTable(currentCategories);
 
-                // Cập nhật lại danh sách option cho select Parent (trong modal Edit và Add nếu mở)
                 loadParentOptions();
-                // =================================
 
             } else {
                 const err = await res.json();
-                alert("Xóa thất bại! " + (err.message || ""));
+                alert("Delete failed! " + (err.message || ""));
             }
         } catch (err) {
             console.error(err);
-            alert("Lỗi kết nối server!");
+            alert("Server connection error!");
         }
     });
 
-    // EXPORT EXCEL CHO CATEGORY – HOẠT ĐỘNG GIỐNG TRANG ORDER
+    // EXPORT EXCEL
     async function exportCategoriesToExcel() {
         try {
-            // Gọi API export (giả sử backend có endpoint POST /categories/export giống orders)
             const res = await fetch(`${BASE_URL}/categories/export`, {
                 method: 'POST',  // Quan trọng: dùng POST như orders
                 headers: {
                     'Authorization': `Bearer ${authToken}`
-                    // Không cần Content-Type vì không gửi body
                 }
             });
 
@@ -672,49 +674,44 @@
                 throw new Error(`Lỗi export: ${res.status}`);
             }
 
-            // Lấy file blob
             const blob = await res.blob();
 
-            // Tạo link tải về
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'categories_export.xlsx';  // Tên file tải về
+            a.download = 'categories_export.xlsx';
             document.body.appendChild(a);
             a.click();
             a.remove();
-            window.URL.revokeObjectURL(url); // Dọn dẹp
+            window.URL.revokeObjectURL(url);
 
-            alert("Export danh mục thành công! File đã được tải về.");
+            alert("Catalog export successful! File has been downloaded.");
 
         } catch (err) {
-            console.error("Lỗi export category:", err);
-            alert("Export thất bại! Vui lòng kiểm tra console (F12) hoặc liên hệ dev backend.\nChi tiết: " + err.message);
+            console.error("Export category error:", err);
+            alert("Export failed! Please check the console (F12) or contact the backend developer.\nDetails: " + err.message);
         }
     }
-            // IMPORT EXCEL CHO CATEGORY
+            // IMPORT EXCEL
             async function importCategoriesFromExcel() {
-            // Kích hoạt input file ẩn
+
             document.getElementById('importExcelInput').click();
         }
 
-            // Khi người dùng chọn file
             document.getElementById('importExcelInput').addEventListener('change', async function(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Kiểm tra định dạng file
             const fileName = file.name.toLowerCase();
             if (!fileName.endsWith('.xlsx') && !fileName.endsWith('.xls')) {
-            alert("Vui lòng chọn file Excel (.xlsx hoặc .xls)!");
+            alert("Please select the Excel file (.xlsx hoặc .xls)!");
             return;
         }
 
             const formData = new FormData();
             formData.append('file', file);
 
-            // Hiển thị loading
-            const importBtn = document.querySelector('.btn-success'); // nút Import Excel
+            const importBtn = document.querySelector('.btn-success');
             const originalText = importBtn.innerHTML;
             importBtn.disabled = true;
             importBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Đang import...';
@@ -724,32 +721,52 @@
             method: 'POST',
             headers: {
             'Authorization': `Bearer ${authToken}`
-            // KHÔNG set Content-Type → browser sẽ tự set multipart/form-data với boundary
         },
             body: formData
         });
 
             if (res.ok) {
             const result = await res.json();
-            alert(`Import thành công!\nĐã thêm/sửa: ${result.data?.imported || 'nhiều'} danh mục.`);
+            alert(`Imported successfully!\nAdded/edited: ${result.data?.imported || 'many'} categories.`);
 
-            // Reload lại danh sách từ server để đồng bộ dữ liệu mới nhất
             await loadCategories();
         } else {
             const err = await res.json().catch(() => ({}));
-            alert("Import thất bại!\nLý do: " + (err.message || "Lỗi server. Vui lòng kiểm tra file Excel."));
+            alert("Imported fail!\nReason: " + (err.message || "Server error. Please check the Excel file."));
             console.error("Import error:", err);
         }
         } catch (err) {
-            console.error("Lỗi kết nối khi import:", err);
-            alert("Không thể kết nối đến server. Vui lòng thử lại!");
+            console.error("Connection error during import:", err);
+            alert("Unable to connect to the server. Please try again!");
         } finally {
-            // Reset button và input file
             importBtn.disabled = false;
             importBtn.innerHTML = originalText;
-            e.target.value = ''; // reset input để có thể chọn lại cùng file
+            e.target.value = '';
         }
         });
+
+    // SEARCH
+    let filteredCategories = currentCategories;
+
+    $('#searchCategoryInput').on('input', function() {
+        const query = $(this).val().trim().toLowerCase();
+
+        if (query === '') {
+            filteredCategories = currentCategories;
+            $('#clearSearchBtn').hide();
+        } else {
+            filteredCategories = currentCategories.filter(cat =>
+                cat.name && cat.name.toLowerCase().includes(query)
+            );
+            $('#clearSearchBtn').show();
+        }
+
+        renderTable(filteredCategories);
+    });
+
+    $('#clearSearchBtn').on('click', function() {
+        $('#searchCategoryInput').val('').trigger('input');
+    });
 
     $(document).ready(function() {
         autoLoginAndLoad();

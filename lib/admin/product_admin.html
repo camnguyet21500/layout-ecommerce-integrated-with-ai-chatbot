@@ -42,6 +42,20 @@
 <!-- PRODUCT MANAGEMENT SECTION -->
 <div class="container" style="margin-top: 120px;">
     <h3 class="text-center my-4">Product Management</h3>
+
+    <!-- SEARCH -->
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-6">
+            <div class="input-group">
+                <input type="text" id="searchProductInput" class="form-control" placeholder="Search for products by name..." aria-label="Search for products">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="clearSearchBtn" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="text-right mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal"> Add Product </button>
         <button class="btn btn-success ml-2">Import Excel</button>
@@ -63,19 +77,19 @@
         <tbody id="productTableBody">
         <tr>
             <td colspan="8" class="text-center">
-                <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải sản phẩm...
+                <i class="fas fa-spinner fa-spin mr-2"></i> Loading products...
             </td>
         </tr>
         </tbody>
     </table>
 </div>
 
-<!-- ==================== ADD PRODUCT MODAL ==================== -->
+<!-- ADD PRODUCT MODAL -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Thêm sản phẩm mới</h5>
+                <h5 class="modal-title">Add new product</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="addProductForm">
@@ -83,13 +97,13 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label>Tên sản phẩm <span class="text-danger">*</span></label>
+                                <label>Product name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="addName" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <label>Price <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="addPrice" required min="0" step="1000">
                             </div>
                         </div>
@@ -97,58 +111,58 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>SKU <small>(mã nội bộ, optional)</small></label>
+                                <label>SKU</label>
                                 <input type="text" class="form-control" id="addSku" placeholder="SKU-001">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Mô tả</label>
+                        <label>Description</label>
                         <textarea class="form-control" id="addDescription" rows="4"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Số lượng tồn kho <span class="text-danger">*</span></label>
+                                <label>Amount <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="addStock" value="0" min="0" required>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Trạng thái <span class="text-danger">*</span></label>
+                                <label>Status <span class="text-danger">*</span></label>
                                 <select class="form-control" id="addStatus" required>
-                                    <option value="active">Active</option>
                                     <option value="draft" selected>Draft</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>URL ảnh sản phẩm (nhập nhiều, cách nhau bằng dấu phẩy hoặc Enter)</label>
+                        <label>Product image URL (enter multiple images, separated by commas or press Enter)</label>
                         <textarea class="form-control" id="addImageUrls" rows="3" placeholder="Ví dụ:&#10;https://example.com/image1.jpg&#10;https://example.com/image2.jpg&#10;https://example.com/image3.jpg"></textarea>
-                        <small class="text-muted">Mỗi dòng 1 URL hoặc cách nhau bằng dấu phẩy (,)</small>
+                        <small class="text-muted">Each line should contain a URL or be separated by commas (,).</small>
                     </div>
                     <div class="form-group">
-                        <label>Xem trước ảnh</label>
+                        <label>Preview photos</label>
                         <div id="addImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- ==================== EDIT PRODUCT MODAL ==================== -->
+<!-- EDIT PRODUCT MODAL -->
 <div class="modal fade" id="editProductModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Chỉnh sửa sản phẩm</h5>
+                <h5 class="modal-title">Update product</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="editProductForm">
@@ -157,13 +171,13 @@
                     <div class="row">
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label>Tên sản phẩm <span class="text-danger">*</span></label>
+                                <label>Product name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="editName" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label>Giá (VNĐ) <span class="text-danger">*</span></label>
+                                <label>Price <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="editPrice" required min="0" step="1000">
                             </div>
                         </div>
@@ -177,51 +191,51 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Mô tả</label>
+                        <label>Description</label>
                         <textarea class="form-control" id="editDescription" rows="4"></textarea>
                     </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Số lượng tồn kho <span class="text-danger">*</span></label>
+                                <label>Amount <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="editStock" required min="0">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Trạng thái <span class="text-danger">*</span></label>
+                                <label>Status <span class="text-danger">*</span></label>
                                 <select class="form-control" id="editStatus" required>
-                                    <option value="active">Active</option>
                                     <option value="draft">Draft</option>
+                                    <option value="active">Active</option>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Ảnh hiện tại</label>
+                        <label>Current image</label>
                         <div id="currentImages" class="d-flex flex-wrap"></div>
                     </div>
                     <div class="form-group">
-                        <label>URL ảnh mới (tùy chọn, nhập nhiều cách nhau bằng dấu phẩy hoặc Enter)</label>
-                        <textarea class="form-control" id="editNewImageUrls" rows="3" placeholder="Nhập thêm URL ảnh mới..."></textarea>
-                        <small class="text-muted">Để trống nếu không muốn thêm ảnh mới</small>
+                        <label>New image URL (optional, enter multiple times separated by commas or press Enter)</label>
+                        <textarea class="form-control" id="editNewImageUrls" rows="3" placeholder="Enter the URL of the new image..."></textarea>
+                        <small class="text-muted">Leave blank if you don't want to add new photos.</small>
                     </div>
                     <div class="form-group">
-                        <label>Xem trước ảnh mới</label>
+                        <label>Preview new photos</label>
                         <div id="editImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning">Cập nhật sản phẩm</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Product updates</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!--FOOTER-->
+<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -378,13 +392,13 @@
             });
             const loginData = await loginRes.json();
             if (!loginData.data?.accessToken) {
-                alert("Login thất bại!");
+                alert("Login failed!");
                 return;
             }
             authToken = loginData.data.accessToken;
             await loadProductsAndSetVendorID();
         } catch (err) {
-            alert("Không kết nối được server");
+            alert("Unable to connect to the server.");
         }
     }
 
@@ -400,14 +414,14 @@
             }
 
             const json = await res.json();
-            console.log("Load products thành công:", json);
+            console.log("Products loaded successfully:", json);
 
             let products = json.data?.list?.filter(p => !p.deletedAt) || [];
 
-            // SORT CHỈ 1 LẦN DUY NHẤT TẠI ĐÂY
+            // SORT
             products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
-            currentProducts = products; // Lưu mảng đã sort
+            currentProducts = products;
 
             if (currentProducts.length > 0 && currentProducts[0].vendorID) {
                 currentVendorID = currentProducts[0].vendorID;
@@ -416,21 +430,28 @@
             renderProductTable(currentProducts, false); // Không sort nữa
 
         } catch (err) {
-            console.error("Lỗi load products:", err);
+            console.error("Error loading products:", err);
             document.getElementById("productTableBody").innerHTML =
                 `<tr><td colspan="8" class="text-danger text-center p-4">
-                <strong>Không tải được danh sách sản phẩm</strong><br>
-                Lỗi: ${err.message}
+                <strong>Unable to load product list</strong><br>
+                Error: ${err.message}
             </td></tr>`;
         }
     }
 
     async function renderProductTable(products, sort = true) {
         const tbody = document.getElementById("productTableBody");
-        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Đang tải ảnh sản phẩm...</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading product...</td></tr>";
 
         if (products.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">Chưa có sản phẩm nào</td></tr>`;
+            const searchQuery = $('#searchProductInput').val().trim();
+            if (searchQuery) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted">
+      No products containing "<strong>${searchQuery}</strong>"
+    </td></tr>`;
+            } else {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-muted py-4">No products yet.</td></tr>`;
+            }
             return;
         }
 
@@ -447,16 +468,16 @@
             const imagesJson = await imagesRes.json();
             console.log("API product-images response:", imagesJson);
             const allImages = imagesJson.data?.list || [];
-            console.log("Số ảnh load được:", allImages.length);
+            console.log("Number of images that can be loaded:", allImages.length);
 
             if (!imagesRes.ok) {
-                throw new Error(`Lỗi load ảnh: ${imagesRes.status}`);
+                throw new Error(`Error loading image: ${imagesRes.status}`);
             }
 
 
             const imagesMap = {};
             console.log("Images Map:", imagesMap);
-            console.log("Product ID mẫu:", products[0]?.id, "có ảnh:", imagesMap[products[0]?.id]);
+            console.log("Product ID sample:", products[0]?.id, "with photo:", imagesMap[products[0]?.id]);
             allImages.forEach(img => {
                 const pid = img.productID;
                 if (pid) {
@@ -505,28 +526,28 @@
             });
 
         } catch (err) {
-            console.error("Lỗi khi load hoặc hiển thị ảnh:", err);
-            tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Lỗi tải ảnh sản phẩm<br><small>${err.message}</small></td></tr>`;
+            console.error("Error loading or displaying images:", err);
+            tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Product image loading error<br><small>${err.message}</small></td></tr>`;
         }
     }
 
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa sản phẩm này? Không thể khôi phục!")) return;
+        if (!confirm("Deleting this product? Cannot be recovered!")) return;
         try {
             const res = await fetch(`${BASE_URL}/products/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (res.ok) {
-                alert("Xóa thành công!");
+                alert("Deleted successfully!");
                 currentProducts = currentProducts.filter(p => p.id !== id);
                 renderProductTable(currentProducts);
             } else {
-                alert("Xóa thất bại!");
+                alert("Delete failed!");
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            alert("Connection error!");
         }
     });
 
@@ -555,7 +576,7 @@
     $('#addProductForm').on('submit', async function(e) {
         e.preventDefault();
         if (!currentVendorID || currentVendorID.includes("PASTE_") || currentVendorID.includes("THAY_")) {
-            alert("VendorID chưa hợp lệ! Vui lòng thay ID thật từ database vào code.");
+            alert("Invalid Vendor ID! Please replace the ID with the correct one from the database in the code.");
             return;
         }
         const name = $('#addName').val().trim();
@@ -566,7 +587,7 @@
         const sku = $('#addSku').val().trim() || null;
 
         if (!name || isNaN(price) || price <= 0) {
-            alert("Tên sản phẩm và Giá là bắt buộc, giá phải lớn hơn 0!");
+            alert("Product name and price are required; the price must be greater than 0!");
             return;
         }
 
@@ -588,7 +609,7 @@
             sku: sku || undefined
         };
 
-        console.log("Payload tạo sản phẩm (bước 1 - không ảnh):", payload);
+        console.log("Payload creates product (step 1 - no image):", payload);
 
         try {
             const res = await fetch(`${BASE_URL}/products`, {
@@ -601,15 +622,15 @@
             });
 
             const text = await res.text();
-            console.log("Response status bước 1:", res.status);
-            console.log("Response body bước 1:", text);
+            console.log("Response status step 1:", res.status);
+            console.log("Response body step 1:", text);
 
             if (!res.ok) {
                 try {
                     const json = JSON.parse(text);
-                    alert("Tạo sản phẩm thất bại: " + (json.errors?.[0]?.message || json.message || "Lỗi server"));
+                    alert("Creating a failed product.: " + (json.errors?.[0]?.message || json.message || "Server error"));
                 } catch {
-                    alert("Tạo sản phẩm thất bại: " + text.substring(0, 500));
+                    alert("Creating a failed product.: " + text.substring(0, 500));
                 }
                 return;
             }
@@ -621,8 +642,8 @@
             if (imageUrls.length > 0) {
                 for (const url of imageUrls) {
                     const imagePayload = {
-                        name: "Ảnh sản phẩm từ admin",
-                        description: "Ảnh thêm khi tạo sản phẩm",
+                        name: "Product photos from admin",
+                        description: "Add images when creating a product.",
                         productID: productId,
                         imageUrl: url,
                         sortOrder: 0
@@ -638,24 +659,24 @@
                     });
 
                     if (!imageRes.ok) {
-                        console.warn("Không lưu được ảnh:", url);
+                        console.warn("Unable to save photo:", url);
                     }
                 }
             }
 
-            alert("Thêm sản phẩm thành công! (và ảnh nếu có)");
+            alert("Successfully added a product!");
             $('#addProductModal').modal('hide');
             $('#addProductForm')[0].reset();
-            $('#addImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+            $('#addImagePreview').innerHTML = '<p class="text-muted">No preview images available.</p>';
 
             setTimeout(async () => {
                 await loadProductsAndSetVendorID();
-            }, 1000); // 1 giây
+            }, 1000);
 
-            await loadProductsAndSetVendorID(); // Reload để thấy sản phẩm mới
+            await loadProductsAndSetVendorID();
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi mạng khi tạo sản phẩm!");
+            console.error("Connection error:", err);
+            alert("Network error when creating a product!");
         }
     });
 
@@ -683,8 +704,8 @@
                 body: JSON.stringify(basicPayload)
             });
             if (!patchRes.ok) {
-                const err = await patchRes.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Cập nhật thông tin sản phẩm thất bại!\n${err.message || ''}`);
+                const err = await patchRes.json().catch(() => ({ message: "Unknown error" }));
+                alert(`Update information on failed products!\n${err.message || ''}`);
                 return;
             }
 
@@ -697,8 +718,8 @@
                 if (imageUrls.length > 0) {
                     for (const url of imageUrls) {
                         const imagePayload = {
-                            name: "Ảnh từ admin",
-                            description: "Ảnh sản phẩm thêm từ trang quản trị",
+                            name: "Photo from admin",
+                            description: "Product images added from the admin page.",
                             productID: id,
                             imageUrl: url,
                             sortOrder: 0
@@ -712,18 +733,18 @@
                             body: JSON.stringify(imagePayload)
                         });
                         if (!imageRes.ok) {
-                            console.warn("Không lưu được 1 ảnh:", url);
+                            console.warn("Unable to save one image.:", url);
                         }
                     }
                 }
             }
 
-            alert("Cập nhật sản phẩm thành công! (bao gồm ảnh mới nếu có)");
+            alert("Product update successful!");
             $('#editProductModal').modal('hide');
-            await loadProductsAndSetVendorID(); // Reload để lấy dữ liệu mới nhất
+            await loadProductsAndSetVendorID();
         } catch (err) {
-            console.error("Lỗi khi cập nhật:", err);
-            alert("Lỗi kết nối server!");
+            console.error("Error while updating:", err);
+            alert("Server connection error!");
         }
     });
 
@@ -733,7 +754,7 @@
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi export");
+            if (!res.ok) throw new Error("Export error");
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -743,11 +764,10 @@
             a.click();
             a.remove();
         } catch (err) {
-            alert("Lỗi export Excel!");
+            alert("Export Excel error!");
         }
     }
 
-    // Hàm chung để preview ảnh từ URL (dùng cho cả Add và Edit)
     function previewImagesFromUrls(textareaId, previewDivId) {
         const textarea = document.getElementById(textareaId);
         const previewDiv = document.getElementById(previewDivId);
@@ -755,13 +775,13 @@
         textarea.addEventListener('input', function() {
             const urlsText = textarea.value.trim();
             const urls = urlsText
-                .split(/[\n,]+/)  // Tách theo Enter hoặc dấu phẩy
+                .split(/[\n,]+/)
                 .map(u => u.trim())
                 .filter(u => u.length > 0 && u.startsWith('http'));
 
             previewDiv.innerHTML = '';
             if (urls.length === 0) {
-                previewDiv.innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+                previewDiv.innerHTML = '<p class="text-muted">No preview images available.</p>';
                 return;
             }
 
@@ -781,18 +801,39 @@
         });
     }
 
-    // Gọi preview khi mở modal Add
     $('#addProductModal').on('show.bs.modal', function() {
         document.getElementById('addImageUrls').value = '';
-        document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh để xem trước</p>';
+        document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">No preview images available.</p>';
         previewImagesFromUrls('addImageUrls', 'addImagePreview');
     });
 
-    // Gọi preview khi mở modal Edit
     $('#editProductModal').on('show.bs.modal', function() {
         document.getElementById('editNewImageUrls').value = '';
-        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">Chưa có ảnh mới</p>';
+        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">No new photos yet</p>';
         previewImagesFromUrls('editNewImageUrls', 'editImagePreview');
+    });
+
+    // SEARCH BY NAME
+    let filteredProducts = [];
+
+    $('#searchProductInput').on('input', function() {
+        const query = $(this).val().trim().toLowerCase();
+
+        if (query === '') {
+            filteredProducts = currentProducts;
+            $('#clearSearchBtn').hide();
+        } else {
+            filteredProducts = currentProducts.filter(product =>
+                product.name && product.name.toLowerCase().includes(query)
+            );
+            $('#clearSearchBtn').show();
+        }
+
+        renderProductTable(filteredProducts, false);
+    });
+
+    $('#clearSearchBtn').on('click', function() {
+        $('#searchProductInput').val('').trigger('input');
     });
 
     $(document).ready(function() {
