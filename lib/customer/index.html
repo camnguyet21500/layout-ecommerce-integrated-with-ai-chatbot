@@ -829,7 +829,7 @@ font-weight: 600;">MEGA MALL</h3>
                     // Reset form
                     $('#signupForm')[0].reset();
                 } else {
-                    // Hiển thị lỗi từ backend
+
                     const errorMsg = data.message || data.errors?.[0]?.message || 'Đăng ký thất bại!';
                     $('#signupError').text(errorMsg).show();
                 }
@@ -838,7 +838,7 @@ font-weight: 600;">MEGA MALL</h3>
                 $('#signupError').text('Lỗi kết nối server! Vui lòng thử lại sau.').show();
             }
         });
-        // Đảm bảo DOM đã load xong trước khi chạy
+
         document.addEventListener('DOMContentLoaded', function() {
             const chatbotToggler = document.getElementById('chatbot-toggler');
             const chatbotBox = document.getElementById('chatbot-box');
@@ -852,7 +852,6 @@ font-weight: 600;">MEGA MALL</h3>
                 return;
             }
 
-            // Toggle chatbox
             chatbotToggler.addEventListener('click', () => {
                 const isVisible = chatbotBox.style.display === 'flex';
                 chatbotBox.style.display = isVisible ? 'none' : 'flex';
@@ -865,7 +864,6 @@ font-weight: 600;">MEGA MALL</h3>
                 chatbotBox.style.display = 'none';
             });
 
-            // Gửi tin nhắn
             chatbotSend.addEventListener('click', sendChatMessage);
             chatbotInput.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendChatMessage();
@@ -899,12 +897,14 @@ font-weight: 600;">MEGA MALL</h3>
                     });
 
                     const data = await res.json();
-
                     typing.remove();
-
                     if (res.ok) {
-                        const botReply = data.message || "Xin lỗi, tôi chưa hiểu rõ.";
+                        const botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
                         appendChatMessage(botReply, 'bot');
+
+                        if (data.sessionID) {
+                            localStorage.setItem('chatSessionID', data.sessionID);
+                        }
                     } else {
                         appendChatMessage(`Lỗi: ${data.message || res.status}`, 'bot');
                     }
