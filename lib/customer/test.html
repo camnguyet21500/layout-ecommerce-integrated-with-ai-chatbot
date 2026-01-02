@@ -1,38 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-            integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-            crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-            crossorigin="anonymous"></script>
-
-    <!--Bootstrap CSS-->
-    <script src="../js/bootstrap.min.js"></script>
-
-    <!--Bootstrap JS-->
-    <link href="../css/bootstrap.min.css" rel="stylesheet">
-
-    <!--CSS-->
-    <link rel="stylesheet" href="../../css/index.css">
-
-    <!-- FONT AWESOME -->
+    <title>Home | Mega Mall</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
-    <!-- JS -->
-    <script src="../../js/testapi.js"></script>
-
+    <link rel="stylesheet" href="../../css/profile.css">
 </head>
-
 <body>
-<!--HEADER-->
-
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
@@ -268,7 +247,8 @@
 
                 <!-- LOGIN -->
                 <!-- Button trigger modal -->
-                <a href="profile.html"><i class="far fa-user" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
+                <i class="far fa-user user-icon" style="cursor: pointer;"></i>
+
                 <!-- Modal -->
                 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
                      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -292,18 +272,16 @@
 font-weight: 600;">MEGA MALL</h3>
                                         <hr>
                                         <p>Great to have you back!</p>
-                                        <form>
+                                        <form id="loginForm">
                                             <div class="form-group">
-                                                <input type="email" class="form-control" id="exampleInputEmail15"
-                                                       aria-describedby="emailHelp" placeholder="Email address">
+                                                <input type="email" class="form-control" id="loginEmail" aria-describedby="emailHelp" placeholder="Email address" required>
                                             </div>
                                             <div class="form-group">
-                                                <input type="password" class="form-control"
-                                                       id="exampleInputPassword16" placeholder="Password">
+                                                <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
                                             </div>
+                                            <div id="loginError" class="text-danger mb-3" style="display:none;"></div>
                                             <div class="login">
-                                                <input type="submit" class="button" value="LOG IN"
-                                                       name="update_cart">
+                                                <button type="submit" class="button w-100">LOG IN</button>
                                             </div>
                                             <div>
                                                 <p>or login with</p>
@@ -354,252 +332,38 @@ font-weight: 600;">MEGA MALL</h3>
         </div>
     </nav>
 </header>
-<!--HEADER END-->
-
-<!--SLIDER-->
-<div id="myCarousel" class="carousel slide carousel-fade" data-ride="carousel" style="background-color: #ecd9c8;">
-    <div class="carousel-inner">
-        <div class="carousel-item active">
-            <div class="mask flex-center">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-7 col-12 order-md-1 order-2">
-                            <h4 style="color: black;">Elevate your <br>
-                                walking experience</h4>
-                            <p style="color: black;">Crafted from premium materials, our shoes deliver unmatched durability, <br>
-                                lightweight comfort, and a fashionable edge to keep you moving with ease.</p>
-                            <a href="#">BUY NOW</a>
-                        </div>
-                        <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider2.png" class="mx-auto"
-                                                                             alt="slide"></div>
-                    </div>
+<div class="container" style="margin-top: 120px; min-height: 70vh;">
+    <div class="text-center my-5">
+        <h2>Home</h2>
+        <div id="loading" class="my-5">
+            <i class="fas fa-spinner fa-spin fa-3x text-primary"></i>
+            <p class="mt-3">Đang tải thông tin...</p>
+        </div>
+        <div id="profileInfo" style="display: none;">
+            <div class="card mx-auto" style="max-width: 600px;">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Thông tin cá nhân</h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Họ tên:</strong> <span id="userFullName"></span></p>
+                    <p><strong>Email:</strong> <span id="userEmail"></span></p>
+                    <p><strong>Địa chỉ:</strong> <span id="userAddress"></span></p>
+                    <p><strong>Thành phố:</strong> <span id="userCity">Chưa cập nhật</span></p>
+                    <p><strong>Quận/Huyện:</strong> <span id="userProvince">Chưa cập nhật</span></p>
+                    <p><strong>Số điện thoại:</strong> <span id="userPhone"></span></p>
+                    <p><strong>Trạng thái:</strong> <span id="userStatus" class="badge badge-success">Active</span></p>
                 </div>
             </div>
-        </div>
-        <div class="carousel-item">
-            <div class="mask flex-center">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-7 col-12 order-md-1 order-2">
-                            <h4 style="color: black;">Step into <br>
-                                timeless fashion</h4>
-                            <p style="color: black;">Discover sneakers that blend modern design with everyday comfort, <br>
-                                ensuring every step reflects your style, confidence, and unique personality.</p>
-                            <a href="#">BUY NOW</a>
-                        </div>
-                        <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider1.png" class="mx-auto"
-                                                                             alt="slide"></div>
-                    </div>
-                </div>
+            <div class="mt-4">
+                <button id="logoutBtn" class="btn btn-danger btn-lg">Đăng xuất</button>
             </div>
         </div>
-        <div class="carousel-item">
-            <div class="mask flex-center">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-7 col-12 order-md-1 order-2">
-                            <h4 style="color: black;">Unlock <br>
-                                your perfect style</h4>
-                            <p style="color: black;">Designed with precision and care, our shoes combine trend-forward aesthetics, <br>
-                                reliable comfort, and long-lasting performance for your daily adventures.</p>
-                            <a href="#">BUY NOW</a>
-                        </div>
-                        <div class="col-md-5 col-12 order-md-2 order-1"><img src="../../img/slider3.png   "
-                                                                             class="mx-auto" alt="slide"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev"
-       style="top: 300px; width: 45px;">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span> <span class="sr-only">Previous</span>
-    </a>
-
-    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next"
-       style="top: 300px; width:45px">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span> <span class="sr-only">Next</span>
-    </a>
-</div>
-<!--SLIDE END -->
-
-<!--CARD-->
-<div class="card-content">
-    <div class="card card-one text-center">
-        <img src="../../img/card1.png" class="card-img-top">
-        <div class="card-body">
-            <h4 class="card-title">24/7 FRIENDLY SUPPORT</h4>
-            <p class="card-text">Our support team alway ready for you to 7 day a week</p>
-        </div>
-    </div>
-    <div class="card card-two text-center">
-        <img src="../../img/card2.png" class="card-img-top">
-        <div class="card-body">
-            <h4 class="card-title">FREE SHIPPING</h4>
-            <p class="card-text">Free worldwide shipping on all area order above $100</p>
-        </div>
-    </div>
-    <div class="card card-three text-center">
-        <img src="../../img/card3.png" class="card-img-top">
-        <div class="card-body">
-            <h4 class="card-title">QUALITY GUARANTEED</h4>
-            <p class="card-text">Our Buyer Protection covers your purchase from click to delivery.</p>
+        <div id="notLoggedIn" class="alert alert-warning mt-5" style="display: none;">
+            <h4>Phiên đăng nhập đã hết hạn hoặc bạn chưa đăng nhập!</h4>
+            <p>Đang chuyển về trang đăng nhập...</p>
         </div>
     </div>
 </div>
-<!--CARD END-->
-
-<!--SHOPIFY-->
-<div class="shopify">
-    <div class="text-center">
-        <h3 class="title-heading">
-            Best Sellers
-        </h3>
-        <span class="sub-heading">
-                Don't Miss Today's Featured Deals
-            </span>
-    </div>
-    <div class="product">
-        <div class="row">
-            <div class="col-sm">
-                <div class="product-item">
-                    <a href="product.html">
-                        <img src="../../img/shopify1.png">
-                    </a>
-                </div>
-                <div class="product-info">
-                    <h4>Sneaker earth - hight top -goat</h4>
-                    <span>$500.00</span>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="product-item">
-                    <img src="../../img/shopify2.png">
-                </div>
-                <div class="product-info">
-                    <h4>SB Chron British Tan</h4>
-                    <span>$500.00</span>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="product-item">
-                    <img src="../../img/shopify3.png">
-                </div>
-                <div class="product-info">
-                    <h4>Converse Chuck Taylor Star</h4>
-                    <span>$500.00</span>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="product-item">
-                    <img src="../../img/shopify4.png">
-                </div>
-                <div class="product-info">
-                    <h4>Converse Unisex Shoes</h4>
-                    <span>$500.00</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- </div> -->
-</div>
-<!--END SHOPIFY-->
-
-<!--BANNER-->
-<div class="banner">
-    <div class="row text-center bannerbottom">
-        <div class="col-sm">
-            <img src="../../img/banner1.png">
-        </div>
-        <div class="col-sm">
-            <img src="../../img/banner2.png">
-        </div>
-    </div>
-
-    <div class="text-center bannertop">
-        <h3 class="title-heading">
-            Street Collection
-        </h3>
-        <span>
-                JUST FOR YOU
-            </span>
-        <p href="" style="margin-top:55px">
-            SHOP NOW
-        </p>
-    </div>
-</div>
-<!--END BANNER-->
-
-<!--INSPIRATION-->
-<div class="inspiration">
-    <div class="text-center">
-        <h3 class="title-heading">
-            INSPIRATION
-        </h3>
-        <span class="sub-heading">
-                Our beloved beauty experts will wow your brows, get you glowing and so much more
-            </span>
-    </div>
-    <div class="blog">
-        <div class="row">
-            <div class="col-sm">
-                <div class="blog-item">
-                    <img src="../../img/blog1.png">
-                </div>
-                <div class="blog-info">
-                    <h3>
-                        Sneaker Freaker Shoes Van
-                    </h3>
-                    <span>
-                            Dancing Shoes from Mr.Klesha animation on Vimeo. The Australian independent magazine has
-                            become a staple for sneaker news predating back to its...
-                        </span>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="blog-item">
-                    <img src="../../img/blog2.png">
-                </div>
-                <div class="blog-info">
-                    <h3>
-                        Sneaker Freaker Shoes
-                    </h3>
-                    <span>
-                            It's BL'EVE! · PAYROLL feat. Jimmy 2Shoes (Prod by Platinum Beat Service) The Australian
-                            independent magazine has become a staple for...
-                        </span>
-                </div>
-            </div>
-            <div class="col-sm">
-                <div class="blog-item">
-                    <img src="../../img/blog3.png">
-                </div>
-                <div class="blog-info">
-                    <h3>
-                        Sneaker Freaker Shoes
-                    </h3>
-                    <span>
-                            The Australian independent magazine has become a staple for sneaker news predating back to
-                            its 2002 print launch. Adapting with the times,...
-                        </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<!--END INSPIRATION-->
-
-<!--INSTAGRAM-->
-<div class="instagram text-center">
-    <img src="../../img/instagram.png">
-    <h3>
-        SHOP INSTAGRAM
-    </h3>
-    <span>
-            News & updates from NiverStore. No spam, we promise.
-        </span>
-</div>
-<!--END INSTAGRAM-->
 
 <!--FOOTER-->
 <footer class="footer mt-5">
@@ -616,30 +380,14 @@ font-weight: 600;">MEGA MALL</h3>
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -647,75 +395,40 @@ font-weight: 600;">MEGA MALL</h3>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border"> Help & Information <br> <hr class="hr"> </h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
+                        <li><a href="" title="Pagination">Pagination</a></li>
+                        <li><a href="" title="Pagination">Terms & Conditions</a></li>
+                        <li><a href="" title="Pagination">Contact</a></li>
+                        <li><a href="" title="Pagination">Accessories</a></li>
+                        <li><a href="" title="Pagination">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border"> About Us <br> <hr class="hr"> </h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
+                        <li><a href="" title="Pagination">Help Center</a></li>
+                        <li><a href="" title="Pagination">Address Store</a></li>
+                        <li><a href="" title="Pagination">Privacy Policy</a></li>
+                        <li><a href="" title="Pagination">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border"> Profile <br> <hr class="hr"> </h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
+                        <li><a href="" title="Pagination">My Account</a></li>
+                        <li><a href="" title="Pagination">Checkout</a></li>
+                        <li><a href="" title="Pagination">Order Tracking</a></li>
+                        <li><a href="" title="Pagination">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -724,244 +437,104 @@ font-weight: 600;">MEGA MALL</h3>
     <hr style="background-color: white;">
     <div class="copyright" style="color: white;">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Mega Mall
-                    </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold"> Designed </a> by <a href="" class="underline_hover link"> Mega Mall </a>
                 </div>
                 <p></p>
             </div>
         </div>
     </div>
 </footer>
-
 <!--END FOOTER-->
+
 <script>
-
     const BASE_URL = "http://localhost:8888/api";
-    let authToken = null;
 
-    // Auto login để lấy token
-    async function autoLogin() {
-        try {
-            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: "nvo28@example.com", // Thay bằng email tồn tại trong DB
-                    password: "nvo28" // Password đúng
-                })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                authToken = data.data.accessToken;
-                console.log("Login thành công! Token:", authToken);
-            } else {
-                console.error("Login thất bại:", await res.text());
-            }
-        } catch (err) {
-            console.error("Lỗi kết nối login:", err);
-        }
-    }
+    async function checkLoginAndShowUser() {
+        $('#loading').show();
+        $('#profileInfo').hide();
+        $('#notLoggedIn').hide();
 
-    autoLogin();
+        const authToken = localStorage.getItem('authToken');
+        let savedUser = localStorage.getItem('currentUser');
+        const savedUserId = localStorage.getItem('currentUserId');
 
-    // Xử lý form Sign Up
-    $('#signupForm').on('submit', async function(e) {
-        e.preventDefault();
-
-        const email = $('#signupEmail').val().trim();
-        const firstName = $('#signupFirstName').val().trim();
-        const fullAddress = $('#signupFullAddress').val().trim();
-        const password = $('#signupPassword').val();
-        const confirmPassword = $('#signupConfirmPassword').val();
-
-        // Reset lỗi
-        $('#signupError').hide().text('');
-
-        // Validation cơ bản
-        if (!email || !firstName || !fullAddress || !password) {
-            $('#signupError').text('Vui lòng điền đầy đủ các trường bắt buộc!').show();
+        if (!authToken) {
+            $('#loading').hide();
+            showNotLoggedIn();
             return;
         }
 
-        if (password !== confirmPassword) {
-            $('#signupError').text('Mật khẩu xác nhận không khớp!').show();
-            return;
-        }
-
-        if (password.length < 6) {
-            $('#signupError').text('Mật khẩu phải ít nhất 6 ký tự!').show();
-            return;
-        }
-
-        const payload = {
-            email,
-            password,
-            firstName,
-            fullAddress
-        };
-
-        try {
-            const res = await fetch(`${BASE_URL}/auth/sign-up`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
-                // Chuyển sang tab Login
-                $('.nav-tabs a[href="#home"]').tab('show');
-                // Reset form
-                $('#signupForm')[0].reset();
-            } else {
-
-                const errorMsg = data.message || data.errors?.[0]?.message || 'Đăng ký thất bại!';
-                $('#signupError').text(errorMsg).show();
-            }
-        } catch (err) {
-            console.error(err);
-            $('#signupError').text('Lỗi kết nối server! Vui lòng thử lại sau.').show();
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const chatbotToggler = document.getElementById('chatbot-toggler');
-        const chatbotBox = document.getElementById('chatbot-box');
-        const chatbotClose = document.getElementById('chatbot-close');
-        const chatbotInput = document.getElementById('chatbot-input');
-        const chatbotSend = document.getElementById('chatbot-send');
-        const chatbotMessages = document.getElementById('chatbot-messages');
-
-        if (!chatbotToggler || !chatbotBox) {
-            console.error("Không tìm thấy phần tử chatbot!");
-            return;
-        }
-
-        chatbotToggler.addEventListener('click', () => {
-            const isVisible = chatbotBox.style.display === 'flex';
-            chatbotBox.style.display = isVisible ? 'none' : 'flex';
-            if (!isVisible) {
-                chatbotInput.focus();
-            }
-        });
-
-        chatbotClose.addEventListener('click', () => {
-            chatbotBox.style.display = 'none';
-        });
-
-        chatbotSend.addEventListener('click', sendChatMessage);
-        chatbotInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendChatMessage();
-        });
-
-        async function sendChatMessage() {
-            const message = chatbotInput.value.trim();
-            if (!message) return;
-
-            appendChatMessage(message, 'user');
-            chatbotInput.value = '';
-
-            const typing = appendChatMessage('Đang suy nghĩ...', 'bot');
-            typing.classList.add('typing');
-
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            if (authToken) {
-                headers['Authorization'] = `Bearer ${authToken}`;
-            }
-
+        if (savedUser) {
             try {
-                const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
-                    method: 'POST',
-                    headers: headers,
-                    body: JSON.stringify({
-                        question: message,
-                        sessionID: localStorage.getItem('chatSessionID') || 'homepage-' + Date.now()
-                    })
+                const user = JSON.parse(savedUser);
+                $('#loading').hide();
+                displayUserInfo(user);
+                return;
+            } catch (err) {
+                console.error("Lỗi parse saved user:", err);
+            }
+        }
+
+        if (savedUserId) {
+            try {
+                const res = await fetch(`${BASE_URL}/users/${savedUserId}`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
                 });
 
-                const data = await res.json();
-                typing.remove();
                 if (res.ok) {
-                    const botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
-                    appendChatMessage(botReply, 'bot');
-
-                    if (data.sessionID) {
-                        localStorage.setItem('chatSessionID', data.sessionID);
-                    }
-                } else {
-                    appendChatMessage(`Lỗi: ${data.message || res.status}`, 'bot');
+                    const data = await res.json();
+                    const user = data.data;
+                    localStorage.setItem('currentUser', JSON.stringify(user));
+                    $('#loading').hide();
+                    displayUserInfo(user);
+                    return;
                 }
             } catch (err) {
-                typing.remove();
-                appendChatMessage("Lỗi kết nối server!", 'bot');
-                console.error(err);
+                console.error("Lỗi gọi /users/{id}:", err);
             }
         }
 
-        function appendChatMessage(text, sender) {
-            const div = document.createElement('div');
-            div.className = `chatbot-message ${sender}`;
-            const bubble = document.createElement('div');
-            bubble.className = 'chatbot-bubble';
-            bubble.textContent = text;
-            div.appendChild(bubble);
-            chatbotMessages.appendChild(div);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            return div;
+        $('#loading').hide();
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('currentUserId');
+        showNotLoggedIn();
+    }
+
+    function displayUserInfo(user) {
+        $('#userFullName').text((user.firstName || '') + ' ' + (user.lastName || '') || 'Chưa cập nhật');
+        $('#userEmail').text(user.email || 'Chưa có');
+        $('#userAddress').text(user.fullAddress || 'Chưa cập nhật');
+        $('#userCity').text(user.city || 'Chưa cập nhật');
+        $('#userProvince').text(user.province || 'Chưa cập nhật');
+        $('#userPhone').text(user.phone || 'Chưa có');
+        $('#userStatus').text(user.status === 'active' ? 'Active' : user.status || 'Unknown');
+        $('#userStatus').addClass(user.status === 'active' ? 'badge-success' : 'badge-secondary');
+        $('#profileInfo').show();
+    }
+
+    function showNotLoggedIn() {
+        $('#notLoggedIn').show();
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
+    }
+
+    $('#logoutBtn').on('click', function() {
+        if (confirm("Bạn có chắc muốn đăng xuất?")) {
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('currentUserId');
+            alert("Đã đăng xuất!");
+            window.location.href = 'login.html';
         }
     });
+
+    $(document).ready(function() {
+        checkLoginAndShowUser();
+    });
 </script>
-<div id="chatbot-container">
-    <!-- Icon floating -->
-    <div id="chatbot-toggler" class="chatbot-toggler">
-        <i class="fas fa-comment-dots chatbot-icon"></i>
-        <span class="chatbot-badge">Chat với AI</span>
-    </div>
-
-    <!-- Chatbox popup -->
-    <div id="chatbot-box" class="chatbot-box">
-        <!-- Header -->
-        <div class="chatbot-header">
-            <div class="chatbot-header-left">
-                <i class="fas fa-robot chatbot-avatar"></i>
-                <div class="chatbot-info">
-                    <h5>Mega Mall AI Assistant</h5>
-                    <span class="online-status">● Đang online</span>
-                </div>
-            </div>
-            <span id="chatbot-close" class="chatbot-close">&times;</span>
-        </div>
-
-        <!-- Messages area -->
-        <div id="chatbot-messages" class="chatbot-messages">
-            <div class="chatbot-message bot">
-                <div class="chatbot-bubble">
-                    Xin chào! Tôi là AI Assistant của Mega Mall Store. Bạn cần hỗ trợ gì hôm nay? 😊
-                </div>
-            </div>
-        </div>
-
-        <!-- Input area -->
-        <div class="chatbot-input-area">
-            <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn của bạn..." autocomplete="off" />
-            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
-        </div>
-    </div>
-</div>
 </body>
-
 </html>
