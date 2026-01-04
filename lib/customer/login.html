@@ -4,68 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Mega Mall</title>
-
     <!-- Bootstrap & Font Awesome -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <!-- Thêm jQuery ở đây -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
     <!-- Custom style -->
     <link rel="stylesheet" href="../../css/index.css">
-
     <style>
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .login-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            overflow: hidden;
-            width: 400px;
-            max-width: 90%;
-        }
-        .login-header {
-            background: #ff6b6b;
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        .login-header img {
-            width: 80px;
-        }
-        .login-header h3 {
-            margin-top: 15px;
-            font-weight: 600;
-        }
-        .login-body {
-            padding: 40px 30px;
-        }
-        .form-control {
-            border-radius: 30px;
-            padding: 12px 20px;
-        }
-        .btn-login {
-            background: #ff6b6b;
-            border: none;
-            border-radius: 30px;
-            padding: 12px;
-            font-weight: bold;
-            width: 100%;
-        }
-        .btn-login:hover {
-            background: #ff5252;
-        }
-        .text-link {
-            color: #ff6b6b;
-            text-decoration: underline;
-        }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .login-card { background: white; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; width: 400px; max-width: 90%; }
+        .login-header { background: #ff6b6b; color: white; padding: 30px; text-align: center; }
+        .login-header img { width: 80px; }
+        .login-header h3 { margin-top: 15px; font-weight: 600; }
+        .login-body { padding: 40px 30px; }
+        .form-control { border-radius: 30px; padding: 12px 20px; }
+        .btn-login { background: #ff6b6b; border: none; border-radius: 30px; padding: 12px; font-weight: bold; width: 100%; }
+        .btn-login:hover { background: #ff5252; }
+        .text-link { color: #ff6b6b; text-decoration: underline; }
     </style>
 </head>
 <body>
@@ -97,15 +53,12 @@
     $('#loginForm').on('submit', async function(e) {
         e.preventDefault();
         $('#loginError').hide().text('');
-
         const email = $('#loginEmail').val().trim();
         const password = $('#loginPassword').val();
-
         if (!email || !password) {
             $('#loginError').text('Vui lòng nhập đầy đủ email và mật khẩu!').show();
             return;
         }
-
         try {
             // Bước 1: Đăng nhập lấy token
             const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
@@ -113,15 +66,12 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
-
             const loginData = await loginRes.json();
-
             if (!loginRes.ok || !loginData.data?.accessToken) {
                 const msg = loginData.message || 'Email hoặc mật khẩu không đúng!';
                 $('#loginError').text(msg).show();
                 return;
             }
-
             const token = loginData.data.accessToken;
             localStorage.setItem('authToken', token);
 
@@ -129,11 +79,8 @@
             const userRes = await fetch(`${BASE_URL}/users?email=${encodeURIComponent(email)}&itemPerPage=1&page=1`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
-
             const userData = await userRes.json();
-
             let user = null;
-
             if (userRes.ok && userData.data?.list?.length > 0) {
                 user = userData.data.list[0]; // Lấy user đầu tiên (duy nhất)
             } else {
@@ -142,18 +89,19 @@
                 alert("Đăng nhập thành công nhưng không lấy được đầy đủ thông tin cá nhân!");
             }
 
-            // Lưu thông tin user vào localStorage
+            // Lưu thông tin user vào localStorage (bao gồm ID nếu có)
             localStorage.setItem('currentUser', JSON.stringify(user));
+            if (user.id) { // Giả sử backend trả về field 'id'
+                localStorage.setItem('currentUserId', user.id);
+            }
 
             alert("Đăng nhập thành công!");
-            window.location.href = 'test.html';
-
+            window.location.href = 'index.html';
         } catch (err) {
             console.error("Lỗi kết nối:", err);
             $('#loginError').text('Lỗi kết nối server. Vui lòng thử lại sau.').show();
         }
     });
 </script>
-
 </body>
 </html>
