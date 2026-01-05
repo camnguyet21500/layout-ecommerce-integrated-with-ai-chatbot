@@ -697,6 +697,7 @@
     });
 
     // Tạo đơn hàng khi bấm Proceed to Checkout – FIX TRIỆT ĐỂ LỖI 400
+    // Tạo đơn hàng khi bấm Proceed to Checkout – TỰ ĐỘNG XÓA GIỎ SAU KHI ĐẶT HÀNG
     $('#proceedCheckoutBtn').on('click', async function(e) {
         e.preventDefault();
         if (!confirm("Xác nhận tạo đơn hàng từ giỏ hàng hiện tại?")) {
@@ -761,7 +762,7 @@
             // Tạo orderNumber đơn giản
             const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
-            // Payload đúng theo schema (có subtotal, tax=0, shipping=0, discount=0, totalAmount = subtotal)
+            // Payload đúng theo schema
             const payload = {
                 orderNumber: orderNumber,
                 userID: userId,
@@ -793,16 +794,20 @@
             const orderData = await createOrderRes.json();
             alert(`Đặt hàng thành công! Mã đơn hàng: ${orderData.data.orderNumber}`);
 
-            // Xóa giỏ hàng sau khi đặt thành công (tùy chọn)
-            if (confirm("Xóa giỏ hàng sau khi đặt hàng?")) {
-                for (let item of cartItems) {
-                    await fetch(`${BASE_URL}/cart-items/${item.id}`, {
-                        method: 'DELETE',
-                        headers
-                    });
-                }
-                loadCartItems(); // Reload giỏ trống
+            // TỰ ĐỘNG XÓA TOÀN BỘ GIỎ HÀNG SAU KHI ĐẶT HÀNG THÀNH CÔNG
+            for (let item of cartItems) {
+                await fetch(`${BASE_URL}/cart-items/${item.id}`, {
+                    method: 'DELETE',
+                    headers
+                });
             }
+
+            // Reload lại giỏ hàng → hiển thị trống
+            loadCartItems();
+
+            // Thông báo thêm
+            alert("Giỏ hàng đã được làm trống sau khi đặt hàng thành công!");
+
         } catch (err) {
             console.error("Lỗi đặt hàng:", err);
             alert("Lỗi đặt hàng: " + err.message);
