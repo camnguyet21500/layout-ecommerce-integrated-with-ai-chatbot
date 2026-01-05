@@ -667,7 +667,7 @@
 
             // Bước mới: Fetch product variants để lấy productVariantID (vì backend yêu cầu variant, không phải product trực tiếp)
             let productVariantID;
-            const variantsRes = await fetch(`${BASE_URL}/product-variants?productID=${productId}&itemPerPage=10&page=1&status=active`, { headers });
+            const variantsRes = await fetch(`${BASE_URL}/product-variants?productID=${productId}&itemPerPage=10&page=1`, { headers });
             if (variantsRes.ok) {
                 const variantsData = await variantsRes.json();
                 const variants = variantsData.data?.list || [];
