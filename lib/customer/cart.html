@@ -463,7 +463,7 @@
         const headers = { 'Authorization': `Bearer ${authToken}` };
 
         try {
-            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartId=${cartId}&itemPerPage=100&page=1`, { headers });
+            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
             if (!itemsRes.ok) throw new Error("Lỗi load cart items");
             const itemsData = await itemsRes.json();
             let items = itemsData.data.list || [];
