@@ -1,225 +1,182 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart | Mabu Store</title>
-
     <!--CDN CSS-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
-        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
-        crossorigin="anonymous"></script>
-
-    <!--JS library-->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-        crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js"
-        integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s"
-        crossorigin="anonymous"></script>
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <!--JS library: Full jQuery first-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
     <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
-    <!-- ION ICON -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons.min.js"></script>
-
-    <!--Angular-->
+    <!-- ION ICON: Fix warning -->
+    <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.js"></script>
+    <!--Angular--> <!-- Remove if not used, or implement controller -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-
     <!-- CSS -->
     <link rel="stylesheet" href="../../css/cart.css">
-    
 </head>
-
-<body ng-app="myApp">
-    <!-- HEADER -->
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white">
-            <div class="container-fluid container-fluid-v1">
-                <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav">
-                        <div class="dropdown">
-                            <a class="nav-link text-body" href="index.html" id="navbarDropdown" role="button">HOME</a>
-                        </div>
-                        <div class="dropdown">
-                            <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SHOP
-                                <span class="absolute label_menu">HOT</span>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
-                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
+<body> <!-- Removed ng-app and ng-controller, use jQuery instead -->
+<!-- HEADER -->
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white">
+        <div class="container-fluid container-fluid-v1">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav">
+                    <div class="dropdown">
+                        <a class="nav-link text-body" href="index.html" id="navbarDropdown" role="button">HOME</a>
+                    </div>
+                    <div class="dropdown">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SHOP <span class="absolute label_menu">HOT</span> </a>
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
                                 </div>
                             </div>
                         </div>
-
-                        <div class="dropdown">
-                            <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
-                            <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
-                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
+                    </div>
+                    <div class="dropdown">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
                                 </div>
-                                <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
                             </div>
+                            <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
-
-                        <div class="dropdown">
-                            <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
-                            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
-                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
+                    </div>
+                    <div class="dropdown">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
                                 </div>
                             </div>
                         </div>
-                        <div class="dropdown">
-                            <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
-                            <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
-                                aria-labelledby="dropdownMenuButton" style="width: 700px;">
-                                <div class="row">
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Another action</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                        <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    </div>
-                                    <div class="col-sm">
-                                        <a class="dropdown-item" href="#">Something else here</a>
-                                        <div class="dropdown-divider"></div>
-                                        <div class="poly-cart">
-                                            <div class="panel panel-default">
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <img class="col-sm-5" src="../../img/img_header1.jpg" />
-                                                        <ul class="col-sm-7">
-                                                            SB Chron British Tan<br>
-                                                            $ 500.00
-                                                        </ul>
-                                                    </div>
+                    </div>
+                    <div class="dropdown">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                            <div class="row">
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                </div>
+                                <div class="col-sm">
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                    <ul class="col-sm-7"> SB Chron British Tan<br> $ 500.00 </ul>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="dropdown-divider"></div>
-                                        <div class="poly-cart">
-                                            <div class="panel panel-default">
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <img class="col-sm-5" src="../../img/img_header2.jpg" />
-                                                        <ul class="col-sm-7">
-                                                            Converse Chuck Taylor Star<br>
-                                                            $ 500.00
-                                                        </ul>
-                                                    </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                    <ul class="col-sm-7"> Converse Chuck Taylor Star<br> $ 500.00 </ul>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="dropdown-divider"></div>
-                                        <div class="poly-cart">
-                                            <div class="panel panel-default">
-                                                <div class="panel-body">
-                                                    <div class="row">
-                                                        <img class="col-sm-5" src="../../img/img_header3.jpg" />
-                                                        <ul class="col-sm-7">
-                                                            Converse Unisex Shoes<br>
-                                                            $ 300.00
-                                                        </ul>
-                                                    </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                    <ul class="col-sm-7"> Converse Unisex Shoes<br> $ 300.00 </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -227,244 +184,381 @@
                                 </div>
                             </div>
                         </div>
-                    </ul>
-                </div>
-                <img src="img/logoblack.jpg" width="5%" style="margin-right: 450px;">
-                <div class="icon" style="display: inherit">
-                    <i class="fas fa-search"></i>
-                    <i class="far fa-user"></i>
-                    <i class="far fa-heart"></i>
-                    <a href="cart.html"><i class="fas fa-dolly"></i></a>
-                </div>
+                    </div>
+                </ul>
             </div>
-        </nav>
-        <div class="bgr">
-            <div class="jumbotron jumbotron-fluid">
-                <h1 class="display-4" style="color: white;">Cart</h1>
-                <p class="lead" style="color: white;">
-                    <a href="" style="color: white;">Home</a> > Your shopping cart
-                </p>
+            <img src="img/logoblack.jpg" width="5%" style="margin-right: 450px;">
+            <div class="icon" style="display: inherit">
+                <i class="fas fa-search"></i>
+                <i class="far fa-user"></i>
+                <i class="far fa-heart"></i>
+                <a href="cart.html"><i class="fas fa-dolly"></i></a>
             </div>
         </div>
-    </header>
-    <!-- END HEADER -->
-
-    <!-- CART -->
-    <section ng-controller="proCtrl">
-        <div class="container">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th scope="col">PRODUCT NAME</th>
-                        <th scope="col">PRICE</th>
-                        <th scope="col">QUANTITY</th>
-                        <th scope="col">TOTAL</th>
-                    </tr>
-                </thead>
+    </nav>
+    <div class="bgr">
+        <div class="jumbotron jumbotron-fluid">
+            <h1 class="display-4" style="color: white;">Cart</h1>
+            <p class="lead" style="color: white;">
+                <a href="" style="color: white;">Home</a> > Your shopping cart
+            </p>
+        </div>
+    </div>
+</header>
+<!-- END HEADER -->
+<!-- CART -->
+<section>
+    <div class="container">
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">PRODUCT NAME</th>
+                <th scope="col">PRICE</th>
+                <th scope="col">QUANTITY</th>
+                <th scope="col">TOTAL</th>
+                <th scope="col">ACTION</th> <!-- Thêm cột remove -->
+            </tr>
+            </thead>
+            <tbody id="cartItemsBody">
+            <!-- Cart items sẽ render động ở đây -->
+            </tbody>
+        </table>
+        <div class="cart-update">
+            <input type="submit" class="button" value="UPDATE CART" id="updateCartBtn">
+        </div>
+        <div class="continue-shopping">
+            <a href="">CONTINUE SHOPPING</a>
+        </div>
+        <div class="cart-check">
+            <h2 class="cart-title">CART TOTAL</h2>
+            <table class="total-checkout">
                 <tbody>
-                    <tr>
-                        <td>
-                            <img src="../../img/Vans1.jpg" style="max-width: 10%;">
-                            Vans Authentic Shoes Black
-                        </td>
-                        <td>$400.00</td>
-                        <td>
-                            <div class="js-qty">
-                                <button class="qty-minus" ng-click="minus(item.id)" type="button">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <input type="text" class="js-qty-num" type="number" value="1"
-                                    aria-label="quantity" pattern="[0-9]*" name="quantity">
-                                <button class="qty-plus" type="button" ng-click="add(item.id)">
-                                    <i class="fas fa-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td>$400.00</td>
-                    </tr>
-                </tbody>
-            </table>
-            <div class="cart-update">
-                <input type="submit" class="button" value="UPDATE CART" name="update_cart">
-            </div>
-            <div class="continue-shopping">
-                <a href="">CONTINUE SHOPPING</a>
-            </div>
-
-            <div class="cart-check">
-                <h2 class="cart-title">CART TOTAL</h2>
-                <table class="total-checkout">
-                    <tbody>
-                        <tr>
-                            <th class="cart-label">
-                                <span>Total</span>
-                            </th>
-                            <td class="cart-amount">
+                <tr>
+                    <th class="cart-label">
+                        <span>Total</span>
+                    </th>
+                    <td class="cart-amount">
                                 <span>
                                     <strong>
-                                        <span class="amount">$400.00</span>
+                                        <span id="cartTotal" class="amount">0 ₫</span>
                                     </strong>
                                 </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="proceed-to-checkout">
+                <a href="" class="checkout-button"> PROCEED TO CHECKOUT </a>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- END CART -->
+<!--FOOTER-->
+<footer class="footer mt-5">
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/logowhite.jpg" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        No 40 New York City 133/2 <br> + (156) 1800-766-9999 <br> ttcosmetic@example.com <br> ttcosmetic-store.com</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border"> Help & Information <br> <hr class="hr"> </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li> <a href="" title="Pagination">Pagination</a> </li>
+                        <li> <a href="" title="Pagination">Terms & Conditions</a> </li>
+                        <li> <a href="" title="Pagination">Contact</a> </li>
+                        <li> <a href="" title="Pagination">Accessories</a> </li>
+                        <li> <a href="" title="Pagination">Term of use</a> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border"> About Us <br> <hr class="hr"> </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li> <a href="" title="Pagination">Help Center</a> </li>
+                        <li> <a href="" title="Pagination">Address Store</a> </li>
+                        <li> <a href="" title="Pagination">Privacy Policy</a> </li>
+                        <li> <a href="" title="Pagination">Receivers & Amplifiers</a> </li>
+                        <li> <a href="" title="Pagination">TT Cosmetic</a> </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border"> Profile <br> <hr class="hr"> </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li> <a href="" title="Pagination">My Account</a> </li>
+                        <li> <a href="" title="Pagination">Checkout</a> </li>
+                        <li> <a href="" title="Pagination">Order Tracking</a> </li>
+                        <li> <a href="" title="Pagination">Help & Support</a> </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2020 | <a href="" class="underline_hover bold"> Camamas </a> By <a href="" class="underline_hover link"> Mabu Store </a>
+                </div>
+                <p></p>
+            </div>
+            <!-- <div class="col-lg-6 col-md-6 text-md-right"> <img src="images/paymet.jpg" alt="" style="justify-content: right;"> </div> -->
+        </div>
+    </div>
+</footer>
+<!--END FOOTER-->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery full for ajax -->
+<script>
+    const BASE_URL = "http://localhost:8888/api";
+
+    async function getOrCreateCartId() {
+        const authToken = localStorage.getItem('authToken');
+        const savedUser = localStorage.getItem('currentUser');
+        if (!authToken || !savedUser) {
+            alert("Vui lòng đăng nhập để xem giỏ hàng!");
+            window.location.href = 'login.html';
+            return null;
+        }
+        const user = JSON.parse(savedUser);
+        const userId = user.id;
+        const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+
+        try {
+            let cartId;
+            // Sửa query: dùng userID (hoa ID), bỏ status
+            const cartsRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
+            if (cartsRes.ok) {
+                const cartsData = await cartsRes.json();
+                if (cartsData.data?.list?.length > 0) {
+                    cartId = cartsData.data.list[0].id;
+                }
+            }
+
+            if (!cartId) {
+                // Tạo cart mới với userID
+                const createCartRes = await fetch(`${BASE_URL}/carts`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ userID: userId })
+                });
+                if (!createCartRes.ok) {
+                    const errData = await createCartRes.json();
+                    throw new Error("Lỗi tạo cart: " + (errData.message || createCartRes.status));
+                }
+                const createCartData = await createCartRes.json();
+                cartId = createCartData.data.id;
+            }
+            return cartId;
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi lấy/tạo cart: " + err.message);
+            return null;
+        }
+    }
+
+    // Load và render cart items
+    async function loadCartItems() {
+        const cartId = await getOrCreateCartId();
+        if (!cartId) return;
+
+        const authToken = localStorage.getItem('authToken');
+        const headers = { 'Authorization': `Bearer ${authToken}` };
+
+        try {
+            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartId=${cartId}&itemPerPage=100&page=1`, { headers });
+            if (!itemsRes.ok) throw new Error("Lỗi load cart items");
+            const itemsData = await itemsRes.json();
+            let items = itemsData.data.list;
+
+            // Nếu backend không join product, fetch thêm (giả định backend trả productId, quantity, id; fetch name/image/price)
+            for (let item of items) {
+                if (!item.product) { // Nếu không có product join
+                    const productRes = await fetch(`${BASE_URL}/products/${item.productId}`, { headers });
+                    if (productRes.ok) {
+                        const productData = await productRes.json();
+                        item.product = productData.data; // Attach product
+                    }
+                }
+                // Giả định price từ product hoặc item.price
+                item.price = item.product?.price || item.price || 0;
+                item.mainImage = item.product?.productImages?.[0]?.imageUrl || "../../img/default-product.jpg";
+            }
+
+            renderCartItems(items);
+        } catch (err) {
+            console.error(err);
+            $('#cartItemsBody').html('<tr><td colspan="5" class="text-center text-danger">Lỗi tải giỏ hàng</td></tr>');
+        }
+    }
+
+    function renderCartItems(items) {
+        const tbody = $('#cartItemsBody');
+        tbody.empty();
+        let total = 0;
+        if (items.length === 0) {
+            tbody.html('<tr><td colspan="5" class="text-center">Giỏ hàng trống</td></tr>');
+        } else {
+            items.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                const price = Number(item.price).toLocaleString('vi-VN') + ' ₫';
+                const itemTotalStr = Number(itemTotal).toLocaleString('vi-VN') + ' ₫';
+                tbody.append(`
+                        <tr data-item-id="${item.id}">
+                            <td>
+                                <img src="${item.mainImage}" style="max-width: 10%;">
+                                ${item.product?.name || 'Sản phẩm không tên'}
                             </td>
+                            <td>${price}</td>
+                            <td>
+                                <div class="js-qty">
+                                    <button class="qty-minus" type="button"><i class="fas fa-minus"></i></button>
+                                    <input type="text" class="js-qty-num" value="${item.quantity}" aria-label="quantity" pattern="[0-9]*" name="quantity">
+                                    <button class="qty-plus" type="button"><i class="fas fa-plus"></i></button>
+                                </div>
+                            </td>
+                            <td class="item-total">${itemTotalStr}</td>
+                            <td><button class="btn btn-danger btn-sm remove-item">Xóa</button></td>
                         </tr>
-                    </tbody>
-                </table>
-                <div class="proceed-to-checkout">
-                    <a href="" class="checkout-button">
-                        PROCEED TO CHECKOUT
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- END CART -->
+                    `);
+            });
+        }
+        $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
+    }
 
-    <!--FOOTER-->
-    <footer class="footer mt-5">
-        <div class="top-footer">
-            <div class="row footerreponsive">
-                <div class="col-sm-3">
-                    <div class="info_footer end">
-                        <div class="logo-top">
-                            <a href="" class="logo">
-                                <img src="../../img/logowhite.jpg" style="width: 50%;">
-                            </a>
-                        </div>
-                        <div class="mb-0 content_footer" style="margin-top: 23px;">
-                            No 40 New York City 133/2 <br>
-                            + (156) 1800-766-9999 <br>
-                            ttcosmetic@example.com <br>
-                            ttcosmetic-store.com</p>
-                        </div>
-                        <div class="list-icon">
-                            <ul class="list-inline list-unstyled mb-0">
-                                <li class="list-inline-item">
-                                    <a href="" class="social-item">
-                                        <i class="fab fa-twitter"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="" class="social-item">
-                                        <i class="fab fa-weixin"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="" class="social-item">
-                                        <i class="fab fa-weibo"></i>
-                                    </a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="" class="social-item">
-                                        <i class="fab fa-skype"></i>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-3" style="line-height: 34px;">
-                    <div class="info_footer">
-                        <div class="title_footer">
-                            <h4 class="mb-0 title_border">
-                                Help & Information <br>
-                                <hr class="hr">
-                            </h4>
-                        </div>
-                        <ul class="list-unstyled mb-0">
-                            <li>
-                                <a href="" title="Pagination">Pagination</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Terms & Conditions</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Contact</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Accessories</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Term of use</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-3" style="line-height: 34px;">
-                    <div class="info_footer">
-                        <div class="title_footer">
-                            <h4 class="mb-0 title_border">
-                                About Us <br>
-                                <hr class="hr">
-                            </h4>
-                        </div>
-                        <ul class="list-unstyled mb-0">
-                            <li>
-                                <a href="" title="Pagination">Help Center</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Address Store</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Privacy Policy</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Receivers & Amplifiers</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">TT Cosmetic</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-sm-3" style="line-height: 34px;">
-                    <div class="info_footer">
-                        <div class="title_footer">
-                            <h4 class="mb-0 title_border">
-                                Profile <br>
-                                <hr class="hr">
-                            </h4>
-                        </div>
-                        <ul class="list-unstyled mb-0">
-                            <li>
-                                <a href="" title="Pagination">My Account</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Checkout</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Order Tracking</a>
-                            </li>
-                            <li>
-                                <a href="" title="Pagination">Help & Support</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <hr style="background-color: white;">
-        <div class="copyright" style="color: white;">
-            <div class="row align-items-center">
-                <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
-                    <div class="text-copyright mb-0">
-                        © Copyright 2020 |
-                        <a href="" class="underline_hover bold">
-                            Camamas
-                        </a>
-                        By
-                        <a href="" class="underline_hover link">
-                            Mabu Store
-                        </a>
-                    </div>
-                    <p></p>
-                </div>
-                <!-- <div class="col-lg-6 col-md-6 text-md-right">
-                    <img src="images/paymet.jpg" alt="" style="justify-content: right;">
-                </div> -->
-            </div>
-        </div>
-    </footer>
-    <!--END FOOTER-->
+    // Handle qty change in cart
+    $(document).on('click', '.qty-minus', function() {
+        const input = $(this).siblings('.js-qty-num');
+        let qty = parseInt(input.val());
+        if (qty > 1) {
+            input.val(qty - 1);
+            updateItemQuantity($(this).closest('tr'));
+        }
+    });
+    $(document).on('click', '.qty-plus', function() {
+        const input = $(this).siblings('.js-qty-num');
+        let qty = parseInt(input.val());
+        input.val(qty + 1);
+        updateItemQuantity($(this).closest('tr'));
+    });
+    $(document).on('change', '.js-qty-num', function() {
+        let qty = parseInt($(this).val());
+        if (isNaN(qty) || qty < 1) $(this).val(1);
+        updateItemQuantity($(this).closest('tr'));
+    });
+
+    // Update quantity via PATCH
+    async function updateItemQuantity(row) {
+        const itemId = row.data('item-id');
+        const newQty = parseInt(row.find('.js-qty-num').val());
+        const authToken = localStorage.getItem('authToken');
+        const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+
+        try {
+            const updateRes = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ quantity: newQty }) // Giả định UpdateCartItemDto có quantity
+            });
+            if (!updateRes.ok) throw new Error("Lỗi update quantity");
+            // Update item total
+            const price = parseFloat(row.find('td:nth-child(2)').text().replace(/[^0-9]/g, ''));
+            const itemTotal = price * newQty;
+            row.find('.item-total').text(Number(itemTotal).toLocaleString('vi-VN') + ' ₫');
+            // Recalc grand total
+            let total = 0;
+            $('#cartItemsBody .item-total').each(function() {
+                total += parseFloat($(this).text().replace(/[^0-9]/g, ''));
+            });
+            $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi update quantity: " + err.message);
+            loadCartItems(); // Refresh nếu lỗi
+        }
+    }
+
+    // Handle remove item
+    $(document).on('click', '.remove-item', async function() {
+        if (!confirm("Xác nhận xóa sản phẩm?")) return;
+        const row = $(this).closest('tr');
+        const itemId = row.data('item-id');
+        const authToken = localStorage.getItem('authToken');
+        const headers = { 'Authorization': `Bearer ${authToken}` };
+
+        try {
+            const deleteRes = await fetch(`${BASE_URL}/cart-items/${itemId}`, { method: 'DELETE', headers });
+            if (!deleteRes.ok) throw new Error("Lỗi xóa item");
+            row.remove();
+            // Recalc total
+            let total = 0;
+            $('#cartItemsBody .item-total').each(function() {
+                total += parseFloat($(this).text().replace(/[^0-9]/g, ''));
+            });
+            $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
+            if ($('#cartItemsBody tr').length === 0) {
+                $('#cartItemsBody').html('<tr><td colspan="5" class="text-center">Giỏ hàng trống</td></tr>');
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Lỗi xóa item: " + err.message);
+        }
+    });
+
+    // UPDATE CART button: refresh page or reload items
+    $('#updateCartBtn').on('click', function() {
+        loadCartItems();
+        alert("Giỏ hàng đã được cập nhật!");
+    });
+
+    // Chạy khi load trang
+    $(document).ready(function() {
+        loadCartItems();
+    });
+</script>
 </body>
-
 </html>
