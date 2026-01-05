@@ -691,7 +691,7 @@
                 }
             }
 
-            // Bước 1: Fetch chi tiết sản phẩm để lấy giá (nếu cần tạo variant)
+            // Bước 1: Fetch chi tiết sản phẩm để lấy giá mới nhất
             let productPrice = 0;
             const productDetailRes = await fetch(`${BASE_URL}/products/${productId}`, { headers });
             if (!productDetailRes.ok) {
@@ -710,10 +710,20 @@
                 const variants = variantsData.data?.list || [];
 
                 if (variants.length > 0) {
-                    // Dùng variant đầu tiên (hoặc có thể chọn theo logic sau này)
+                    // Có variant → dùng cái đầu tiên và update giá = giá product mới nhất
                     productVariantID = variants[0].id;
+
+                    const updateVariantRes = await fetch(`${BASE_URL}/product-variants/${productVariantID}`, {
+                        method: 'PATCH',
+                        headers,
+                        body: JSON.stringify({ price: productPrice })
+                    });
+
+                    if (!updateVariantRes.ok) {
+                        console.warn("Không update được giá variant, dùng giá cũ");
+                    }
                 } else {
-                    // Chưa có variant → tạo 1 variant default DUY NHẤT
+                    // Chưa có variant → tạo mới với giá hiện tại
                     const createVariantRes = await fetch(`${BASE_URL}/product-variants`, {
                         method: 'POST',
                         headers,

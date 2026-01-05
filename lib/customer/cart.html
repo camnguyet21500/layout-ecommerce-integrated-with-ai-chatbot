@@ -519,16 +519,19 @@
         const headers = { 'Authorization': `Bearer ${authToken}` };
 
         try {
+
             const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
             if (!itemsRes.ok) throw new Error("Lỗi load cart items");
             const itemsData = await itemsRes.json();
             let items = itemsData.data.list || [];
 
             let total = 0;
+
             for (let item of items) {
                 // Backend có thể trả productVariant hoặc chỉ variantId → fetch thêm nếu cần
                 let variantId = item.productVariantID || item.productVariantId; // hỗ trợ cả hai
                 if (!item.product && variantId) {
+
                     const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
                     if (variantRes.ok) {
                         const variantData = await variantRes.json();
@@ -541,6 +544,10 @@
                             const productData = await productRes.json();
                             item.product = productData.data;
                         }
+
+
+
+
                     }
                 }
 
@@ -561,12 +568,21 @@
 
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
+
             }
 
             renderCartItems(items, total);
+
         } catch (err) {
             console.error(err);
             $('#cartItemsBody').html('<tr><td colspan="5" class="text-center text-danger">Lỗi tải giỏ hàng</td></tr>');
+
+
+
+
+
+
+
         }
     }
 
@@ -586,7 +602,7 @@
             const itemTotalStr = Number(itemTotal).toLocaleString('vi-VN') + ' ₫';
 
             tbody.append(`
-            <tr data-item-id="${item.id}"> <!-- ← QUAN TRỌNG: thêm data-item-id để lưu ID cart-item -->
+            <tr data-item-id="${item.id}" data-price="${item.price}" data-quantity="${item.quantity}">
                 <td class="d-flex align-items-center">
                     <img src="${item.mainImage}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border-radius: 8px;">
                     <span>${item.name}</span>
@@ -645,19 +661,24 @@
                 alert("Xóa sản phẩm thành công!");
 
                 // Xóa dòng ngay lập tức trên giao diện
+                // Sau khi xóa dòng thành công
+                // Sau khi xóa thành công
                 row.remove();
 
-                // Tính lại tổng tiền
+// Tính lại total chính xác từ data attribute
                 let grandTotal = 0;
-                $('#cartItemsBody .item-total').each(function() {
-                    const text = $(this).text().replace(/[^0-9]/g, '');
-                    grandTotal += parseInt(text) || 0;
+                $('#cartItemsBody tr').each(function() {
+                    const p = parseFloat($(this).attr('data-price')) || 0;
+                    const q = parseFloat($(this).attr('data-quantity')) || 1;
+                    grandTotal += p * q;
                 });
+
                 $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
 
-                // Nếu giỏ trống
+// Nếu giỏ trống
                 if ($('#cartItemsBody tr').length === 0) {
                     $('#cartItemsBody').html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
+                    $('#cartTotal').text('0 ₫');
                 }
             } else {
                 const err = await res.json();
@@ -708,22 +729,26 @@
             });
             if (!updateRes.ok) throw new Error("Lỗi cập nhật số lượng");
 
-            // Update total hiển thị
-            const price = parseFloat(row.find('td:nth-child(2)').text().replace(/[^0-9]/g, ''));
+            // Cập nhật data-quantity và item-total
+            row.attr('data-quantity', newQty);
+            const price = parseFloat(row.attr('data-price'));
             const itemTotal = price * newQty;
             row.find('.item-total').text(Number(itemTotal).toLocaleString('vi-VN') + ' ₫');
 
-            // Recalc grand total
+            // Tính lại total từ tất cả row (chính xác tuyệt đối)
             let grandTotal = 0;
-            $('#cartItemsBody .item-total').each(function() {
-                grandTotal += parseFloat($(this).text().replace(/[^0-9]/g, ''));
+            $('#cartItemsBody tr').each(function() {
+                const p = parseFloat($(this).attr('data-price')) || 0;
+                const q = parseFloat($(this).attr('data-quantity')) || 1;
+                grandTotal += p * q;
             });
+
             $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
 
         } catch (err) {
             console.error(err);
             alert("Lỗi cập nhật số lượng: " + err.message);
-            loadCartItems(); // reload nếu lỗi
+            loadCartItems();
         }
     }
 
