@@ -305,7 +305,7 @@
                 </tbody>
             </table>
             <div class="proceed-to-checkout">
-                <a href="" class="checkout-button"> PROCEED TO CHECKOUT </a>
+                <button id="proceedCheckoutBtn" class="checkout-button">PROCEED TO CHECKOUT</button>
             </div>
         </div>
     </div>
@@ -468,7 +468,6 @@
         const user = JSON.parse(savedUser);
         const userId = user.id;
         const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
-
         try {
             let cartId;
             // Tìm cart hiện có
@@ -479,14 +478,9 @@
                     cartId = cartsData.data.list[0].id;
                 }
             }
-
             // Nếu không có → tạo mới (với retry nếu unique error)
             if (!cartId) {
-                const createCartRes = await fetch(`${BASE_URL}/carts`, {
-                    method: 'POST',
-                    headers,
-                    body: JSON.stringify({ userID: userId })
-                });
+                const createCartRes = await fetch(`${BASE_URL}/carts`, { method: 'POST', headers, body: JSON.stringify({ userID: userId }) });
                 if (!createCartRes.ok) {
                     // Retry tìm lại nếu lỗi unique
                     const retryRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
@@ -514,29 +508,22 @@
     async function loadCartItems() {
         const cartId = await getOrCreateCartId();
         if (!cartId) return;
-
         const authToken = localStorage.getItem('authToken');
         const headers = { 'Authorization': `Bearer ${authToken}` };
-
         try {
-
             const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
             if (!itemsRes.ok) throw new Error("Lỗi load cart items");
             const itemsData = await itemsRes.json();
             let items = itemsData.data.list || [];
-
             let total = 0;
-
             for (let item of items) {
                 // Backend có thể trả productVariant hoặc chỉ variantId → fetch thêm nếu cần
                 let variantId = item.productVariantID || item.productVariantId; // hỗ trợ cả hai
                 if (!item.product && variantId) {
-
                     const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
                     if (variantRes.ok) {
                         const variantData = await variantRes.json();
                         item.productVariant = variantData.data;
-
                         // Fetch product từ variant
                         const productId = item.productVariant.productID;
                         const productRes = await fetch(`${BASE_URL}/products/${productId}?include=productImages`, { headers });
@@ -544,86 +531,56 @@
                             const productData = await productRes.json();
                             item.product = productData.data;
                         }
-
-
-
-
                     }
                 }
-
                 // Lấy info hiển thị
                 item.name = item.product?.name || 'Sản phẩm không tên';
-                // Ưu tiên giá từ variant (luôn đúng, vì cart-item dựa trên variant)
                 item.price = item.productVariant?.price || item.product?.price || 0;
-
-// Nếu vẫn null → dùng giá từ product (fallback an toàn)
-                if (item.price === 0 || item.price === undefined) {
-                    item.price = item.product?.price || 0;
-                }
-                item.mainImage = item.product?.productImages?.[0]?.imageUrl
-                    || item.productVariant?.imageUrl
-                    || "https://via.placeholder.com/300x300/eeeeee/999999?text=No+Image";
+                item.mainImage = item.product?.productImages?.[0]?.imageUrl || item.productVariant?.imageUrl || "https://via.placeholder.com/300x300/eeeeee/999999?text=No+Image";
                 item.quantity = item.quantity || 1;
                 item.id = item.id; // cart-item id
-
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
-
             }
-
             renderCartItems(items, total);
-
         } catch (err) {
             console.error(err);
             $('#cartItemsBody').html('<tr><td colspan="5" class="text-center text-danger">Lỗi tải giỏ hàng</td></tr>');
-
-
-
-
-
-
-
         }
     }
 
     function renderCartItems(items, total = 0) {
         const tbody = $('#cartItemsBody');
         tbody.empty();
-
         if (items.length === 0) {
             tbody.html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
             $('#cartTotal').text('0 ₫');
             return;
         }
-
         items.forEach(item => {
             const priceStr = Number(item.price).toLocaleString('vi-VN') + ' ₫';
             const itemTotal = item.price * item.quantity;
             const itemTotalStr = Number(itemTotal).toLocaleString('vi-VN') + ' ₫';
-
             tbody.append(`
-            <tr data-item-id="${item.id}" data-price="${item.price}" data-quantity="${item.quantity}">
-                <td class="align-middle">
-                    <strong>${item.name}</strong> <!-- Chỉ hiện tên sản phẩm, không ảnh -->
-                </td>
-                <td class="align-middle">${priceStr}</td>
-                <td class="align-middle">
-                    <div class="js-qty d-inline-block">
-                        <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
-                        <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
-                        <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
-                    </div>
-                </td>
-                <td class="align-middle item-total">${itemTotalStr}</td>
-                <td class="align-middle text-center">
-                    <button class="btn btn-danger btn-sm remove-item">
-                        <i class="fas fa-trash-alt"></i> Xóa
-                    </button>
-                </td>
-            </tr>
-        `);
+                <tr data-item-id="${item.id}" data-price="${item.price}" data-quantity="${item.quantity}">
+                    <td class="align-middle"><strong>${item.name}</strong></td> <!-- Chỉ hiện tên sản phẩm, không ảnh -->
+                    <td class="align-middle">${priceStr}</td>
+                    <td class="align-middle">
+                        <div class="js-qty d-inline-block">
+                            <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
+                            <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
+                            <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
+                        </div>
+                    </td>
+                    <td class="align-middle item-total">${itemTotalStr}</td>
+                    <td class="align-middle text-center">
+                        <button class="btn btn-danger btn-sm remove-item">
+                            <i class="fas fa-trash-alt"></i> Xóa
+                        </button>
+                    </td>
+                </tr>
+            `);
         });
-
         $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
     }
 
@@ -632,49 +589,36 @@
         if (!confirm("Xác nhận xóa sản phẩm này khỏi giỏ hàng?")) {
             return;
         }
-
         const row = $(this).closest('tr');
         const itemId = row.data('item-id'); // Lấy từ data-item-id
-
         if (!itemId) {
             alert("Lỗi: Không tìm thấy ID sản phẩm!");
             return;
         }
-
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
             alert("Vui lòng đăng nhập lại!");
             window.location.href = 'login.html';
             return;
         }
-
         try {
             const res = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
                 method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${authToken}`
-                }
+                headers: { 'Authorization': `Bearer ${authToken}` }
             });
-
             if (res.ok || res.status === 204) {
                 alert("Xóa sản phẩm thành công!");
-
                 // Xóa dòng ngay lập tức trên giao diện
-                // Sau khi xóa dòng thành công
-                // Sau khi xóa thành công
                 row.remove();
-
-// Tính lại total chính xác từ data attribute
+                // Tính lại total chính xác từ data attribute
                 let grandTotal = 0;
                 $('#cartItemsBody tr').each(function() {
                     const p = parseFloat($(this).attr('data-price')) || 0;
                     const q = parseFloat($(this).attr('data-quantity')) || 1;
                     grandTotal += p * q;
                 });
-
                 $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
-
-// Nếu giỏ trống
+                // Nếu giỏ trống
                 if ($('#cartItemsBody tr').length === 0) {
                     $('#cartItemsBody').html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
                     $('#cartTotal').text('0 ₫');
@@ -716,10 +660,8 @@
     async function updateItemQuantity(row) {
         const itemId = row.data('item-id');
         const newQty = parseInt(row.find('.js-qty-num').val());
-
         const authToken = localStorage.getItem('authToken');
         const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
-
         try {
             const updateRes = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
                 method: 'PATCH',
@@ -727,13 +669,11 @@
                 body: JSON.stringify({ quantity: newQty })
             });
             if (!updateRes.ok) throw new Error("Lỗi cập nhật số lượng");
-
             // Cập nhật data-quantity và item-total
             row.attr('data-quantity', newQty);
             const price = parseFloat(row.attr('data-price'));
             const itemTotal = price * newQty;
             row.find('.item-total').text(Number(itemTotal).toLocaleString('vi-VN') + ' ₫');
-
             // Tính lại total từ tất cả row (chính xác tuyệt đối)
             let grandTotal = 0;
             $('#cartItemsBody tr').each(function() {
@@ -741,23 +681,132 @@
                 const q = parseFloat($(this).attr('data-quantity')) || 1;
                 grandTotal += p * q;
             });
-
             $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
-
         } catch (err) {
             console.error(err);
             alert("Lỗi cập nhật số lượng: " + err.message);
-            loadCartItems();
+            loadCartItems(); // reload nếu lỗi
         }
     }
-
-
 
     // Nút UPDATE CART → chỉ reload để đồng bộ
     $('#updateCartBtn').on('click', function(e) {
         e.preventDefault();
         loadCartItems();
         alert("Giỏ hàng đã được cập nhật!");
+    });
+
+    // Tạo đơn hàng khi bấm Proceed to Checkout – FIX TRIỆT ĐỂ LỖI 400
+    $('#proceedCheckoutBtn').on('click', async function(e) {
+        e.preventDefault();
+        if (!confirm("Xác nhận tạo đơn hàng từ giỏ hàng hiện tại?")) {
+            return;
+        }
+        const authToken = localStorage.getItem('authToken');
+        const savedUser = localStorage.getItem('currentUser');
+        if (!authToken || !savedUser) {
+            alert("Vui lòng đăng nhập để đặt hàng!");
+            window.location.href = 'login.html';
+            return;
+        }
+        const user = JSON.parse(savedUser);
+        const userId = user.id;
+        const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+        try {
+            // Lấy cartId
+            const cartId = await getOrCreateCartId();
+            if (!cartId) throw new Error("Không tìm thấy giỏ hàng");
+
+            // Lấy cart-items
+            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
+            if (!itemsRes.ok) throw new Error("Lỗi lấy sản phẩm trong giỏ");
+            const itemsData = await itemsRes.json();
+            const cartItems = itemsData.data?.list || [];
+
+            if (cartItems.length === 0) {
+                alert("Giỏ hàng trống!");
+                return;
+            }
+
+            // Tính subtotal và chuẩn bị orderItems
+            let subtotal = 0;
+            const orderItemsCreate = [];
+
+            for (let item of cartItems) {
+                const variantId = item.productVariantID || item.productVariantId;
+                const quantity = item.quantity || 1;
+
+                // Lấy giá từ variant (ưu tiên)
+                let price = 0;
+                if (variantId) {
+                    const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
+                    if (variantRes.ok) {
+                        const vData = await variantRes.json();
+                        price = vData.data.price || 0;
+                    }
+                }
+
+                const itemTotal = price * quantity;
+                subtotal += itemTotal;
+
+                // Payload cho orderItem: unitPrice, totalPrice
+                orderItemsCreate.push({
+                    productVariantID: variantId,
+                    quantity: quantity,
+                    unitPrice: price,
+                    totalPrice: itemTotal
+                });
+            }
+
+            // Tạo orderNumber đơn giản
+            const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+
+            // Payload đúng theo schema (có subtotal, tax=0, shipping=0, discount=0, totalAmount = subtotal)
+            const payload = {
+                orderNumber: orderNumber,
+                userID: userId,
+                subtotal: subtotal,
+                taxAmount: 0,
+                shippingAmount: 0,
+                discountAmount: 0,
+                totalAmount: subtotal,
+                currency: "VND",
+                status: 'pending',
+                orderItems: {
+                    create: orderItemsCreate
+                }
+            };
+
+            // Tạo đơn hàng
+            const createOrderRes = await fetch(`${BASE_URL}/orders`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
+
+            if (!createOrderRes.ok) {
+                const errData = await createOrderRes.json();
+                console.error("Order error response:", errData);
+                throw new Error(errData.message || "Lỗi tạo đơn hàng");
+            }
+
+            const orderData = await createOrderRes.json();
+            alert(`Đặt hàng thành công! Mã đơn hàng: ${orderData.data.orderNumber}`);
+
+            // Xóa giỏ hàng sau khi đặt thành công (tùy chọn)
+            if (confirm("Xóa giỏ hàng sau khi đặt hàng?")) {
+                for (let item of cartItems) {
+                    await fetch(`${BASE_URL}/cart-items/${item.id}`, {
+                        method: 'DELETE',
+                        headers
+                    });
+                }
+                loadCartItems(); // Reload giỏ trống
+            }
+        } catch (err) {
+            console.error("Lỗi đặt hàng:", err);
+            alert("Lỗi đặt hàng: " + err.message);
+        }
     });
 
     // Load khi mở trang
