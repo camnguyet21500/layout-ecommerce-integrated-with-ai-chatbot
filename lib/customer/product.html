@@ -665,20 +665,50 @@
                 }
             }
 
-            // Bước mới: Fetch product variants để lấy productVariantID (vì backend yêu cầu variant, không phải product trực tiếp)
+            // Bước mới: Lấy hoặc tạo variant cho sản phẩm
+            // Bước mới: Lấy hoặc tạo variant cho sản phẩm
             let productVariantID;
+            let productPrice = 0;
+
+// Fetch chi tiết sản phẩm để lấy giá
+            const productDetailRes = await fetch(`${BASE_URL}/products/${productId}`, { headers });
+            if (!productDetailRes.ok) {
+                throw new Error("Không thể lấy thông tin sản phẩm");
+            }
+            const productDetailJson = await productDetailRes.json();
+            const currentProduct = productDetailJson.data;
+            productPrice = currentProduct.price || 0;
+
+// Fetch variants
             const variantsRes = await fetch(`${BASE_URL}/product-variants?productID=${productId}&itemPerPage=10&page=1`, { headers });
+
             if (variantsRes.ok) {
                 const variantsData = await variantsRes.json();
                 const variants = variantsData.data?.list || [];
+
                 if (variants.length > 0) {
-                    // Lấy variant đầu tiên (default), hoặc bạn có thể thêm UI để chọn variant
                     productVariantID = variants[0].id;
                 } else {
-                    throw new Error("Sản phẩm không có variant khả dụng!");
+                    // Tạo variant mới - chỉ gửi field cần thiết
+                    const createVariantRes = await fetch(`${BASE_URL}/product-variants`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({
+                            productID: productId,
+                            price: productPrice
+                        })
+                    });
+
+                    if (!createVariantRes.ok) {
+                        const errData = await createVariantRes.json();
+                        throw new Error("Không thể tạo variant tự động: " + (errData.message || createVariantRes.status));
+                    }
+
+                    const createVariantData = await createVariantRes.json();
+                    productVariantID = createVariantData.data.id;
                 }
             } else {
-                throw new Error("Lỗi fetch variants của sản phẩm");
+                throw new Error("Lỗi kết nối khi kiểm tra variant");
             }
 
             // Bước 3: Add item vào cart với fields đúng: cartID, productVariantID, quantity

@@ -480,7 +480,7 @@
 
                         // Fetch product từ variant
                         const productId = item.productVariant.productID;
-                        const productRes = await fetch(`${BASE_URL}/products/${productId}`, { headers });
+                        const productRes = await fetch(`${BASE_URL}/products/${productId}?include=productImages`, { headers });
                         if (productRes.ok) {
                             const productData = await productRes.json();
                             item.product = productData.data;
@@ -491,7 +491,9 @@
                 // Lấy info hiển thị
                 item.name = item.product?.name || 'Sản phẩm không tên';
                 item.price = item.productVariant?.price || item.product?.price || 0;
-                item.mainImage = item.product?.productImages?.[0]?.imageUrl || "../../img/default-product.jpg";
+                item.mainImage = item.product?.productImages?.[0]?.imageUrl
+                    || item.productVariant?.imageUrl
+                    || "https://via.placeholder.com/300x300/eeeeee/999999?text=No+Image";
                 item.quantity = item.quantity || 1;
                 item.id = item.id; // cart-item id
 
