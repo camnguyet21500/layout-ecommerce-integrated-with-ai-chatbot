@@ -22,49 +22,101 @@
     <link rel="stylesheet" href="../../css/cart.css">
 </head>
 <body> <!-- Removed ng-app and ng-controller, use jQuery instead -->
-<!-- HEADER -->
+<!--HEADER-->
+
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown" role="button">HOME</a>
+                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SHOP <span class="absolute label_menu">HOT</span> </a>
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
+                            <span class="absolute label_menu">HOT</span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="product.html">ALL ITEMS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Sneaker</a>
+                                    <a class="dropdown-item text-secondary" href="#">Converse</a>
+                                    <a class="dropdown-item text-secondary" href="#">Adidas</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">PRODUCTS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Hot Trend</a>
+                                    <a class="dropdown-item text-secondary" href="#">Best Seller</a>
+                                    <a class="dropdown-item text-secondary" href="#">Fashion</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">POPULAR</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        SB Chron British Tan<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Chuck Taylor Star<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Unisex Shoes<br>
+                                                        $ 300.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
+
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -94,9 +146,12 @@
                             <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
+
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -123,8 +178,10 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -154,7 +211,10 @@
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <img class="col-sm-5" src="../../img/img_header1.jpg" />
-                                                    <ul class="col-sm-7"> SB Chron British Tan<br> $ 500.00 </ul>
+                                                    <ul class="col-sm-7">
+                                                        SB Chron British Tan<br>
+                                                        $ 500.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,7 +225,10 @@
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <img class="col-sm-5" src="../../img/img_header2.jpg" />
-                                                    <ul class="col-sm-7"> Converse Chuck Taylor Star<br> $ 500.00 </ul>
+                                                    <ul class="col-sm-7">
+                                                        Converse Chuck Taylor Star<br>
+                                                        $ 500.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -176,7 +239,10 @@
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <img class="col-sm-5" src="../../img/img_header3.jpg" />
-                                                    <ul class="col-sm-7"> Converse Unisex Shoes<br> $ 300.00 </ul>
+                                                    <ul class="col-sm-7">
+                                                        Converse Unisex Shoes<br>
+                                                        $ 300.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -189,24 +255,14 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
-<!--                <i class="fas fa-search"></i>-->
-                <a href="profile.html"><i class="far fa-user fa-fw mx-3"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
             </div>
         </div>
     </nav>
-    <div class="bgr">
-        <div class="jumbotron jumbotron-fluid">
-            <h1 class="display-4" style="color: white;">Cart</h1>
-            <p class="lead" style="color: white;">
-                <a href="" style="color: white;">Home</a> > Your shopping cart
-            </p>
-        </div>
-    </div>
 </header>
-<!-- END HEADER -->
+<!--HEADER END-->
 <!-- CART -->
 <section>
     <div class="container">
@@ -490,7 +546,13 @@
 
                 // Lấy info hiển thị
                 item.name = item.product?.name || 'Sản phẩm không tên';
+                // Ưu tiên giá từ variant (luôn đúng, vì cart-item dựa trên variant)
                 item.price = item.productVariant?.price || item.product?.price || 0;
+
+// Nếu vẫn null → dùng giá từ product (fallback an toàn)
+                if (item.price === 0 || item.price === undefined) {
+                    item.price = item.product?.price || 0;
+                }
                 item.mainImage = item.product?.productImages?.[0]?.imageUrl
                     || item.productVariant?.imageUrl
                     || "https://via.placeholder.com/300x300/eeeeee/999999?text=No+Image";
@@ -513,7 +575,7 @@
         tbody.empty();
 
         if (items.length === 0) {
-            tbody.html('<tr><td colspan="5" class="text-center">Giỏ hàng trống</td></tr>');
+            tbody.html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
             $('#cartTotal').text('0 ₫');
             return;
         }
@@ -524,27 +586,88 @@
             const itemTotalStr = Number(itemTotal).toLocaleString('vi-VN') + ' ₫';
 
             tbody.append(`
-                <tr data-item-id="${item.id}">
-                    <td>
-                        <img src="${item.mainImage}" style="max-width: 80px; margin-right: 10px;">
-                        ${item.name}
-                    </td>
-                    <td>${priceStr}</td>
-                    <td>
-                        <div class="js-qty d-inline-block">
-                            <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
-                            <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
-                            <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
-                        </div>
-                    </td>
-                    <td class="item-total">${itemTotalStr}</td>
-                    <td><button class="btn btn-danger btn-sm remove-item">Xóa</button></td>
-                </tr>
-            `);
+            <tr data-item-id="${item.id}"> <!-- ← QUAN TRỌNG: thêm data-item-id để lưu ID cart-item -->
+                <td class="d-flex align-items-center">
+                    <img src="${item.mainImage}" alt="${item.name}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px; border-radius: 8px;">
+                    <span>${item.name}</span>
+                </td>
+                <td class="align-middle">${priceStr}</td>
+                <td class="align-middle">
+                    <div class="js-qty d-inline-block">
+                        <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
+                        <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
+                        <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
+                    </div>
+                </td>
+                <td class="align-middle item-total">${itemTotalStr}</td>
+                <td class="align-middle text-center">
+                    <button class="btn btn-danger btn-sm remove-item">
+                        <i class="fas fa-trash-alt"></i> Xóa
+                    </button>
+                </td>
+            </tr>
+        `);
         });
 
         $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
     }
+
+    // XÓA SẢN PHẨM KHỎI GIỎ HÀNG – GỌI API DELETE (backend sẽ soft-delete)
+    $(document).on('click', '.remove-item', async function() {
+        if (!confirm("Xác nhận xóa sản phẩm này khỏi giỏ hàng?")) {
+            return;
+        }
+
+        const row = $(this).closest('tr');
+        const itemId = row.data('item-id'); // Lấy từ data-item-id
+
+        if (!itemId) {
+            alert("Lỗi: Không tìm thấy ID sản phẩm!");
+            return;
+        }
+
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            alert("Vui lòng đăng nhập lại!");
+            window.location.href = 'login.html';
+            return;
+        }
+
+        try {
+            const res = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            if (res.ok || res.status === 204) {
+                alert("Xóa sản phẩm thành công!");
+
+                // Xóa dòng ngay lập tức trên giao diện
+                row.remove();
+
+                // Tính lại tổng tiền
+                let grandTotal = 0;
+                $('#cartItemsBody .item-total').each(function() {
+                    const text = $(this).text().replace(/[^0-9]/g, '');
+                    grandTotal += parseInt(text) || 0;
+                });
+                $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
+
+                // Nếu giỏ trống
+                if ($('#cartItemsBody tr').length === 0) {
+                    $('#cartItemsBody').html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
+                }
+            } else {
+                const err = await res.json();
+                alert("Xóa thất bại: " + (err.message || "Lỗi server"));
+            }
+        } catch (err) {
+            console.error("Lỗi kết nối:", err);
+            alert("Lỗi kết nối server!");
+        }
+    });
 
     // Handle qty change
     $(document).on('click', '.qty-minus', function() {
@@ -604,38 +727,7 @@
         }
     }
 
-    // Handle remove item
-    $(document).on('click', '.remove-item', async function() {
-        if (!confirm("Xác nhận xóa sản phẩm khỏi giỏ hàng?")) return;
 
-        const row = $(this).closest('tr');
-        const itemId = row.data('item-id');
-
-        const authToken = localStorage.getItem('authToken');
-        const headers = { 'Authorization': `Bearer ${authToken}` };
-
-        try {
-            const deleteRes = await fetch(`${BASE_URL}/cart-items/${itemId}`, { method: 'DELETE', headers });
-            if (!deleteRes.ok) throw new Error("Lỗi xóa sản phẩm");
-
-            row.remove();
-
-            // Recalc total
-            let grandTotal = 0;
-            $('#cartItemsBody .item-total').each(function() {
-                grandTotal += parseFloat($(this).text().replace(/[^0-9]/g, ''));
-            });
-            $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
-
-            if ($('#cartItemsBody tr').length === 0) {
-                $('#cartItemsBody').html('<tr><td colspan="5" class="text-center">Giỏ hàng trống</td></tr>');
-            }
-
-        } catch (err) {
-            console.error(err);
-            alert("Lỗi xóa sản phẩm: " + err.message);
-        }
-    });
 
     // Nút UPDATE CART → chỉ reload để đồng bộ
     $('#updateCartBtn').on('click', function(e) {

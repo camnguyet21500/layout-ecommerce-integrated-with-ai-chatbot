@@ -743,98 +743,32 @@
 
 <!--END FOOTER-->
 <script>
-
+    // FIX 1: BASE_URL đúng local
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
 
-    // Auto login để lấy token
+    // Auto login – FIX lỗi login 500
     async function autoLogin() {
         try {
             const res = await fetch(`${BASE_URL}/auth/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: "nvo28@example.com", // Thay bằng email tồn tại trong DB
-                    password: "nvo28" // Password đúng
-                })
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
             });
             if (res.ok) {
                 const data = await res.json();
                 authToken = data.data.accessToken;
                 console.log("Login thành công! Token:", authToken);
             } else {
-                console.error("Login thất bại:", await res.text());
+                const err = await res.text();
+                console.error("Login thất bại:", err);
+                appendChatMessage("⚠️ Lỗi đăng nhập tự động. Một số chức năng có thể không hoạt động.", 'bot');
             }
         } catch (err) {
             console.error("Lỗi kết nối login:", err);
+            appendChatMessage("⚠️ Không kết nối được server.", 'bot');
         }
     }
-
-    autoLogin();
-
-    // Xử lý form Sign Up
-    $('#signupForm').on('submit', async function(e) {
-        e.preventDefault();
-
-        const email = $('#signupEmail').val().trim();
-        const firstName = $('#signupFirstName').val().trim();
-        const fullAddress = $('#signupFullAddress').val().trim();
-        const password = $('#signupPassword').val();
-        const confirmPassword = $('#signupConfirmPassword').val();
-
-        // Reset lỗi
-        $('#signupError').hide().text('');
-
-        // Validation cơ bản
-        if (!email || !firstName || !fullAddress || !password) {
-            $('#signupError').text('Vui lòng điền đầy đủ các trường bắt buộc!').show();
-            return;
-        }
-
-        if (password !== confirmPassword) {
-            $('#signupError').text('Mật khẩu xác nhận không khớp!').show();
-            return;
-        }
-
-        if (password.length < 6) {
-            $('#signupError').text('Mật khẩu phải ít nhất 6 ký tự!').show();
-            return;
-        }
-
-        const payload = {
-            email,
-            password,
-            firstName,
-            fullAddress
-        };
-
-        try {
-            const res = await fetch(`${BASE_URL}/auth/sign-up`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(payload)
-            });
-
-            const data = await res.json();
-
-            if (res.ok) {
-                alert("Đăng ký thành công! Bạn có thể đăng nhập ngay bây giờ.");
-                // Chuyển sang tab Login
-                $('.nav-tabs a[href="#home"]').tab('show');
-                // Reset form
-                $('#signupForm')[0].reset();
-            } else {
-
-                const errorMsg = data.message || data.errors?.[0]?.message || 'Đăng ký thất bại!';
-                $('#signupError').text(errorMsg).show();
-            }
-        } catch (err) {
-            console.error(err);
-            $('#signupError').text('Lỗi kết nối server! Vui lòng thử lại sau.').show();
-        }
-    });
 
     document.addEventListener('DOMContentLoaded', function() {
         const chatbotToggler = document.getElementById('chatbot-toggler');
@@ -844,28 +778,129 @@
         const chatbotSend = document.getElementById('chatbot-send');
         const chatbotMessages = document.getElementById('chatbot-messages');
 
-        if (!chatbotToggler || !chatbotBox) {
+        if (!chatbotToggler || !chatbotBox || !chatbotInput || !chatbotSend || !chatbotMessages) {
             console.error("Không tìm thấy phần tử chatbot!");
             return;
         }
 
-        chatbotToggler.addEventListener('click', () => {
-            const isVisible = chatbotBox.style.display === 'flex';
-            chatbotBox.style.display = isVisible ? 'none' : 'flex';
-            if (!isVisible) {
-                chatbotInput.focus();
+        let pendingProductName = null; // Chỉ lưu tên, đợi user confirm mới add
+
+        function appendChatMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `chatbot-message ${sender}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'chatbot-bubble';
+            bubble.innerHTML = text.replace(/\n/g, '<br>');
+            div.appendChild(bubble);
+            chatbotMessages.appendChild(div);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            return div;
+        }
+
+        // Lấy hoặc tạo cartID
+        async function getOrCreateCartId() {
+            if (!authToken) return null;
+            try {
+                const userRes = await fetch(`${BASE_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!userRes.ok) return null;
+                const userData = await userRes.json();
+                const userId = userData.data.id;
+
+                const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+                let cartId;
+                const cartsRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
+                if (cartsRes.ok) {
+                    const cartsData = await cartsRes.json();
+                    if (cartsData.data?.list?.length > 0) {
+                        cartId = cartsData.data.list[0].id;
+                    }
+                }
+                if (!cartId) {
+                    const createRes = await fetch(`${BASE_URL}/carts`, {
+                        method: 'POST',
+                        headers,
+                        body: JSON.stringify({ userID: userId })
+                    });
+                    if (createRes.ok) {
+                        const createData = await createRes.json();
+                        cartId = createData.data.id;
+                    }
+                }
+                return cartId;
+            } catch (err) {
+                console.error(err);
+                return null;
             }
-        });
+        }
 
-        chatbotClose.addEventListener('click', () => {
-            chatbotBox.style.display = 'none';
-        });
+        // Tìm sản phẩm bằng tên chính xác hơn
+        async function findProductByName(name) {
+            try {
+                const res = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (!res.ok) return null;
+                const data = await res.json();
+                const products = data.data.list || [];
+                const cleanName = name.trim().toLowerCase();
+                // Tìm chính xác hoặc chứa tên
+                return products.find(p =>
+                    p.name.toLowerCase() === cleanName ||
+                    p.name.toLowerCase().includes(cleanName) ||
+                    cleanName.includes(p.name.toLowerCase())
+                );
+            } catch (err) {
+                console.error("Lỗi tìm sản phẩm:", err);
+                return null;
+            }
+        }
 
-        chatbotSend.addEventListener('click', sendChatMessage);
-        chatbotInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendChatMessage();
-        });
+        // Add sản phẩm vào giỏ
+        async function addProductToCart(product) {
+            const cartId = await getOrCreateCartId();
+            if (!cartId) {
+                appendChatMessage("❌ Lỗi: Không thể lấy giỏ hàng (chưa đăng nhập?).", 'bot');
+                return false;
+            }
 
+            // FIX lỗi Foreign key: dùng product.id làm productVariantID (giả sử đơn giản)
+            const productVariantID = product.id;
+
+            const payload = {
+                cartID: cartId,
+                productVariantID: productVariantID,
+                quantity: 1
+            };
+
+            try {
+                const res = await fetch(`${BASE_URL}/cart-items`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.ok || res.status === 201) {
+                    appendChatMessage(`✅ Đã thêm <strong>${product.name}</strong> vào giỏ hàng! Xem tại <a href="cart.html" style="color:#f9af47;text-decoration:underline;">Giỏ hàng</a>.`, 'bot');
+                    return true;
+                } else {
+                    const err = await res.json();
+                    appendChatMessage(`❌ Thêm thất bại: ${err.message || "Lỗi server"}`, 'bot');
+                    console.error("Add cart error:", err);
+                    return false;
+                }
+            } catch (err) {
+                appendChatMessage("❌ Lỗi kết nối khi thêm vào giỏ!", 'bot');
+                console.error(err);
+                return false;
+            }
+        }
+
+        // GỬI TIN NHẮN – CHỈ GỢI Ý SẢN PHẨM ACTIVE
         async function sendChatMessage() {
             const message = chatbotInput.value.trim();
             if (!message) return;
@@ -876,17 +911,13 @@
             const typing = appendChatMessage('Đang suy nghĩ...', 'bot');
             typing.classList.add('typing');
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
-            if (authToken) {
-                headers['Authorization'] = `Bearer ${authToken}`;
-            }
+            const headers = { 'Content-Type': 'application/json' };
+            if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
             try {
                 const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
                     method: 'POST',
-                    headers: headers,
+                    headers,
                     body: JSON.stringify({
                         question: message,
                         sessionID: localStorage.getItem('chatSessionID') || 'homepage-' + Date.now()
@@ -895,12 +926,74 @@
 
                 const data = await res.json();
                 typing.remove();
-                if (res.ok) {
-                    const botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
-                    appendChatMessage(botReply, 'bot');
 
-                    if (data.sessionID) {
-                        localStorage.setItem('chatSessionID', data.sessionID);
+                if (res.ok) {
+                    let botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
+
+                    // KIỂM TRA USER HỎI VỀ GIÁ TỐT NHẤT / RẺ NHẤT
+                    if (message.toLowerCase().includes('giá tốt nhất') ||
+                        message.toLowerCase().includes('rẻ nhất') ||
+                        message.toLowerCase().includes('giá thấp nhất')) {
+
+                        appendChatMessage(botReply, 'bot'); // Vẫn hiện reply gốc của AI
+
+                        // FRONTEND TỰ LỌC SẢN PHẨM ACTIVE + TÌM GIÁ TỐT NHẤT
+                        appendChatMessage("🔍 Đang kiểm tra sản phẩm đang bán...", 'bot');
+
+                        try {
+                            const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
+                                headers: { 'Authorization': `Bearer ${authToken}` }
+                            });
+
+                            if (productsRes.ok) {
+                                const productsData = await productsRes.json();
+                                const allProducts = productsData.data.list || [];
+
+                                // LỌC CHỈ SẢN PHẨM ACTIVE
+                                const activeProducts = allProducts.filter(p =>
+                                    p.status === 'active' && !p.deletedAt
+                                );
+
+                                if (activeProducts.length === 0) {
+                                    appendChatMessage("Hiện tại chưa có sản phẩm nào đang bán.", 'bot');
+                                } else {
+                                    // TÌM SẢN PHẨM RẺ NHẤT TRONG ACTIVE
+                                    const cheapest = activeProducts.reduce((prev, curr) =>
+                                        (prev.price < curr.price ? prev : curr)
+                                    );
+
+                                    const priceFormatted = Number(cheapest.price).toLocaleString('vi-VN') + ' ₫';
+
+                                    const realReply = `✅ Sản phẩm giá tốt nhất đang bán là:\n\n* **${cheapest.name}**\nGiá: **${priceFormatted}**`;
+                                    const confirmReply = "\n\nBạn có muốn thêm sản phẩm này vào giỏ hàng không? (Trả lời 'có', 'add', 'mua', 'thêm')";
+
+                                    appendChatMessage(realReply + confirmReply, 'bot');
+
+                                    // Lưu tạm sản phẩm active để add sau
+                                    localStorage.setItem('pendingAddToCartProduct', JSON.stringify(cheapest));
+                                }
+                            } else {
+                                appendChatMessage("Lỗi tải danh sách sản phẩm.", 'bot');
+                            }
+                        } catch (err) {
+                            console.error("Lỗi kết nối khi lọc sản phẩm:", err);
+                            appendChatMessage("Lỗi kết nối khi kiểm tra sản phẩm.", 'bot');
+                        }
+                    } else {
+                        // Các câu hỏi khác → hiện reply bình thường
+                        appendChatMessage(botReply, 'bot');
+                    }
+
+                    if (data.sessionID) localStorage.setItem('chatSessionID', data.sessionID);
+
+                    // XỬ LÝ XÁC NHẬN ADD VÀO GIỎ
+                    if (/có|add|mua|thêm|ok|yes/i.test(message)) {
+                        const pendingJson = localStorage.getItem('pendingAddToCartProduct');
+                        if (pendingJson) {
+                            const product = JSON.parse(pendingJson);
+                            await addProductToCart(product);
+                            localStorage.removeItem('pendingAddToCartProduct');
+                        }
                     }
                 } else {
                     appendChatMessage(`Lỗi: ${data.message || res.status}`, 'bot');
@@ -912,18 +1005,21 @@
             }
         }
 
-        function appendChatMessage(text, sender) {
-            const div = document.createElement('div');
-            div.className = `chatbot-message ${sender}`;
-            const bubble = document.createElement('div');
-            bubble.className = 'chatbot-bubble';
-            bubble.textContent = text;
-            div.appendChild(bubble);
-            chatbotMessages.appendChild(div);
-            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-            return div;
-        }
+        // Events
+        chatbotToggler.addEventListener('click', () => {
+            chatbotBox.style.display = chatbotBox.style.display === 'flex' ? 'none' : 'flex';
+            if (chatbotBox.style.display === 'flex') chatbotInput.focus();
+        });
+
+        chatbotClose.addEventListener('click', () => { chatbotBox.style.display = 'none'; });
+        chatbotSend.addEventListener('click', sendChatMessage);
+        chatbotInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendChatMessage(); });
+
+        appendChatMessage("Xin chào! Tôi là AI Assistant của Mega Mall. Hỏi tôi về sản phẩm nhé! 😊", 'bot');
     });
+
+    // Gọi login khi load
+    autoLogin();
 </script>
 <div id="chatbot-container">
     <!-- Icon floating -->

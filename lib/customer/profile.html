@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="../../css/index.css">
 </head>
 <body>
+<!--HEADER-->
+
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
             <button class="navbar-toggler" type="button" data-toggle="collapse"
                     data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
@@ -23,11 +25,12 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown" role="button">HOME</a>
+                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SHOP
+                        <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
                             <span class="absolute label_menu">HOT</span>
                         </a>
 
@@ -35,32 +38,71 @@
                              aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="product.html">ALL ITEMS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Sneaker</a>
+                                    <a class="dropdown-item text-secondary" href="#">Converse</a>
+                                    <a class="dropdown-item text-secondary" href="#">Adidas</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">PRODUCTS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Hot Trend</a>
+                                    <a class="dropdown-item text-secondary" href="#">Best Seller</a>
+                                    <a class="dropdown-item text-secondary" href="#">Fashion</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">POPULAR</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        SB Chron British Tan<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Chuck Taylor Star<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Unisex Shoes<br>
+                                                        $ 300.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
 
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
+                        <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
                         <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
                              aria-labelledby="dropdownMenuButton" style="width: 700px;">
@@ -95,7 +137,7 @@
                     </div>
 
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
+                        <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button"
                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
                         <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
                              aria-labelledby="dropdownMenuButton" style="width: 700px;">
@@ -202,24 +244,14 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
-<!--                <i class="fas fa-search"></i>-->
-                <a href="profile.html"><i class="far fa-user fa-fw mx-3"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
             </div>
         </div>
     </nav>
-    <div class="bgr">
-        <div class="jumbotron jumbotron-fluid">
-            <h1 class="display-4" style="color: white;">Cart</h1>
-            <p class="lead" style="color: white;">
-                <a href="" style="color: white;">Home</a> > Your shopping cart
-            </p>
-        </div>
-    </div>
 </header>
-<!-- END HEADER -->
+<!--HEADER END-->
 <div class="container" style="margin-top: 120px; min-height: 70vh;">
     <div class="text-center my-5">
         <h2>My Profile</h2>

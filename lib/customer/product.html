@@ -25,49 +25,101 @@
 </head>
 </head>
 <body ng-app="myApp">
-<!-- HEADER -->
+<!--HEADER-->
+
 <header>
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" style="background-color: white">
+    <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse"
+                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown" role="button">HOME</a>
+                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">SHOP <span class="absolute label_menu">HOT</span></a>
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
+                            <span class="absolute label_menu">HOT</span>
+                        </a>
+
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="product.html">ALL ITEMS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Sneaker</a>
+                                    <a class="dropdown-item text-secondary" href="#">Converse</a>
+                                    <a class="dropdown-item text-secondary" href="#">Adidas</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">PRODUCTS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <a class="dropdown-item text-secondary" href="#">Hot Trend</a>
+                                    <a class="dropdown-item text-secondary" href="#">Best Seller</a>
+                                    <a class="dropdown-item text-secondary" href="#">Fashion</a>
                                 </div>
                                 <div class="col-sm">
-                                    <a class="dropdown-item" href="#">Something else here</a>
+                                    <a class="dropdown-item" href="#">POPULAR</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
-                                    <a class="dropdown-item text-secondary" href="#">Separated link</a>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        SB Chron British Tan<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header2.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Chuck Taylor Star<br>
+                                                        $ 500.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <div class="poly-cart">
+                                        <div class="panel panel-default">
+                                            <div class="panel-body">
+                                                <div class="row">
+                                                    <img class="col-sm-5" src="../../img/img_header3.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        Converse Unisex Shoes<br>
+                                                        $ 300.00
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
+
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -97,9 +149,12 @@
                             <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
+
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -126,8 +181,10 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
+                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -156,8 +213,11 @@
                                         <div class="panel panel-default">
                                             <div class="panel-body">
                                                 <div class="row">
-                                                    <img class="col-sm-5" src="../../img/img_header3.jpg" />
-                                                    <ul class="col-sm-7"> SB Chron British Tan<br> $ 500.00 </ul>
+                                                    <img class="col-sm-5" src="../../img/img_header1.jpg" />
+                                                    <ul class="col-sm-7">
+                                                        SB Chron British Tan<br>
+                                                        $ 500.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -168,7 +228,10 @@
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <img class="col-sm-5" src="../../img/img_header2.jpg" />
-                                                    <ul class="col-sm-7"> Converse Chuck Taylor Star<br> $ 500.00 </ul>
+                                                    <ul class="col-sm-7">
+                                                        Converse Chuck Taylor Star<br>
+                                                        $ 500.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -179,7 +242,10 @@
                                             <div class="panel-body">
                                                 <div class="row">
                                                     <img class="col-sm-5" src="../../img/img_header3.jpg" />
-                                                    <ul class="col-sm-7"> Converse Unisex Shoes<br> $ 300.00 </ul>
+                                                    <ul class="col-sm-7">
+                                                        Converse Unisex Shoes<br>
+                                                        $ 300.00
+                                                    </ul>
                                                 </div>
                                             </div>
                                         </div>
@@ -192,54 +258,14 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
-<!--                <i class="fas fa-search"></i>-->
-                <a href="profile.html"><i class="far fa-user fa-fw mx-3"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
             </div>
         </div>
     </nav>
-    <div class="bgr">
-        <div class="jumbotron jumbotron-fluid">
-            <h1 class="display-4" style="font-weight: 500; letter-spacing: 2px;">Product</h1>
-            <p class="lead">
-                <a href="">Home</a> > Products
-            </p>
-            <div class="container">
-                <div class="img_banner">
-                    <div class="items">
-                        <img src="../../img/container_product1.jpg" alt="">
-                        <div class="text_banner">
-                            <a href="">ALL ITEMS</a>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <img src="../../img/container_product2.jpg" alt="">
-                        <div class="text_banner">
-                            <a href="">HOT TREND</a>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <img src="../../img/container_product3.jpg" alt="">
-                        <div class="text_banner">
-                            <a href="">BEST SELLER</a>
-                        </div>
-                    </div>
-                    <div class="items">
-                        <img src="../../img/container_product4.jpg" alt="">
-                        <div class="text_banner">
-                            <a href="">FASHION</a>
-                        </div>
-                    </div>
-                    <!-- <img src="img/container_product5.jpg" alt=""> -->
-                    <!-- <img src="img/container_product6.jpg" alt=""> <img src="img/container_product7.jpg" alt=""> <img src="img/container_product8.jpg" alt=""> -->
-                </div>
-            </div>
-        </div>
-    </div>
 </header>
-<!-- END HEADER -->
+<!--HEADER END-->
 <!-- ITEMS -->
 <div class="filter">
     <a href="" class="btnfilter"><i class="fas fa-filter"></i>FILTER</a>
@@ -665,12 +691,8 @@
                 }
             }
 
-            // Bước mới: Lấy hoặc tạo variant cho sản phẩm
-            // Bước mới: Lấy hoặc tạo variant cho sản phẩm
-            let productVariantID;
+            // Bước 1: Fetch chi tiết sản phẩm để lấy giá (nếu cần tạo variant)
             let productPrice = 0;
-
-// Fetch chi tiết sản phẩm để lấy giá
             const productDetailRes = await fetch(`${BASE_URL}/products/${productId}`, { headers });
             if (!productDetailRes.ok) {
                 throw new Error("Không thể lấy thông tin sản phẩm");
@@ -679,7 +701,8 @@
             const currentProduct = productDetailJson.data;
             productPrice = currentProduct.price || 0;
 
-// Fetch variants
+// Bước 2: Lấy variant của sản phẩm
+            let productVariantID;
             const variantsRes = await fetch(`${BASE_URL}/product-variants?productID=${productId}&itemPerPage=10&page=1`, { headers });
 
             if (variantsRes.ok) {
@@ -687,9 +710,10 @@
                 const variants = variantsData.data?.list || [];
 
                 if (variants.length > 0) {
+                    // Dùng variant đầu tiên (hoặc có thể chọn theo logic sau này)
                     productVariantID = variants[0].id;
                 } else {
-                    // Tạo variant mới - chỉ gửi field cần thiết
+                    // Chưa có variant → tạo 1 variant default DUY NHẤT
                     const createVariantRes = await fetch(`${BASE_URL}/product-variants`, {
                         method: 'POST',
                         headers,
@@ -701,30 +725,57 @@
 
                     if (!createVariantRes.ok) {
                         const errData = await createVariantRes.json();
-                        throw new Error("Không thể tạo variant tự động: " + (errData.message || createVariantRes.status));
+                        throw new Error("Không thể tạo variant: " + (errData.message || createVariantRes.status));
                     }
 
                     const createVariantData = await createVariantRes.json();
                     productVariantID = createVariantData.data.id;
                 }
             } else {
-                throw new Error("Lỗi kết nối khi kiểm tra variant");
+                throw new Error("Lỗi kiểm tra variant");
             }
 
-            // Bước 3: Add item vào cart với fields đúng: cartID, productVariantID, quantity
-            const addRes = await fetch(`${BASE_URL}/cart-items`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify({
-                    cartID: cartId,
-                    productVariantID: productVariantID,
-                    quantity: quantity
-                })
-            });
+// Bước 3: Kiểm tra xem sản phẩm (variant) đã có trong giỏ chưa
+            let existingCartItem = null;
+            const cartItemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
+            if (cartItemsRes.ok) {
+                const cartItemsData = await cartItemsRes.json();
+                const cartItems = cartItemsData.data?.list || [];
+                existingCartItem = cartItems.find(item =>
+                    item.productVariantID === productVariantID || item.productVariantId === productVariantID
+                );
+            }
 
-            if (!addRes.ok) {
-                const errData = await addRes.json();
-                throw new Error("Lỗi thêm sản phẩm: " + (errData.message || addRes.status));
+// Bước 4: Nếu đã có → cập nhật quantity, chưa có → tạo mới
+            if (existingCartItem) {
+                // Cập nhật quantity
+                const newQuantity = (existingCartItem.quantity || 1) + quantity;
+                const updateRes = await fetch(`${BASE_URL}/cart-items/${existingCartItem.id}`, {
+                    method: 'PATCH',
+                    headers,
+                    body: JSON.stringify({ quantity: newQuantity })
+                });
+
+                if (!updateRes.ok) {
+                    const errData = await updateRes.json();
+                    throw new Error("Lỗi cập nhật số lượng: " + (errData.message || updateRes.status));
+                }
+            } else {
+                // Tạo mới cart-item
+                const addRes = await fetch(`${BASE_URL}/cart-items`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        cartID: cartId,
+                        productVariantID: productVariantID,
+                        quantity: quantity
+                    })
+                });
+
+                if (!addRes.ok) {
+                    const errData = await addRes.json();
+                    throw new Error("Lỗi thêm sản phẩm: " + (errData.message || addRes.status));
+                }
             }
 
             alert("Đã thêm vào giỏ hàng thành công!");
