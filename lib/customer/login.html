@@ -4,39 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | Mega Mall</title>
-
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
-
     <link rel="stylesheet" href="../../css/login.css">
 </head>
 <body>
-
 <div class="login-card">
     <div class="login-header">
         <img src="../../img/mega_mall_logo.png" alt="Mega Mall Logo">
         <h3>MEGA MALL</h3>
         <p>Welcome back!</p>
     </div>
-
     <div class="login-body">
         <form id="loginForm">
             <div class="form-group">
                 <input type="email" class="form-control" id="loginEmail" placeholder="Email address" required>
             </div>
-
             <div class="form-group">
                 <input type="password" class="form-control" id="loginPassword" placeholder="Password" required>
             </div>
-
             <div id="loginError" class="text-danger text-center mb-3" style="display:none;"></div>
-
             <button type="submit" class="btn btn-login text-white">LOG IN</button>
         </form>
-
         <div class="text-center mt-3">
             <p>Don't have an account? <a href="../customer/sign_up.html" class="text-link">Sign up</a></p>
         </div>
@@ -52,7 +43,6 @@
         <div class="toast-body" id="toastMessage"></div>
     </div>
 </div>
-
 <script>
     const BASE_URL = "http://localhost:8888/api";
 
@@ -92,21 +82,34 @@
                 return;
             }
 
+            // === THÊM DÒNG NÀY ĐỂ ALERT RESPONSE TRƯỚC KHI REDIRECT ===
+            alert("Sign-in response:\n" + JSON.stringify(loginData, null, 2));
+
             const token = loginData.data.accessToken;
             localStorage.setItem('authToken', token);
 
+            // Phần còn lại giữ nguyên (lấy user, lưu localStorage, redirect...)
             const userRes = await fetch(`${BASE_URL}/users?email=${encodeURIComponent(email)}&itemPerPage=1&page=1`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
-            const userData = await userRes.json();
-            let user = null;
+            let user = { email };
+            let isSuperRole = false;
 
-            if (userRes.ok && userData.data?.list?.length > 0) {
-                user = userData.data.list[0];
-            } else {
-                user = { email };
-                showToast("Login Notice", "Login successful, but user profile could not be fully loaded.", false);
+            if (userRes.ok) {
+                const userData = await userRes.json();
+                if (userData.data?.list?.length > 0) {
+                    user = userData.data.list[0];
+                }
+            }
+
+            // Kiểm tra isSuperRole (ưu tiên từ sign-in response)
+            if (loginData.data?.isSuperRole !== undefined) {
+                isSuperRole = loginData.data.isSuperRole;
+            } else if (loginData.isSuperRole !== undefined) {
+                isSuperRole = loginData.isSuperRole;
+            } else if (user.isSuperRole !== undefined) {
+                isSuperRole = user.isSuperRole;
             }
 
             localStorage.setItem('currentUser', JSON.stringify(user));
@@ -115,8 +118,13 @@
             }
 
             showToast("Success", "Login successful!");
+
             setTimeout(() => {
-                window.location.href = 'index.html';
+                if (isSuperRole) {
+                    window.location.href = 'index_admin.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
             }, 1200);
 
         } catch (err) {
@@ -125,6 +133,5 @@
         }
     });
 </script>
-
 </body>
 </html>
