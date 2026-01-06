@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders | Mabu Store</title>
-    <!--CDN CSS-->
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <!-- CSS -->
-    <link rel="stylesheet" href="../../css/product.css"> <!-- Tái sử dụng style cart hoặc tạo order.css nếu muốn riêng -->
-    <!-- jQuery & Bootstrap JS -->
+    <link rel="stylesheet" href="../../css/product.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
+
 <body>
 <!--HEADER-->
-
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
@@ -29,9 +26,8 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
+                    <div class="nav-item">
+                        <a class="nav-link text-body" href="../customer/index.html">HOME</a>
                     </div>
                     <div class="dropdown">
                         <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
@@ -249,6 +245,7 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
+                <a href="profile.html"><i class="far fa-user fa-fw mx-3" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
@@ -258,23 +255,27 @@
 </header>
 <!--HEADER END-->
 
+
 <!-- ORDERS SECTION -->
 <section class="my-5">
     <div class="container">
-        <h2 class="mb-4">Danh sách đơn hàng của bạn</h2>
+        <h2 class="mb-4">Your Orders</h2>
         <div id="ordersContainer">
-            <!-- Đơn hàng sẽ được render động ở đây -->
-            <div class="text-center"><p>Đang tải đơn hàng...</p></div>
+            <div class="text-center"><p>Loading orders...</p></div>
         </div>
-
         <div class="text-center mt-4" id="noOrders" style="display: none;">
-            <p>Bạn chưa có đơn hàng nào.</p>
-            <a href="product.html" class="btn btn-warning text-white">Tiếp tục mua sắm</a>
+            <p>You have no orders yet.</p>
+            <a href="product.html" class="btn btn-warning text-white">Continue Shopping</a>
         </div>
     </div>
 </section>
 
-<!--FOOTER-->
+<!-- TOAST CONTAINER -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
+<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -289,30 +290,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -320,75 +305,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -397,48 +347,53 @@
     <hr style="background-color: white;">
     <div class="copyright" style="color: white;">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Mega Mall
-                    </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
 
-<!--END FOOTER-->
-
 <script>
     const BASE_URL = "http://localhost:8888/api";
 
-    // Load orders của user hiện tại
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+          <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
+        </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
+
     async function loadOrders() {
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
 
         if (!authToken || !savedUser) {
-            alert("Vui lòng đăng nhập để xem đơn hàng!");
+            showToast('Please log in to view your orders', 'warning');
             window.location.href = 'login.html';
             return;
         }
 
         const user = JSON.parse(savedUser);
         const userId = user.id;
-
         const headers = { 'Authorization': `Bearer ${authToken}` };
 
         try {
-            // Endpoint lấy orders theo userID (dựa trên backend phổ biến)
             const ordersRes = await fetch(`${BASE_URL}/orders?userID=${userId}&itemPerPage=50&page=1`, { headers });
-            if (!ordersRes.ok) throw new Error("Lỗi tải đơn hàng");
+            if (!ordersRes.ok) throw new Error('Failed to load orders');
 
             const ordersData = await ordersRes.json();
             let orders = ordersData.data?.list || [];
@@ -451,10 +406,9 @@
                 return;
             }
 
-            // Render từng đơn hàng
             for (let order of orders) {
-                // Fetch chi tiết order items nếu backend không join
                 let orderItems = order.orderItems || [];
+
                 if (orderItems.length === 0 && order.id) {
                     const itemsRes = await fetch(`${BASE_URL}/order-items?orderId=${order.id}&itemPerPage=100&page=1`, { headers });
                     if (itemsRes.ok) {
@@ -463,7 +417,6 @@
                     }
                 }
 
-                // Tính tổng tiền (nếu backend không có totalAmount)
                 let totalAmount = order.totalAmount || 0;
                 if (!totalAmount) {
                     for (let item of orderItems) {
@@ -471,10 +424,9 @@
                     }
                 }
 
-                // Lấy thông tin sản phẩm cho mỗi item
                 let itemsHTML = '';
                 for (let item of orderItems) {
-                    let productName = item.productName || 'Sản phẩm không tên';
+                    let productName = item.productName || 'Unnamed Product';
                     let productImage = '../../img/default-product.jpg';
 
                     if (item.productVariantID) {
@@ -489,41 +441,40 @@
 
                     const itemTotal = (item.priceAtPurchase || 0) * (item.quantity || 1);
                     itemsHTML += `
-                        <div class="d-flex align-items-center mb-3 border-bottom pb-3">
-                            <img src="${productImage}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
-                            <div class="flex-grow-1">
-                                <h6 class="mb-0">${productName}</h6>
-                                <small>Số lượng: ${item.quantity} × ${Number(item.priceAtPurchase || 0).toLocaleString('vi-VN')} ₫</small>
-                            </div>
-                            <strong>${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
-                        </div>
-                    `;
+              <div class="d-flex align-items-center mb-3 border-bottom pb-3">
+                <img src="${productImage}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
+                <div class="flex-grow-1">
+                  <h6 class="mb-0">${productName}</h6>
+                  <small>Quantity: ${item.quantity} × ${Number(item.priceAtPurchase || 0).toLocaleString()} ₫</small>
+                </div>
+                <strong>${Number(itemTotal).toLocaleString()} ₫</strong>
+              </div>`;
                 }
 
-                const statusBadge = order.status ?
-                    `<span class="badge badge-${order.status === 'completed' ? 'success' : order.status === 'pending' ? 'warning' : 'secondary'}">${order.status}</span>`
+                const statusBadge = order.status
+                    ? `<span class="badge badge-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'secondary'}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>`
                     : '<span class="badge badge-info">Unknown</span>';
 
                 const orderHTML = `
-                    <div class="card mb-4">
-                        <div class="card-header d-flex justify-content-between">
-                            <strong>Đơn hàng #${order.id} - ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</strong>
-                            ${statusBadge}
-                        </div>
-                        <div class="card-body">
-                            ${itemsHTML || '<p>Không có sản phẩm trong đơn hàng này.</p>'}
-                            <hr>
-                            <div class="d-flex justify-content-end">
-                                <h5>Tổng tiền: <strong class="text-danger">${Number(totalAmount).toLocaleString('vi-VN')} ₫</strong></h5>
-                            </div>
-                        </div>
-                    </div>
-                `;
+            <div class="card mb-4">
+              <div class="card-header d-flex justify-content-between">
+                <strong>Order #${order.id} - ${new Date(order.createdAt).toLocaleDateString()}</strong>
+                ${statusBadge}
+              </div>
+              <div class="card-body">
+                ${itemsHTML || '<p>No products in this order.</p>'}
+                <hr>
+                <div class="d-flex justify-content-end">
+                  <h5>Total: <strong class="text-danger">${Number(totalAmount).toLocaleString()} ₫</strong></h5>
+                </div>
+              </div>
+            </div>`;
                 container.append(orderHTML);
             }
         } catch (err) {
             console.error(err);
-            $('#ordersContainer').html('<p class="text-center text-danger">Lỗi tải đơn hàng: ' + err.message + '</p>');
+            $('#ordersContainer').html('<p class="text-center text-danger">Failed to load orders</p>');
+            showToast('Failed to load orders', 'danger');
         }
     }
 

@@ -4,19 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Notifications | Mabu Store</title>
-    <!--CDN CSS-->
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
-    <!-- FONT AWESOME -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <!-- CSS (tái sử dụng từ cart hoặc product) -->
-    <link rel="stylesheet" href="../../css/cart.css"> <!-- Hoặc tạo notification.css riêng nếu muốn -->
-    <!-- jQuery & Bootstrap JS -->
+    <link rel="stylesheet" href="../../css/cart.css">
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
+
 <body>
 <!--HEADER-->
-
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
@@ -28,9 +26,8 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
+                    <div class="nav-item">
+                        <a class="nav-link text-body" href="../customer/index.html">HOME</a>
                     </div>
                     <div class="dropdown">
                         <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
@@ -248,6 +245,7 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
+                <a href="profile.html"><i class="far fa-user fa-fw mx-3" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
@@ -260,20 +258,23 @@
 <!-- NOTIFICATIONS SECTION -->
 <section class="my-5">
     <div class="container">
-        <h2 class="mb-4">Thông báo của bạn</h2>
+        <h2 class="mb-4">Your Notifications</h2>
         <div id="notificationsList" class="list-group">
-            <!-- Thông báo sẽ được render động ở đây -->
-            <div class="text-center"><p>Đang tải thông báo...</p></div>
+            <div class="text-center"><p>Loading notifications...</p></div>
         </div>
-
         <div class="text-center mt-4" id="noNotifications" style="display: none;">
-            <p>Bạn chưa có thông báo nào.</p>
-            <a href="product.html" class="btn btn-warning text-white">Tiếp tục mua sắm</a>
+            <p>You have no notifications.</p>
+            <a href="product.html" class="btn btn-warning text-white">Continue Shopping</a>
         </div>
     </div>
 </section>
 
-<!--FOOTER-->
+<!-- TOAST CONTAINER -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
+<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -288,30 +289,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -319,75 +304,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -396,113 +346,42 @@
     <hr style="background-color: white;">
     <div class="copyright" style="color: white;">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Mega Mall
-                    </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
 
-<!--END FOOTER-->
-
-<!--<script>-->
-<!--    const BASE_URL = "http://localhost:8888/api";-->
-
-<!--    async function loadNotifications() {-->
-<!--        const authToken = localStorage.getItem('authToken');-->
-<!--        const savedUser = localStorage.getItem('currentUser');-->
-
-<!--        if (!authToken || !savedUser) {-->
-<!--            alert("Vui lòng đăng nhập để xem thông báo!");-->
-<!--            window.location.href = 'login.html';-->
-<!--            return;-->
-<!--        }-->
-
-<!--        const headers = { 'Authorization': `Bearer ${authToken}` };-->
-
-<!--        try {-->
-<!--            // Giữ endpoint /users/notifications (dựa trên routes bạn cung cấp)-->
-<!--            const res = await fetch(`${BASE_URL}/users/notifications?itemPerPage=50&page=1`, { headers });-->
-
-<!--            if (!res.ok) {-->
-<!--                throw new Error("Không thể tải thông báo (HTTP " + res.status + ")");-->
-<!--            }-->
-
-<!--            const data = await res.json();-->
-
-<!--            // Kiểm tra cấu trúc response chuẩn: data.data.list-->
-<!--            let notifications = [];-->
-<!--            if (data.data && Array.isArray(data.data.list)) {-->
-<!--                notifications = data.data.list;-->
-<!--            } else if (Array.isArray(data.data)) {-->
-<!--                notifications = data.data;-->
-<!--            } else if (Array.isArray(data)) {-->
-<!--                notifications = data;-->
-<!--            }-->
-<!--            // Nếu response là list users như bạn paste → coi như không có notification-->
-<!--            if (notifications.length > 0 && notifications[0].email) {-->
-<!--                notifications = []; // Force empty nếu là list users-->
-<!--            }-->
-
-<!--            const list = $('#notificationsList');-->
-<!--            list.empty();-->
-
-<!--            if (notifications.length === 0) {-->
-<!--                list.html('<div class="alert alert-info text-center">Bạn chưa có thông báo nào.</div>');-->
-<!--                $('#noNotifications').hide(); // Ẩn phần default-->
-<!--                return;-->
-<!--            }-->
-
-<!--            // Render nếu có data thật (code cũ)-->
-<!--            notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));-->
-
-<!--            notifications.forEach(noti => {-->
-<!--                const isRead = noti.isRead !== undefined ? noti.isRead : !noti.readAt;-->
-<!--                const badge = isRead ? '' : '<span class="badge badge-danger ml-2">Mới</span>';-->
-<!--                const date = new Date(noti.createdAt).toLocaleString('vi-VN');-->
-
-<!--                const item = `-->
-<!--                <a href="#" class="list-group-item list-group-item-action ${isRead ? 'read' : 'unread'}">-->
-<!--                    <div class="d-flex w-100 justify-content-between">-->
-<!--                        <h5 class="mb-1">${noti.title || 'Thông báo từ hệ thống'} ${badge}</h5>-->
-<!--                        <small>${date}</small>-->
-<!--                    </div>-->
-<!--                    <p class="mb-1">${noti.message || noti.content || 'Không có nội dung'}</p>-->
-<!--                    ${noti.type ? `<small class="text-muted">Loại: ${noti.type}</small>` : ''}-->
-<!--                </a>-->
-<!--            `;-->
-<!--                list.append(item);-->
-<!--            });-->
-
-<!--        } catch (err) {-->
-<!--            console.error(err);-->
-<!--            $('#notificationsList').html('<div class="alert alert-warning">Hiện tại chưa có thông báo nào hoặc tính năng đang phát triển.</div>');-->
-<!--        }-->
-<!--    }-->
-
-<!--    $(document).ready(function() {-->
-<!--        loadNotifications();-->
-<!--    });-->
-<!--</script>-->
 <script>
     const BASE_URL = "http://localhost:8888/api";
+
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+          <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
+        </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
 
     async function loadNotifications() {
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
 
         if (!authToken || !savedUser) {
-            alert("Vui lòng đăng nhập để xem thông báo!");
+            showToast('Please log in to view notifications', 'warning');
             window.location.href = 'login.html';
             return;
         }
@@ -511,65 +390,58 @@
 
         try {
             const res = await fetch(`${BASE_URL}/users/notifications?itemPerPage=50&page=1`, { headers });
-
-            if (!res.ok) {
-                throw new Error("Không thể tải thông báo (HTTP " + res.status + ")");
-            }
+            if (!res.ok) throw new Error('Unable to load notifications');
 
             const data = await res.json();
-
             let notifications = [];
+
             if (data.data && Array.isArray(data.data.list)) {
                 notifications = data.data.list;
             } else if (Array.isArray(data.data)) {
                 notifications = data.data;
             }
 
-            // Phát hiện nếu response là list users (có field email) → backend lỗi
             if (notifications.length > 0 && notifications[0].email !== undefined) {
                 $('#notificationsList').html(`
-                    <div class="alert alert-warning text-center">
-                        <strong>Lỗi backend:</strong> Endpoint notifications đang trả về danh sách users thay vì thông báo.<br>
-                        Hiện tại chưa có thông báo nào hiển thị đúng.<br>
-                        Vui lòng chờ fix backend hoặc liên hệ admin.
-                    </div>
-                `);
+            <div class="alert alert-warning text-center">
+              <strong>Backend error:</strong> The notifications endpoint is returning user list instead of notifications.<br>
+              No notifications can be displayed at the moment.<br>
+              Please wait for backend fix or contact admin.
+            </div>
+          `);
                 return;
             }
-
-            // Nếu là empty list thật → chưa có noti
-            if (notifications.length === 0) {
-                $('#notificationsList').html('<div class="alert alert-info text-center">Bạn chưa có thông báo nào.</div>');
-                return;
-            }
-
-            // Nếu có data noti thật → render bình thường
-            notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
             const list = $('#notificationsList');
             list.empty();
 
+            if (notifications.length === 0) {
+                list.html('<div class="alert alert-info text-center">You have no notifications.</div>');
+                return;
+            }
+
+            notifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
             notifications.forEach(noti => {
                 const isRead = noti.isRead === true || noti.readAt !== null;
-                const badge = isRead ? '' : '<span class="badge badge-danger ml-2">Mới</span>';
-                const date = new Date(noti.createdAt).toLocaleString('vi-VN');
+                const badge = isRead ? '' : '<span class="badge badge-danger ml-2">New</span>';
+                const date = new Date(noti.createdAt).toLocaleString();
 
                 const item = `
-                    <a href="#" class="list-group-item list-group-item-action ${isRead ? 'read' : 'unread'}">
-                        <div class="d-flex w-100 justify-content-between">
-                            <h5 class="mb-1">${escapeHtml(noti.title || 'Thông báo hệ thống')} ${badge}</h5>
-                            <small>${date}</small>
-                        </div>
-                        <p class="mb-1">${escapeHtml(noti.message || noti.content || 'Không có nội dung')}</p>
-                        ${noti.type ? `<small class="text-muted">Loại: ${escapeHtml(noti.type)}</small>` : ''}
-                    </a>
-                `;
+            <a href="#" class="list-group-item list-group-item-action ${isRead ? 'read' : 'unread'}">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">${escapeHtml(noti.title || 'System Notification')} ${badge}</h5>
+                <small>${date}</small>
+              </div>
+              <p class="mb-1">${escapeHtml(noti.message || noti.content || 'No content')}</p>
+              ${noti.type ? `<small class="text-muted">Type: ${escapeHtml(noti.type)}</small>` : ''}
+            </a>`;
                 list.append(item);
             });
 
         } catch (err) {
             console.error(err);
-            $('#notificationsList').html('<div class="alert alert-danger text-center">Lỗi kết nối hoặc endpoint notifications chưa hoạt động đúng.</div>');
+            $('#notificationsList').html('<div class="alert alert-danger text-center">Connection error or notifications endpoint not working properly.</div>');
         }
     }
 
@@ -588,9 +460,7 @@
     });
 </script>
 
-
 <style>
-    /* Style đơn giản cho thông báo */
     .list-group-item.unread {
         background-color: #f8f9fa;
         font-weight: bold;

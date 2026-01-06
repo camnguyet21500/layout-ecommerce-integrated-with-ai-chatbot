@@ -44,10 +44,9 @@
 </div>
 
 <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
-    <div id="loginToast" class="toast" data-delay="1500">
+    <div id="loginToast" class="toast" data-delay="2000">
         <div class="toast-header">
             <strong class="mr-auto" id="toastTitle"></strong>
-            <small>Now</small>
             <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">&times;</button>
         </div>
         <div class="toast-body" id="toastMessage"></div>
@@ -57,12 +56,12 @@
 <script>
     const BASE_URL = "http://localhost:8888/api";
 
-    function showToast(title, message, isSuccess = true) {
+    function showToast(title, message, success = true) {
         $('#toastTitle').text(title);
         $('#toastMessage').text(message);
         $('#loginToast')
             .removeClass('bg-success bg-danger text-white')
-            .addClass(isSuccess ? 'bg-success text-white' : 'bg-danger text-white')
+            .addClass(success ? 'bg-success text-white' : 'bg-danger text-white')
             .toast('show');
     }
 
@@ -74,7 +73,7 @@
         const password = $('#loginPassword').val();
 
         if (!email || !password) {
-            showToast('Login Failed', 'Please enter both email and password.', false);
+            $('#loginError').text('Please enter both email and password.').show();
             return;
         }
 
@@ -89,34 +88,40 @@
 
             if (!loginRes.ok || !loginData.data?.accessToken) {
                 const msg = loginData.message || 'Invalid email or password.';
-                showToast('Login Failed', msg, false);
+                $('#loginError').text(msg).show();
                 return;
             }
 
             const token = loginData.data.accessToken;
             localStorage.setItem('authToken', token);
 
-            const user = loginData.data.user || { email };
+            const userRes = await fetch(`${BASE_URL}/users?email=${encodeURIComponent(email)}&itemPerPage=1&page=1`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
 
-            let isSystemUser = false;
-            if (user.userRoles && Array.isArray(user.userRoles)) {
-                isSystemUser = user.userRoles.some(ur => ur.role?.isSystemRole === true);
+            const userData = await userRes.json();
+            let user = null;
+
+            if (userRes.ok && userData.data?.list?.length > 0) {
+                user = userData.data.list[0];
+            } else {
+                user = { email };
+                showToast("Login Notice", "Login successful, but user profile could not be fully loaded.", false);
             }
 
-            localStorage.setItem('currentUser', JSON.stringify({ ...user, isSystemUser }));
+            localStorage.setItem('currentUser', JSON.stringify(user));
             if (user.id) {
                 localStorage.setItem('currentUserId', user.id);
             }
 
-            showToast('Success', 'Login successful! Redirecting...', true);
-
+            showToast("Success", "Login successful!");
             setTimeout(() => {
-                window.location.href = isSystemUser ? 'index_admin.html' : 'index.html';
-            }, 1500);
+                window.location.href = 'index.html';
+            }, 1200);
 
         } catch (err) {
-            console.error(err);
-            showToast('Error', 'Server connection error. Please try again later.', false);
+            console.error("Connection error:", err);
+            $('#loginError').text('Server connection error. Please try again later.').show();
         }
     });
 </script>

@@ -4,26 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart | Mabu Store</title>
-    <!--CDN CSS-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <!--JS library: Full jQuery first-->
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
-    <!-- FONT AWESOME -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <!-- ION ICON: Fix warning -->
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.js"></script>
-    <!--Angular--> <!-- Remove if not used, or implement controller -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <!-- CSS -->
     <link rel="stylesheet" href="../../css/cart.css">
 </head>
-<body> <!-- Removed ng-app and ng-controller, use jQuery instead -->
-<!--HEADER-->
 
+<body>
+<!--HEADER-->
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
@@ -35,9 +32,8 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
+                    <div class="nav-item">
+                        <a class="nav-link text-body" href="../customer/index.html">HOME</a>
                     </div>
                     <div class="dropdown">
                         <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
@@ -255,6 +251,7 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
+                <a href="profile.html"><i class="far fa-user fa-fw mx-3" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
@@ -263,6 +260,8 @@
     </nav>
 </header>
 <!--HEADER END-->
+
+
 <!-- CART -->
 <section>
     <div class="container">
@@ -273,12 +272,10 @@
                 <th scope="col">PRICE</th>
                 <th scope="col">QUANTITY</th>
                 <th scope="col">TOTAL</th>
-                <th scope="col">ACTION</th> <!-- Thêm cột remove -->
+                <th scope="col">ACTION</th>
             </tr>
             </thead>
-            <tbody id="cartItemsBody">
-            <!-- Cart items sẽ render động ở đây -->
-            </tbody>
+            <tbody id="cartItemsBody"></tbody>
         </table>
         <div class="cart-update">
             <input type="submit" class="button" value="UPDATE CART" id="updateCartBtn">
@@ -291,15 +288,9 @@
             <table class="total-checkout">
                 <tbody>
                 <tr>
-                    <th class="cart-label">
-                        <span>Total</span>
-                    </th>
+                    <th class="cart-label"><span>Total</span></th>
                     <td class="cart-amount">
-                                <span>
-                                    <strong>
-                                        <span id="cartTotal" class="amount">0 ₫</span>
-                                    </strong>
-                                </span>
+                        <span><strong><span id="cartTotal" class="amount">0 ₫</span></strong></span>
                     </td>
                 </tr>
                 </tbody>
@@ -310,8 +301,13 @@
         </div>
     </div>
 </section>
-<!-- END CART -->
-<!--FOOTER-->
+
+<!-- TOAST CONTAINER -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
+<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -326,30 +322,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -357,75 +337,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -434,43 +379,52 @@
     <hr style="background-color: white;">
     <div class="copyright" style="color: white;">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Mega Mall
-                    </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
 
-<!--END FOOTER-->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Ensure jQuery full for ajax -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     const BASE_URL = "http://localhost:8888/api";
+
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
+          <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
+        </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
 
     async function getOrCreateCartId() {
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
+
         if (!authToken || !savedUser) {
-            alert("Vui lòng đăng nhập để xem giỏ hàng!");
+            showToast('Please log in to view your cart', 'warning');
             window.location.href = 'login.html';
             return null;
         }
+
         const user = JSON.parse(savedUser);
         const userId = user.id;
         const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+
         try {
             let cartId;
-            // Tìm cart hiện có
             const cartsRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
             if (cartsRes.ok) {
                 const cartsData = await cartsRes.json();
@@ -478,11 +432,15 @@
                     cartId = cartsData.data.list[0].id;
                 }
             }
-            // Nếu không có → tạo mới (với retry nếu unique error)
+
             if (!cartId) {
-                const createCartRes = await fetch(`${BASE_URL}/carts`, { method: 'POST', headers, body: JSON.stringify({ userID: userId }) });
+                const createCartRes = await fetch(`${BASE_URL}/carts`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({ userID: userId })
+                });
+
                 if (!createCartRes.ok) {
-                    // Retry tìm lại nếu lỗi unique
                     const retryRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
                     if (retryRes.ok) {
                         const retryData = await retryRes.json();
@@ -490,7 +448,7 @@
                             cartId = retryData.data.list[0].id;
                         }
                     }
-                    if (!cartId) throw new Error("Không thể tạo hoặc tìm cart");
+                    if (!cartId) throw new Error('Unable to create or find cart');
                 } else {
                     const createCartData = await createCartRes.json();
                     cartId = createCartData.data.id;
@@ -499,32 +457,34 @@
             return cartId;
         } catch (err) {
             console.error(err);
-            alert("Lỗi lấy/tạo cart: " + err.message);
+            showToast('Error accessing cart', 'danger');
             return null;
         }
     }
 
-    // Load và render cart items
     async function loadCartItems() {
         const cartId = await getOrCreateCartId();
         if (!cartId) return;
+
         const authToken = localStorage.getItem('authToken');
         const headers = { 'Authorization': `Bearer ${authToken}` };
+
         try {
             const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
-            if (!itemsRes.ok) throw new Error("Lỗi load cart items");
+            if (!itemsRes.ok) throw new Error('Failed to load cart items');
+
             const itemsData = await itemsRes.json();
             let items = itemsData.data.list || [];
+
             let total = 0;
             for (let item of items) {
-                // Backend có thể trả productVariant hoặc chỉ variantId → fetch thêm nếu cần
-                let variantId = item.productVariantID || item.productVariantId; // hỗ trợ cả hai
+                let variantId = item.productVariantID || item.productVariantId;
                 if (!item.product && variantId) {
                     const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
                     if (variantRes.ok) {
                         const variantData = await variantRes.json();
                         item.productVariant = variantData.data;
-                        // Fetch product từ variant
+
                         const productId = item.productVariant.productID;
                         const productRes = await fetch(`${BASE_URL}/products/${productId}?include=productImages`, { headers });
                         if (productRes.ok) {
@@ -533,107 +493,112 @@
                         }
                     }
                 }
-                // Lấy info hiển thị
-                item.name = item.product?.name || 'Sản phẩm không tên';
+
+                item.name = item.product?.name || 'Unnamed Product';
                 item.price = item.productVariant?.price || item.product?.price || 0;
                 item.mainImage = item.product?.productImages?.[0]?.imageUrl || item.productVariant?.imageUrl || "https://via.placeholder.com/300x300/eeeeee/999999?text=No+Image";
                 item.quantity = item.quantity || 1;
-                item.id = item.id; // cart-item id
+                item.id = item.id;
+
                 const itemTotal = item.price * item.quantity;
                 total += itemTotal;
             }
+
             renderCartItems(items, total);
         } catch (err) {
             console.error(err);
-            $('#cartItemsBody').html('<tr><td colspan="5" class="text-center text-danger">Lỗi tải giỏ hàng</td></tr>');
+            $('#cartItemsBody').html('<tr><td colspan="5" class="text-center text-danger">Failed to load cart</td></tr>');
+            showToast('Failed to load cart', 'danger');
         }
     }
 
     function renderCartItems(items, total = 0) {
         const tbody = $('#cartItemsBody');
         tbody.empty();
+
         if (items.length === 0) {
-            tbody.html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
+            tbody.html('<tr><td colspan="5" class="text-center py-5 text-muted">Your cart is empty</td></tr>');
             $('#cartTotal').text('0 ₫');
             return;
         }
+
         items.forEach(item => {
-            const priceStr = Number(item.price).toLocaleString('vi-VN') + ' ₫';
+            const priceStr = Number(item.price).toLocaleString() + ' ₫';
             const itemTotal = item.price * item.quantity;
-            const itemTotalStr = Number(itemTotal).toLocaleString('vi-VN') + ' ₫';
+            const itemTotalStr = Number(itemTotal).toLocaleString() + ' ₫';
+
             tbody.append(`
-                <tr data-item-id="${item.id}" data-price="${item.price}" data-quantity="${item.quantity}">
-                    <td class="align-middle"><strong>${item.name}</strong></td> <!-- Chỉ hiện tên sản phẩm, không ảnh -->
-                    <td class="align-middle">${priceStr}</td>
-                    <td class="align-middle">
-                        <div class="js-qty d-inline-block">
-                            <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
-                            <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
-                            <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
-                        </div>
-                    </td>
-                    <td class="align-middle item-total">${itemTotalStr}</td>
-                    <td class="align-middle text-center">
-                        <button class="btn btn-danger btn-sm remove-item">
-                            <i class="fas fa-trash-alt"></i> Xóa
-                        </button>
-                    </td>
-                </tr>
-            `);
+          <tr data-item-id="${item.id}" data-price="${item.price}" data-quantity="${item.quantity}">
+            <td class="align-middle"><strong>${item.name}</strong></td>
+            <td class="align-middle">${priceStr}</td>
+            <td class="align-middle">
+              <div class="js-qty d-inline-block">
+                <button class="qty-minus btn btn-outline-dark btn-sm" type="button">-</button>
+                <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="${item.quantity}" style="width: 60px;">
+                <button class="qty-plus btn btn-outline-dark btn-sm" type="button">+</button>
+              </div>
+            </td>
+            <td class="align-middle item-total">${itemTotalStr}</td>
+            <td class="align-middle text-center">
+              <button class="btn btn-danger btn-sm remove-item">
+                <i class="fas fa-trash-alt"></i> Remove
+              </button>
+            </td>
+          </tr>
+        `);
         });
-        $('#cartTotal').text(Number(total).toLocaleString('vi-VN') + ' ₫');
+
+        $('#cartTotal').text(Number(total).toLocaleString() + ' ₫');
     }
 
-    // XÓA SẢN PHẨM KHỎI GIỎ HÀNG – GỌI API DELETE (backend sẽ soft-delete)
     $(document).on('click', '.remove-item', async function() {
-        if (!confirm("Xác nhận xóa sản phẩm này khỏi giỏ hàng?")) {
-            return;
-        }
         const row = $(this).closest('tr');
-        const itemId = row.data('item-id'); // Lấy từ data-item-id
+        const itemId = row.data('item-id');
+
         if (!itemId) {
-            alert("Lỗi: Không tìm thấy ID sản phẩm!");
+            showToast('Error: Item ID not found', 'danger');
             return;
         }
+
         const authToken = localStorage.getItem('authToken');
         if (!authToken) {
-            alert("Vui lòng đăng nhập lại!");
+            showToast('Please log in again', 'warning');
             window.location.href = 'login.html';
             return;
         }
+
         try {
             const res = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
+
             if (res.ok || res.status === 204) {
-                alert("Xóa sản phẩm thành công!");
-                // Xóa dòng ngay lập tức trên giao diện
+                showToast('Item removed successfully', 'success');
                 row.remove();
-                // Tính lại total chính xác từ data attribute
+
                 let grandTotal = 0;
                 $('#cartItemsBody tr').each(function() {
                     const p = parseFloat($(this).attr('data-price')) || 0;
                     const q = parseFloat($(this).attr('data-quantity')) || 1;
                     grandTotal += p * q;
                 });
-                $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
-                // Nếu giỏ trống
+                $('#cartTotal').text(Number(grandTotal).toLocaleString() + ' ₫');
+
                 if ($('#cartItemsBody tr').length === 0) {
-                    $('#cartItemsBody').html('<tr><td colspan="5" class="text-center py-5 text-muted">Giỏ hàng trống</td></tr>');
+                    $('#cartItemsBody').html('<tr><td colspan="5" class="text-center py-5 text-muted">Your cart is empty</td></tr>');
                     $('#cartTotal').text('0 ₫');
                 }
             } else {
                 const err = await res.json();
-                alert("Xóa thất bại: " + (err.message || "Lỗi server"));
+                showToast('Remove failed: ' + (err.message || 'Server error'), 'danger');
             }
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi kết nối server!");
+            console.error(err);
+            showToast('Connection error', 'danger');
         }
     });
 
-    // Handle qty change
     $(document).on('click', '.qty-minus', function() {
         const input = $(this).siblings('.js-qty-num');
         let qty = parseInt(input.val());
@@ -656,165 +621,152 @@
         updateItemQuantity($(this).closest('tr'));
     });
 
-    // Update quantity (PATCH)
     async function updateItemQuantity(row) {
         const itemId = row.data('item-id');
         const newQty = parseInt(row.find('.js-qty-num').val());
         const authToken = localStorage.getItem('authToken');
         const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+
         try {
             const updateRes = await fetch(`${BASE_URL}/cart-items/${itemId}`, {
                 method: 'PATCH',
                 headers,
                 body: JSON.stringify({ quantity: newQty })
             });
-            if (!updateRes.ok) throw new Error("Lỗi cập nhật số lượng");
-            // Cập nhật data-quantity và item-total
+
+            if (!updateRes.ok) throw new Error('Failed to update quantity');
+
             row.attr('data-quantity', newQty);
             const price = parseFloat(row.attr('data-price'));
             const itemTotal = price * newQty;
-            row.find('.item-total').text(Number(itemTotal).toLocaleString('vi-VN') + ' ₫');
-            // Tính lại total từ tất cả row (chính xác tuyệt đối)
+            row.find('.item-total').text(Number(itemTotal).toLocaleString() + ' ₫');
+
             let grandTotal = 0;
             $('#cartItemsBody tr').each(function() {
                 const p = parseFloat($(this).attr('data-price')) || 0;
                 const q = parseFloat($(this).attr('data-quantity')) || 1;
                 grandTotal += p * q;
             });
-            $('#cartTotal').text(Number(grandTotal).toLocaleString('vi-VN') + ' ₫');
+            $('#cartTotal').text(Number(grandTotal).toLocaleString() + ' ₫');
         } catch (err) {
             console.error(err);
-            alert("Lỗi cập nhật số lượng: " + err.message);
-            loadCartItems(); // reload nếu lỗi
+            showToast('Failed to update quantity', 'danger');
+            loadCartItems();
         }
     }
 
-    // Nút UPDATE CART → chỉ reload để đồng bộ
     $('#updateCartBtn').on('click', function(e) {
         e.preventDefault();
         loadCartItems();
-        alert("Giỏ hàng đã được cập nhật!");
+        showToast('Cart updated successfully', 'success');
     });
 
-    // Tạo đơn hàng khi bấm Proceed to Checkout – FIX TRIỆT ĐỂ LỖI 400
-    // Tạo đơn hàng khi bấm Proceed to Checkout – TỰ ĐỘNG XÓA GIỎ SAU KHI ĐẶT HÀNG
-    $('#proceedCheckoutBtn').on('click', async function(e) {
+        $('#proceedCheckoutBtn').on('click', async function(e) {
         e.preventDefault();
-        if (!confirm("Xác nhận tạo đơn hàng từ giỏ hàng hiện tại?")) {
-            return;
-        }
+
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
+
         if (!authToken || !savedUser) {
-            alert("Vui lòng đăng nhập để đặt hàng!");
-            window.location.href = 'login.html';
-            return;
-        }
+        showToast('Please log in to place an order', 'warning');
+        window.location.href = 'login.html';
+        return;
+    }
+
         const user = JSON.parse(savedUser);
         const userId = user.id;
         const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+
         try {
-            // Lấy cartId
-            const cartId = await getOrCreateCartId();
-            if (!cartId) throw new Error("Không tìm thấy giỏ hàng");
+        const cartId = await getOrCreateCartId();
+        if (!cartId) throw new Error('Cart not found');
 
-            // Lấy cart-items
-            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
-            if (!itemsRes.ok) throw new Error("Lỗi lấy sản phẩm trong giỏ");
-            const itemsData = await itemsRes.json();
-            const cartItems = itemsData.data?.list || [];
+        const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
+        if (!itemsRes.ok) throw new Error('Failed to retrieve cart items');
 
-            if (cartItems.length === 0) {
-                alert("Giỏ hàng trống!");
-                return;
-            }
+        const itemsData = await itemsRes.json();
+        const cartItems = itemsData.data?.list || [];
 
-            // Tính subtotal và chuẩn bị orderItems
-            let subtotal = 0;
-            const orderItemsCreate = [];
+        if (cartItems.length === 0) {
+        showToast('Your cart is empty', 'warning');
+        return;
+    }
 
-            for (let item of cartItems) {
-                const variantId = item.productVariantID || item.productVariantId;
-                const quantity = item.quantity || 1;
+        let subtotal = 0;
+        const orderItemsCreate = [];
 
-                // Lấy giá từ variant (ưu tiên)
-                let price = 0;
-                if (variantId) {
-                    const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
-                    if (variantRes.ok) {
-                        const vData = await variantRes.json();
-                        price = vData.data.price || 0;
-                    }
-                }
+        for (let item of cartItems) {
+        const variantId = item.productVariantID || item.productVariantId;
+        const quantity = item.quantity || 1;
+        let price = 0;
 
-                const itemTotal = price * quantity;
-                subtotal += itemTotal;
+        if (variantId) {
+        const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
+        if (variantRes.ok) {
+        const vData = await variantRes.json();
+        price = vData.data.price || 0;
+    }
+    }
 
-                // Payload cho orderItem: unitPrice, totalPrice
-                orderItemsCreate.push({
-                    productVariantID: variantId,
-                    quantity: quantity,
-                    unitPrice: price,
-                    totalPrice: itemTotal
-                });
-            }
+        const itemTotal = price * quantity;
+        subtotal += itemTotal;
 
-            // Tạo orderNumber đơn giản
-            const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+        orderItemsCreate.push({
+        productVariantID: variantId,
+        quantity: quantity,
+        unitPrice: price,
+        totalPrice: itemTotal
+    });
+    }
 
-            // Payload đúng theo schema
-            const payload = {
-                orderNumber: orderNumber,
-                userID: userId,
-                subtotal: subtotal,
-                taxAmount: 0,
-                shippingAmount: 0,
-                discountAmount: 0,
-                totalAmount: subtotal,
-                currency: "VND",
-                status: 'pending',
-                orderItems: {
-                    create: orderItemsCreate
-                }
-            };
+        const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
 
-            // Tạo đơn hàng
-            const createOrderRes = await fetch(`${BASE_URL}/orders`, {
-                method: 'POST',
-                headers,
-                body: JSON.stringify(payload)
-            });
+        const payload = {
+        orderNumber: orderNumber,
+        userID: userId,
+        subtotal: subtotal,
+        taxAmount: 0,
+        shippingAmount: 0,
+        discountAmount: 0,
+        totalAmount: subtotal,
+        currency: "VND",
+        status: 'pending',
+        orderItems: { create: orderItemsCreate }
+    };
 
-            if (!createOrderRes.ok) {
-                const errData = await createOrderRes.json();
-                console.error("Order error response:", errData);
-                throw new Error(errData.message || "Lỗi tạo đơn hàng");
-            }
-
-            const orderData = await createOrderRes.json();
-            alert(`Đặt hàng thành công! Mã đơn hàng: ${orderData.data.orderNumber}`);
-
-            // TỰ ĐỘNG XÓA TOÀN BỘ GIỎ HÀNG SAU KHI ĐẶT HÀNG THÀNH CÔNG
-            for (let item of cartItems) {
-                await fetch(`${BASE_URL}/cart-items/${item.id}`, {
-                    method: 'DELETE',
-                    headers
-                });
-            }
-
-            // Reload lại giỏ hàng → hiển thị trống
-            loadCartItems();
-
-            // Thông báo thêm
-            alert("Giỏ hàng đã được làm trống sau khi đặt hàng thành công!");
-
-        } catch (err) {
-            console.error("Lỗi đặt hàng:", err);
-            alert("Lỗi đặt hàng: " + err.message);
-        }
+        const createOrderRes = await fetch(`${BASE_URL}/orders`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
     });
 
-    // Load khi mở trang
+        if (!createOrderRes.ok) {
+        const errData = await createOrderRes.json();
+        throw new Error(errData.message || 'Failed to create order');
+    }
+
+        const orderData = await createOrderRes.json();
+        showToast(`Order placed successfully! Order ID: ${orderData.data.orderNumber}`, 'success');
+
+        for (let item of cartItems) {
+        await fetch(`${BASE_URL}/cart-items/${item.id}`, {
+        method: 'DELETE',
+        headers
+    });
+    }
+
+        showToast('Cart cleared after successful order', 'success');
+
+        setTimeout(() => {
+        window.location.reload();
+    }, 2000);
+
+    } catch (err) {
+        console.error(err);
+        showToast('Order failed: ' + err.message, 'danger');
+    }
+    });
+
     $(document).ready(function() {
         loadCartItems();
     });

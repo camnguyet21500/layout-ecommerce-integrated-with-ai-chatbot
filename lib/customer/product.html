@@ -4,29 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product | Mabu Store</title>
-    <!--CDN CSS-->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <!--JS library: Full jQuery first-->
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+          integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.min.js" integrity="sha384-w1Q4orYjBQndcko6MimVbzY0tgp4pWB4lZ7lr30WKz0vr/aWKhXdBNmNb5D92v7s" crossorigin="anonymous"></script>
-    <!-- FONT AWESOME -->
+
+    <!-- Popper & Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+            integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <!-- ION ICON: Fix warning by using module/nomodule -->
+
+    <!-- Ion Icons -->
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.js"></script>
-    <!--Angular-->
+
+    <!-- AngularJS -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
-    <!-- CSS -->
+
+    <!-- Custom CSS & JS -->
     <link rel="stylesheet" href="../../css/product.css">
-    <!-- JS -->
     <script src="../../js/cart.js"></script>
 </head>
-</head>
+
 <body ng-app="myApp">
 <!--HEADER-->
-
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
@@ -38,9 +46,8 @@
 
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
-                    <div class="dropdown">
-                        <a class="nav-link text-body" href="index.html" id="navbarDropdown1" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">HOME</a>
+                    <div class="nav-item">
+                        <a class="nav-link text-body" href="../customer/index.html">HOME</a>
                     </div>
                     <div class="dropdown">
                         <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
@@ -258,6 +265,7 @@
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
             <div class="icon" style="display: inherit">
+                <a href="profile.html"><i class="far fa-user fa-fw mx-3" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
@@ -266,23 +274,24 @@
     </nav>
 </header>
 <!--HEADER END-->
-<!-- ITEMS -->
+
+<!-- FILTER -->
 <div class="filter">
     <a href="" class="btnfilter"><i class="fas fa-filter"></i>FILTER</a>
 </div>
+
+<!-- PRODUCTS GRID -->
 <div id="Accessories">
     <div class="tab-pane fade active show">
-        <div class="row" style="padding-left: 50px; padding-right: 50px;" id="productGrid">
-            <!-- Dữ liệu sản phẩm sẽ được render động ở đây -->
-        </div>
+        <div class="row" style="padding-left: 50px; padding-right: 50px;" id="productGrid"></div>
     </div>
 </div>
+
 <div class="loadmore">
     <a href="" class="btnloadmore">LOAD MORE</a>
 </div>
-<!-- END ITEMS -->
-<!-- PRODUCT DETAIL MODAL – CHUNG CHO TẤT CẢ SẢN PHẨM -->
-<!-- PRODUCT DETAIL MODAL – GIỐNG HỆT TEST.HTML -->
+
+<!-- PRODUCT DETAIL MODAL -->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -305,7 +314,7 @@
                                 <span>No reviews</span>
                             </div>
                             <hr>
-                            <div class="summary" id="modalDescription">Không có mô tả</div>
+                            <div class="summary" id="modalDescription">No description available.</div>
                             <div class="active mt-4">
                                 <div class="js-qty d-inline-block">
                                     <button class="qty-minus btn btn-outline-dark" type="button">-</button>
@@ -326,7 +335,13 @@
         </div>
     </div>
 </div>
-<!--FOOTER-->
+
+<!-- TOAST CONTAINER -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
+<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -341,30 +356,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -372,75 +371,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Help & Information <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Pagination</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Terms & Conditions</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Contact</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Accessories</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Term of use</a>
-                        </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            About Us <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">Help Center</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Address Store</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Privacy Policy</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Receivers & Amplifiers</a>
-                        </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border">
-                            Profile <br>
-                            <hr class="hr">
-                        </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li>
-                            <a href="" title="Pagination">My Account</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Checkout</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Order Tracking</a>
-                        </li>
-                        <li>
-                            <a href="" title="Pagination">Help & Support</a>
-                        </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -449,94 +413,91 @@
     <hr style="background-color: white;">
     <div class="copyright" style="color: white;">
         <div class="row align-items-center">
-            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">
-                        Designed
-                    </a>
-                    by
-                    <a href="" class="underline_hover link">
-                        Mega Mall
-                    </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
 
-<!--END FOOTER-->
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
-    // Tự động login để lấy token (dùng tài khoản public hoặc guest nếu có)
+    let allProductImages = [];
+
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+        <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="3000">
+          <div class="toast-header bg-${type === 'success' ? 'success' : 'danger'} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
+        </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
+
     async function autoLoginAndLoadProducts() {
         try {
-            // Thử login với tài khoản có sẵn (nvo28@example.com)
             const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
             });
+
             if (loginRes.ok) {
                 const loginData = await loginRes.json();
                 authToken = loginData.data.accessToken;
-                console.log("Login thành công, đang tải sản phẩm...");
-            } else {
-                console.warn("Login thất bại, thử gọi API public...");
-                // Nếu login fail → vẫn thử gọi API (có thể backend cho public)
             }
-            loadProducts();
         } catch (err) {
-            console.error("Lỗi login:", err);
-            loadProducts(); // Vẫn thử gọi API dù không có token
+            console.error(err);
         }
+        loadProducts();
     }
 
-    let allProductImages = []; // Lưu toàn bộ ảnh để dùng chung
     async function loadProducts() {
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-            // 1. Load danh sách sản phẩm
+
             const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, { headers });
-            if (!productsRes.ok) throw new Error("Không tải được sản phẩm");
+            if (!productsRes.ok) throw new Error("Failed to load products");
             const productsJson = await productsRes.json();
             let products = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
 
-            // 2. Load tất cả ảnh sản phẩm
             const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, { headers });
-            if (!imagesRes.ok) {
-                console.warn("Không load được ảnh, dùng ảnh default");
-                allProductImages = [];
-            } else {
+            if (imagesRes.ok) {
                 const imagesJson = await imagesRes.json();
                 allProductImages = imagesJson.data?.list || [];
             }
 
-            // 3. Map ảnh theo productID
             const imagesMap = {};
             allProductImages.forEach(img => {
                 if (!imagesMap[img.productID]) imagesMap[img.productID] = [];
                 imagesMap[img.productID].push(img);
             });
 
-            // 4. Gắn ảnh vào từng sản phẩm
             products = products.map(product => {
                 const imgs = imagesMap[product.id] || [];
                 if (imgs.length > 0) {
-                    // Sắp xếp theo sortOrder nếu có, nếu không thì lấy cái đầu
                     imgs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
                 }
                 product.mainImage = imgs.length > 0 ? imgs[0].imageUrl : "../../img/default-product.jpg";
-                product.allImages = imgs; // Dùng cho modal chi tiết
+                product.allImages = imgs;
                 return product;
             });
 
             renderProducts(products);
         } catch (err) {
-            console.error("Lỗi load sản phẩm:", err);
-            document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Lỗi tải sản phẩm từ server</p>';
+            console.error(err);
+            document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Failed to load products from server</p>';
         }
     }
 
@@ -544,49 +505,46 @@
         const grid = document.getElementById("productGrid");
         grid.innerHTML = "";
         if (products.length === 0) {
-            grid.innerHTML = '<p class="text-center">Chưa có sản phẩm nào</p>';
+            grid.innerHTML = '<p class="text-center">No products available</p>';
             return;
         }
+
         products.forEach(product => {
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
             const item = document.createElement("div");
             item.className = "col-lg-3 col-md-4 col-sm-6 col-6 product-tab-pd";
             item.innerHTML = `
-                    <div class="product-item-v1">
-                        <div class="product mb-30 engoj_grid_parent relative">
-                            <div class="img-product relative">
-                                <div class="engoj_find_img">
-                                    <img src="${product.mainImage}" alt="${product.name}" style="width: 100%; height: 300px; object-fit: cover;">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="info-product">
-                            <h4 class="des-font capital title-product mb-0 flex">
-                                <a href="#" class="product-detail-link" data-id="${product.id}">
-                                    ${product.name}
-                                </a>
-                            </h4>
-                            <p class="price-product">
-                                <span class="price">${price}</span>
-                            </p>
-                        </div>
-                    </div>
-                `;
+          <div class="product-item-v1">
+            <div class="product mb-30 engoj_grid_parent relative">
+              <div class="img-product relative">
+                <div class="engoj_find_img">
+                  <img src="${product.mainImage}" alt="${product.name}" style="width: 100%; height: 300px; object-fit: cover;">
+                </div>
+              </div>
+            </div>
+            <div class="info-product">
+              <h4 class="des-font capital title-product mb-0 flex">
+                <a href="#" class="product-detail-link" data-id="${product.id}">${product.name}</a>
+              </h4>
+              <p class="price-product">
+                <span class="price">${price}</span>
+              </p>
+            </div>
+          </div>`;
             grid.appendChild(item);
         });
     }
 
-    // Xử lý click xem chi tiết sản phẩm
     $(document).on('click', '.product-detail-link', async function(e) {
         e.preventDefault();
         const id = $(this).data('id');
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
             const res = await fetch(`${BASE_URL}/products/${id}`, { headers });
-            if (!res.ok) throw new Error("Lỗi load chi tiết");
+            if (!res.ok) throw new Error("Failed to load product details");
             const json = await res.json();
             let product = json.data;
-            // Nếu chi tiết không có ảnh → dùng từ allProductImages
+
             if (!product.productImages || product.productImages.length === 0) {
                 const imgs = allProductImages.filter(img => img.productID === id);
                 if (imgs.length > 0) {
@@ -598,43 +556,38 @@
             } else {
                 product.mainImage = product.productImages[0]?.imageUrl || "../../img/default-product.jpg";
             }
+
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
             $('#modalProductImage').attr('src', product.mainImage);
             $('#modalProductName').text(product.name);
             $('#modalNewPrice').text(price);
-            $('#modalDescription').text(product.description || 'Không có mô tả sản phẩm.');
+            $('#modalDescription').text(product.description || 'No description available.');
             $('#modalOldPrice').hide();
-            // Lưu productId vào modal để dùng cho add to cart
             $('#productModal').data('productId', product.id);
-            // Reset quantity về 1
             $('.js-qty-num').val(1);
             $('#productModal').modal('show');
         } catch (err) {
             console.error(err);
-            alert("Lỗi load chi tiết sản phẩm!");
+            showToast("Failed to load product details", "danger");
         }
     });
 
-    // Handle qty buttons in modal
     $(document).on('click', '.qty-minus', function() {
         let qty = parseInt($('.js-qty-num').val());
         if (qty > 1) $('.js-qty-num').val(qty - 1);
     });
+
     $(document).on('click', '.qty-plus', function() {
         let qty = parseInt($('.js-qty-num').val());
         $('.js-qty-num').val(qty + 1);
     });
 
-    // Handle ADD TO CART (đã fix unique constraint)
-    // Handle ADD TO CART (đã fix unique constraint và DTO fields)
     $(document).on('click', '.add-to-cart-btn', async function(e) {
         e.preventDefault();
-
-        // Kiểm tra login (dùng localStorage như code gốc của bạn)
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
         if (!authToken || !savedUser) {
-            alert("Vui lòng đăng nhập để thêm vào giỏ hàng!");
+            showToast("Please log in to add items to cart", "danger");
             window.location.href = 'login.html';
             return;
         }
@@ -643,16 +596,10 @@
         const userId = user.id;
         const productId = $('#productModal').data('productId');
         const quantity = parseInt($('.js-qty-num').val()) || 1;
-
-        const headers = {
-            'Authorization': `Bearer ${authToken}`,
-            'Content-Type': 'application/json'
-        };
+        const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
 
         try {
             let cartId;
-
-            // Bước 1: Tìm cart hiện có của user (query đúng theo backend: userID - chữ hoa ID)
             const cartsRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
             if (cartsRes.ok) {
                 const cartsData = await cartsRes.json();
@@ -661,18 +608,14 @@
                 }
             }
 
-            // Bước 2: NẾU VẪN KHÔNG CÓ CART → mới tạo (nhưng thực tế hiếm xảy ra vì unique)
-            // Quan trọng: Nếu đã có cart rồi → KHÔNG tạo nữa → tránh lỗi unique
             if (!cartId) {
                 const createCartRes = await fetch(`${BASE_URL}/carts`, {
                     method: 'POST',
                     headers,
-                    body: JSON.stringify({ userID: userId })  // đúng field backend yêu cầu
+                    body: JSON.stringify({ userID: userId })
                 });
 
-                // Nếu tạo fail vì đã tồn tại (500 unique) → thử tìm lại cart một lần nữa
                 if (!createCartRes.ok) {
-                    // Thử tìm lại cart (có thể cart đã được tạo từ session khác)
                     const retryRes = await fetch(`${BASE_URL}/carts?userID=${userId}&itemPerPage=1&page=1`, { headers });
                     if (retryRes.ok) {
                         const retryData = await retryRes.json();
@@ -680,124 +623,79 @@
                             cartId = retryData.data.list[0].id;
                         }
                     }
-
-                    if (!cartId) {
-                        const errData = await createCartRes.json();
-                        throw new Error("Lỗi tạo cart: " + (errData.errors?.[0]?.message || createCartRes.status));
-                    }
+                    if (!cartId) throw new Error("Failed to create cart");
                 } else {
                     const createCartData = await createCartRes.json();
                     cartId = createCartData.data.id;
                 }
             }
 
-            // Bước 1: Fetch chi tiết sản phẩm để lấy giá mới nhất
             let productPrice = 0;
             const productDetailRes = await fetch(`${BASE_URL}/products/${productId}`, { headers });
-            if (!productDetailRes.ok) {
-                throw new Error("Không thể lấy thông tin sản phẩm");
-            }
+            if (!productDetailRes.ok) throw new Error("Failed to retrieve product info");
             const productDetailJson = await productDetailRes.json();
             const currentProduct = productDetailJson.data;
             productPrice = currentProduct.price || 0;
 
-// Bước 2: Lấy variant của sản phẩm
             let productVariantID;
             const variantsRes = await fetch(`${BASE_URL}/product-variants?productID=${productId}&itemPerPage=10&page=1`, { headers });
-
             if (variantsRes.ok) {
                 const variantsData = await variantsRes.json();
                 const variants = variantsData.data?.list || [];
-
                 if (variants.length > 0) {
-                    // Có variant → dùng cái đầu tiên và update giá = giá product mới nhất
                     productVariantID = variants[0].id;
-
                     const updateVariantRes = await fetch(`${BASE_URL}/product-variants/${productVariantID}`, {
                         method: 'PATCH',
                         headers,
                         body: JSON.stringify({ price: productPrice })
                     });
-
-                    if (!updateVariantRes.ok) {
-                        console.warn("Không update được giá variant, dùng giá cũ");
-                    }
                 } else {
-                    // Chưa có variant → tạo mới với giá hiện tại
                     const createVariantRes = await fetch(`${BASE_URL}/product-variants`, {
                         method: 'POST',
                         headers,
-                        body: JSON.stringify({
-                            productID: productId,
-                            price: productPrice
-                        })
+                        body: JSON.stringify({ productID: productId, price: productPrice })
                     });
-
-                    if (!createVariantRes.ok) {
-                        const errData = await createVariantRes.json();
-                        throw new Error("Không thể tạo variant: " + (errData.message || createVariantRes.status));
-                    }
-
+                    if (!createVariantRes.ok) throw new Error("Failed to create variant");
                     const createVariantData = await createVariantRes.json();
                     productVariantID = createVariantData.data.id;
                 }
             } else {
-                throw new Error("Lỗi kiểm tra variant");
+                throw new Error("Failed to check variants");
             }
 
-// Bước 3: Kiểm tra xem sản phẩm (variant) đã có trong giỏ chưa
             let existingCartItem = null;
             const cartItemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
             if (cartItemsRes.ok) {
                 const cartItemsData = await cartItemsRes.json();
                 const cartItems = cartItemsData.data?.list || [];
-                existingCartItem = cartItems.find(item =>
-                    item.productVariantID === productVariantID || item.productVariantId === productVariantID
-                );
+                existingCartItem = cartItems.find(item => item.productVariantID === productVariantID);
             }
 
-// Bước 4: Nếu đã có → cập nhật quantity, chưa có → tạo mới
             if (existingCartItem) {
-                // Cập nhật quantity
                 const newQuantity = (existingCartItem.quantity || 1) + quantity;
                 const updateRes = await fetch(`${BASE_URL}/cart-items/${existingCartItem.id}`, {
                     method: 'PATCH',
                     headers,
                     body: JSON.stringify({ quantity: newQuantity })
                 });
-
-                if (!updateRes.ok) {
-                    const errData = await updateRes.json();
-                    throw new Error("Lỗi cập nhật số lượng: " + (errData.message || updateRes.status));
-                }
+                if (!updateRes.ok) throw new Error("Failed to update quantity");
             } else {
-                // Tạo mới cart-item
                 const addRes = await fetch(`${BASE_URL}/cart-items`, {
                     method: 'POST',
                     headers,
-                    body: JSON.stringify({
-                        cartID: cartId,
-                        productVariantID: productVariantID,
-                        quantity: quantity
-                    })
+                    body: JSON.stringify({ cartID: cartId, productVariantID: productVariantID, quantity: quantity })
                 });
-
-                if (!addRes.ok) {
-                    const errData = await addRes.json();
-                    throw new Error("Lỗi thêm sản phẩm: " + (errData.message || addRes.status));
-                }
+                if (!addRes.ok) throw new Error("Failed to add product");
             }
 
-            alert("Đã thêm vào giỏ hàng thành công!");
+            showToast("Added to cart successfully!");
             $('#productModal').modal('hide');
-
         } catch (err) {
             console.error(err);
-            alert("Lỗi thêm vào giỏ hàng: " + err.message);
+            showToast("Failed to add to cart: " + err.message, "danger");
         }
     });
 
-    // Chạy khi load trang
     $(document).ready(function() {
         autoLoginAndLoadProducts();
     });
