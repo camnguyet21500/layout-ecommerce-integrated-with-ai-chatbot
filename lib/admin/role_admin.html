@@ -4,18 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Role Management | Mega Mall Store Admin</title>
-    <!-- Bootstrap 4 + jQuery -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="../../css/role_admin.css">
 </head>
 <body>
-<!-- HEADER -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
@@ -37,20 +33,22 @@
         </div>
     </nav>
 </header>
-<!-- END HEADER -->
 
-<!-- ROLE MANAGEMENT SECTION -->
 <div class="role-management container mt-5 pt-4">
     <div class="text-center mb-4">
         <h3 class="title-heading">Role Management</h3>
     </div>
-    <!-- Action Buttons -->
-    <div class="management-actions text-right mb-4">
-        <a href="#" class="btn-admin btn-add" data-toggle="modal" data-target="#addRoleModal"> Add Role </a>
-        <button class="btn btn-success ml-2" onclick="importRolesFromExcel()">Import Excel</button>
-        <button class="btn btn-info ml-2" onclick="exportRolesToExcel()">Export Excel</button>
+    <div class="text-right mb-3">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
+            Add Role
+        </button>
+        <button class="btn btn-success ml-2" onclick="importRolesFromExcel()">
+            <i class="fas fa-file-excel mr-1"></i> Import Excel
+        </button>
+        <button class="btn btn-info ml-2" onclick="exportRolesToExcel()">
+            Export Excel
+        </button>
     </div>
-    <!-- Roles Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
@@ -59,14 +57,13 @@
                 <th>ROLE</th>
                 <th>DESCRIPTION</th>
                 <th>IS SYSTEM ROLE</th>
-                <th>PERMISSIONS</th>
                 <th>ACTION</th>
             </tr>
             </thead>
             <tbody id="roleTableBody">
             <tr>
-                <td colspan="6" class="text-center">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải vai trò...
+                <td colspan="5" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading roles...
                 </td>
             </tr>
             </tbody>
@@ -74,80 +71,83 @@
     </div>
 </div>
 
-<!-- Add Role Modal -->
 <div class="modal fade" id="addRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Thêm vai trò mới</h5>
+                <h5 class="modal-title">Add new role</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="addRoleForm">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên vai trò <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="addRoleName" required placeholder="Ví dụ: Moderator, Staff...">
+                        <label>Role name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="addRoleName" required placeholder="Example: Moderator, Staff...">
                     </div>
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
-                        <input type="text" class="form-control" id="addRoleDescription" placeholder="Mô tả ngắn về vai trò">
+                        <label>Description (optional)</label>
+                        <input type="text" class="form-control" id="addRoleDescription" placeholder="Short description of the role">
                     </div>
                     <div class="form-group">
                         <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" id="addIsSystemRole"> Là vai trò hệ thống (không thể xóa/sửa sau khi tạo)
+                            <input type="checkbox" class="form-check-input" id="addIsSystemRole">
+                            System role (cannot be deleted or edited after creation)
                         </label>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Thêm vai trò</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add role</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Role Modal -->
 <div class="modal fade" id="editRoleModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Chỉnh sửa vai trò</h5>
+                <h5 class="modal-title">Edit role</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="editRoleForm">
                 <input type="hidden" id="editRoleId">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label>Tên vai trò <span class="text-danger">*</span></label>
+                        <label>Role name <span class="text-danger">*</span></label>
                         <input type="text" class="form-control" id="editRoleName" required>
                     </div>
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
+                        <label>Description (optional)</label>
                         <input type="text" class="form-control" id="editRoleDescription">
                     </div>
                     <div class="form-group">
                         <label class="form-check-label">
-                            <input type="checkbox" class="form-check-input" id="editIsSystemRole" disabled> Là vai trò hệ thống
+                            <input type="checkbox" class="form-check-input" id="editIsSystemRole" disabled>
+                            System role
                         </label>
                     </div>
                     <div class="form-group">
-                        <label>Phân quyền</label>
+                        <label>Permissions</label>
                         <div id="editPermissionsList" class="border p-3" style="max-height: 300px; overflow-y: auto;">
-                            <p class="text-muted">Đang tải quyền...</p>
+                            <p class="text-muted">Loading permissions...</p>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning">Cập nhật vai trò</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Update role</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!--FOOTER-->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -162,30 +162,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -193,40 +177,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> Help & Information <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">Pagination</a> </li>
-                        <li> <a href="" title="Pagination">Terms & Conditions</a> </li>
-                        <li> <a href="" title="Pagination">Contact</a> </li>
-                        <li> <a href="" title="Pagination">Accessories</a> </li>
-                        <li> <a href="" title="Pagination">Term of use</a> </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> About Us <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">Help Center</a> </li>
-                        <li> <a href="" title="Pagination">Address Store</a> </li>
-                        <li> <a href="" title="Pagination">Privacy Policy</a> </li>
-                        <li> <a href="" title="Pagination">Receivers & Amplifiers</a> </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> Profile <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">My Account</a> </li>
-                        <li> <a href="" title="Pagination">Checkout</a> </li>
-                        <li> <a href="" title="Pagination">Order Tracking</a> </li>
-                        <li> <a href="" title="Pagination">Help & Support</a> </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -237,20 +221,37 @@
         <div class="row align-items-center">
             <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 | <a href="" class="underline_hover bold"> Designed </a> by <a href="" class="underline_hover link"> Mega Mall </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
+
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentRoles = [];
     let currentPermissions = [];
 
-    // Auto login
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+            <div class="toast" role="alert" data-delay="4000">
+                <div class="toast-header bg-${type} text-white">
+                    <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+                    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">${message}</div>
+            </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
+
     async function autoLoginAndLoad() {
         try {
             const res = await fetch(`${BASE_URL}/auth/sign-in`, {
@@ -264,10 +265,10 @@
                 await loadPermissions();
                 await loadRoles();
             } else {
-                alert("Login thất bại!");
+                showToast('Login failed', 'danger');
             }
         } catch (err) {
-            alert("Không kết nối được server");
+            showToast('Unable to connect to server', 'danger');
         }
     }
 
@@ -276,15 +277,13 @@
             const res = await fetch(`${BASE_URL}/roles?itemPerPage=100&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi load role");
+            if (!res.ok) throw new Error("Error loading roles");
             const json = await res.json();
             currentRoles = json.data.list.filter(r => !r.deletedAt);
-            // Order latest
             currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
             renderRoleTable(currentRoles);
         } catch (err) {
-            console.error(err);
-            document.getElementById("roleTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Lỗi tải dữ liệu</td></tr>`;
+            document.getElementById("roleTableBody").innerHTML = `<tr><td colspan="5" class="text-danger text-center">Error loading data</td></tr>`;
         }
     }
 
@@ -293,12 +292,11 @@
             const res = await fetch(`${BASE_URL}/permissions?itemPerPage=200&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi load permission");
+            if (!res.ok) throw new Error("Error loading permissions");
             const json = await res.json();
             currentPermissions = json.data.list.filter(p => !p.deletedAt);
         } catch (err) {
-            console.error(err);
-            alert("Không thể load danh sách quyền!");
+            showToast('Unable to load permissions list', 'danger');
         }
     }
 
@@ -306,38 +304,35 @@
         const tbody = document.getElementById("roleTableBody");
         tbody.innerHTML = "";
         if (roles.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">Chưa có vai trò nào</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No roles available</td></tr>`;
             return;
         }
         roles.forEach((role, index) => {
-            const permNames = role.rolePermissions?.map(rp => rp.permission.name).join(', ') || '-';
-            const isSystem = role.isSystemRole ? '<span class="badge badge-danger">Có</span>' : '<span class="badge badge-secondary">Không</span>';
+            const isSystem = role.isSystemRole ? '<span class="badge badge-danger">Yes</span>' : '<span class="badge badge-secondary">No</span>';
             const row = document.createElement("tr");
             row.innerHTML = `
-          <td class="text-center">${index + 1}</td>
-          <td><strong>${role.name}</strong></td>
-          <td>${role.description || '-'}</td>
-          <td class="text-center">${isSystem}</td>
-          <td>${permNames}</td>
-          <td class="text-center">
-            <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
-              <i class="fas fa-edit"></i>
-            </button>
-            ${role.isSystemRole ? '' : `<button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
-              <i class="fas fa-trash-alt"></i>
-            </button>`}
-          </td>
-        `;
+    <td class="text-center">${index + 1}</td>
+    <td><strong>${role.name}</strong></td>
+    <td>${role.description || '-'}</td>
+    <td class="text-center">${isSystem}</td>
+    <td class="text-center">
+        <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
+            <i class="fas fa-edit"></i>
+        </button>
+        ${role.isSystemRole ? '' : `<button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
+            <i class="fas fa-trash-alt"></i>
+        </button>`}
+    </td>
+`;
             tbody.appendChild(row);
         });
     }
 
-    // Render permissions checkbox
     function renderPermissions(containerId, selectedPermissionIds = []) {
         const container = document.getElementById(containerId);
         container.innerHTML = "";
         if (currentPermissions.length === 0) {
-            container.innerHTML = "<p class='text-muted'>Không có quyền nào</p>";
+            container.innerHTML = "<p class='text-muted'>No permissions available</p>";
             return;
         }
         currentPermissions.forEach(perm => {
@@ -345,54 +340,37 @@
             const div = document.createElement("div");
             div.className = "form-check form-check-inline";
             div.innerHTML = `
-          <input class="form-check-input permission-checkbox" type="checkbox" id="${containerId}_${perm.id}" value="${perm.id}" ${checked}>
-          <label class="form-check-label" for="${containerId}_${perm.id}">${perm.name} <small class="text-muted">(${perm.key})</small></label>
-        `;
+                <input class="form-check-input permission-checkbox" type="checkbox" id="${containerId}_${perm.id}" value="${perm.id}" ${checked}>
+                <label class="form-check-label" for="${containerId}_${perm.id}">${perm.name} <small class="text-muted">(${perm.key})</small></label>
+            `;
             container.appendChild(div);
         });
     }
 
-    // Open Edit modal
     $(document).on('click', '.edit-btn', async function() {
         const roleData = JSON.parse($(this).attr('data-role'));
         const roleId = roleData.id;
-
         try {
-            // Fetch detail role
             const res = await fetch(`${BASE_URL}/roles/${roleId}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-
-            if (!res.ok) {
-                throw new Error(`HTTP ${res.status}`);
-            }
-
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const json = await res.json();
             const fullRole = json.data || json;
-
-            // Make sure fullRole exist
             if (!fullRole) {
-                alert("Không nhận được dữ liệu role!");
+                showToast('No role data received', 'danger');
                 return;
             }
-
-            // Populate field
             $('#editRoleId').val(fullRole.id);
             $('#editRoleName').val(fullRole.name || '');
             $('#editRoleDescription').val(fullRole.description || '');
             $('#editIsSystemRole').prop('checked', fullRole.isSystemRole || false);
-
-            // Get list permission IDs
             let selectedPermIds = [];
-
             if (fullRole.rolePermissions && Array.isArray(fullRole.rolePermissions)) {
                 selectedPermIds = fullRole.rolePermissions.map(rp => rp.permission?.id || rp.permissionId).filter(id => id);
-            }
-            else if (fullRole.permissionIDs && Array.isArray(fullRole.permissionIDs)) {
+            } else if (fullRole.permissionIDs && Array.isArray(fullRole.permissionIDs)) {
                 selectedPermIds = fullRole.permissionIDs;
-            }
-            else {
-                // Fallback: call API role-permissions to get
+            } else {
                 try {
                     const rpRes = await fetch(`${BASE_URL}/role-permissions`, {
                         headers: { 'Authorization': `Bearer ${authToken}` }
@@ -405,31 +383,22 @@
                             .map(rp => rp.permissionId || rp.permission?.id)
                             .filter(id => id);
                     }
-                } catch (fallbackErr) {
-                    console.warn("Fallback load role-permissions failed", fallbackErr);
-                }
+                } catch (fallbackErr) {}
             }
-
-            // Render checkbox with permissions is ticked
             renderPermissions('editPermissionsList', selectedPermIds);
-
-            // Open modal
             $('#editRoleModal').modal('show');
-
         } catch (err) {
-            console.error("Lỗi khi mở modal edit:", err);
-            alert("Không thể tải thông tin vai trò. Vui lòng thử lại hoặc kiểm tra console (F12).");
+            showToast('Unable to load role information', 'danger');
         }
     });
 
-    // EXPORT EXCEL
     async function exportRolesToExcel() {
         try {
             const res = await fetch(`${BASE_URL}/roles/export`, {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi export");
+            if (!res.ok) throw new Error("Export error");
             const blob = await res.blob();
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -438,14 +407,12 @@
             document.body.appendChild(a);
             a.click();
             a.remove();
-            alert("Export thành công!");
+            showToast('Export successful', 'success');
         } catch (err) {
-            console.error(err);
-            alert("Lỗi export Excel! Kiểm tra xem backend có endpoint /roles/export chưa.");
+            showToast('Export Excel error', 'danger');
         }
     }
 
-    // IMPORT EXCEL
     function importRolesFromExcel() {
         document.getElementById('importExcelInput').click();
     }
@@ -468,15 +435,14 @@
                     body: formData
                 });
                 if (res.ok) {
-                    alert("Import vai trò thành công!");
-                    await loadRoles(); // Reload list
+                    showToast('Import successful', 'success');
+                    await loadRoles();
                 } else {
-                    const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                    alert(`Import thất bại!\n${err.message || err.error || ''}`);
+                    const err = await res.json().catch(() => ({ message: "Unknown error" }));
+                    showToast(`Import failed: ${err.message || err.error || ''}`, 'danger');
                 }
             } catch (err) {
-                console.error(err);
-                alert("Lỗi kết nối khi import!");
+                showToast('Connection error during import', 'danger');
             } finally {
                 importInput.value = '';
             }
@@ -484,14 +450,13 @@
         document.body.appendChild(importInput);
     });
 
-    // ADD ROLE
     $('#addRoleForm').on('submit', async function(e) {
         e.preventDefault();
         const name = $('#addRoleName').val().trim();
         const description = $('#addRoleDescription').val().trim() || null;
         const isSystemRole = $('#addIsSystemRole').is(':checked');
         if (!name) {
-            alert("Tên vai trò là bắt buộc!");
+            showToast('Role name is required', 'danger');
             return;
         }
         const payload = { name, description, isSystemRole };
@@ -502,36 +467,33 @@
                 body: JSON.stringify(payload)
             });
             if (!res.ok) {
-                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Tạo role thất bại!\nMã lỗi: ${res.status}\n${err.message || err.error || ''}`);
+                const err = await res.json().catch(() => ({ message: "Unknown error" }));
+                showToast(`Create role failed: ${res.status} - ${err.message || err.error || ''}`, 'danger');
                 return;
             }
             const json = await res.json();
             const newRole = json.data;
-            alert("Thêm vai trò thành công!\nBạn có thể chỉnh sửa role để gán quyền sau.");
+            showToast('Role added successfully. You can edit the role to assign permissions.', 'success');
             $('#addRoleModal').modal('hide');
             $('#addRoleForm')[0].reset();
             currentRoles.push(newRole);
             currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
             renderRoleTable(currentRoles);
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi kết nối server khi tạo role!");
+            showToast('Server connection error when creating role', 'danger');
         }
     });
 
-    // EDIT ROLE
     $('#editRoleForm').on('submit', async function(e) {
         e.preventDefault();
         const submitBtn = $(this).find('button[type="submit"]');
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang cập nhật...');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Updating...');
         const roleId = $('#editRoleId').val();
         const name = $('#editRoleName').val().trim();
         const description = $('#editRoleDescription').val().trim() || null;
-        // Get permissions as array of STRING (UUID)
         const selectedPermissions = [];
         $('#editPermissionsList .permission-checkbox:checked').each(function() {
-            selectedPermissions.push($(this).val()); // Không parseInt, giữ string
+            selectedPermissions.push($(this).val());
         });
         const payload = { name, description, permissionIDs: selectedPermissions };
         try {
@@ -541,47 +503,44 @@
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                alert("Cập nhật role và phân quyền thành công!");
+                showToast('Role and permissions updated successfully', 'success');
                 $('#editRoleModal').modal('hide');
                 await loadRoles();
             } else {
-                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Cập nhật thất bại!\n${err.message || JSON.stringify(err.errors)}`);
+                const err = await res.json().catch(() => ({ message: "Unknown error" }));
+                showToast(`Update failed: ${err.message || JSON.stringify(err.errors)}`, 'danger');
             }
         } catch (err) {
-            console.error(err);
-            alert("Lỗi kết nối server!");
+            showToast('Server connection error', 'danger');
         } finally {
-            submitBtn.prop('disabled', false).html('Cập nhật vai trò');
+            submitBtn.prop('disabled', false).html('Update role');
         }
     });
 
-    // Delete Role
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa vai trò này? Thao tác KHÔNG THỂ khôi phục!")) return;
+        if (!confirm("Delete this role? This action cannot be undone.")) return;
         try {
             const res = await fetch(`${BASE_URL}/roles/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (res.ok) {
-                alert("Xóa vai trò thành công!");
+                showToast('Role deleted successfully', 'success');
                 const index = currentRoles.findIndex(role => role.id === id);
                 if (index !== -1) {
                     currentRoles.splice(index, 1);
                 }
                 renderRoleTable(currentRoles);
             } else {
-                const err = await res.json().catch(() => ({ message: "Lỗi không rõ" }));
-                alert(`Xóa thất bại! ${err.message || ''}`);
+                const err = await res.json().catch(() => ({ message: "Unknown error" }));
+                showToast(`Delete failed: ${err.message || ''}`, 'danger');
             }
         } catch (err) {
-            alert("Lỗi kết nối khi xóa!");
+            showToast('Connection error when deleting', 'danger');
         }
     });
 
-    // Load page
     $(document).ready(function() {
         autoLoginAndLoad();
     });

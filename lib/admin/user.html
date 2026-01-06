@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="../../css/user.css">
 </head>
 <body>
-<!-- HEADER -->
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
         <div class="container-fluid container-fluid-v1">
@@ -36,7 +35,6 @@
 
 <div class="user-management container" style="margin-top: 120px;">
     <h3 class="text-center my-4">User Management</h3>
-    <!-- SEARCH -->
     <div class="row mb-4">
         <div class="col-md-6 offset-md-6">
             <div class="input-group">
@@ -68,7 +66,7 @@
         </thead>
         <tbody>
         <tr>
-            <td colspan="8">
+            <td colspan="7" class="text-center">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
             </td>
         </tr>
@@ -76,7 +74,6 @@
     </table>
 </div>
 
-<!-- Add User Modal -->
 <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -124,7 +121,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>City</label>
-                                <input type="text" class="form-control" id="city" placeholder="Ho Chi Minh city">
+                                <input type="text" class="form-control" id="city" placeholder="Ho Chi Minh City">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -136,7 +133,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country</label>
-                                <input type="text" class="form-control" id="country" value="Việt Nam">
+                                <input type="text" class="form-control" id="country" value="Vietnam">
                             </div>
                         </div>
                     </div>
@@ -151,7 +148,7 @@
                             <div class="form-group mt-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="status" checked>
-                                    <label class="form-check-label" for="status"> Status (active) </label>
+                                    <label class="form-check-label" for="status">Status (active)</label>
                                 </div>
                             </div>
                         </div>
@@ -174,7 +171,6 @@
     </div>
 </div>
 
-<!-- Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -197,7 +193,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>New password (leave blank if not changed)</label>
-                                <input type="password" class="form-control" id="editPassword" placeholder="Để trống = giữ nguyên mật khẩu cũ">
+                                <input type="password" class="form-control" id="editPassword" placeholder="Leave blank to keep current password">
                             </div>
                         </div>
                     </div>
@@ -223,7 +219,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>City</label>
-                                <input type="text" class="form-control" id="editCity" placeholder="Ho Chi Minh city">
+                                <input type="text" class="form-control" id="editCity" placeholder="Ho Chi Minh City">
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -235,7 +231,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Country</label>
-                                <input type="text" class="form-control" id="editCountry" value="Việt Nam">
+                                <input type="text" class="form-control" id="editCountry" value="Vietnam">
                             </div>
                         </div>
                     </div>
@@ -250,7 +246,7 @@
                             <div class="form-group mt-4">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="editStatus">
-                                    <label class="form-check-label" for="editStatus"> Status (active) </label>
+                                    <label class="form-check-label" for="editStatus">Status (active)</label>
                                 </div>
                             </div>
                         </div>
@@ -273,7 +269,10 @@
     </div>
 </div>
 
-<!--FOOTER-->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -288,30 +287,14 @@
                         University of Information Technology (VNUHCM – UIT)<br>
                         (028) 372 52002 <br>
                         (028) 372 52148 <br>
-                        info@uit.edu.vn</p>
+                        info@uit.edu.vn
                     </div>
                     <div class="list-icon">
                         <ul class="list-inline list-unstyled mb-0">
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-twitter"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weixin"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-weibo"></i>
-                                </a>
-                            </li>
-                            <li class="list-inline-item">
-                                <a href="" class="social-item">
-                                    <i class="fab fa-skype"></i>
-                                </a>
-                            </li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
                         </ul>
                     </div>
                 </div>
@@ -319,40 +302,40 @@
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> Help & Information <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">Pagination</a> </li>
-                        <li> <a href="" title="Pagination">Terms & Conditions</a> </li>
-                        <li> <a href="" title="Pagination">Contact</a> </li>
-                        <li> <a href="" title="Pagination">Accessories</a> </li>
-                        <li> <a href="" title="Pagination">Term of use</a> </li>
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> About Us <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">Help Center</a> </li>
-                        <li> <a href="" title="Pagination">Address Store</a> </li>
-                        <li> <a href="" title="Pagination">Privacy Policy</a> </li>
-                        <li> <a href="" title="Pagination">Receivers & Amplifiers</a> </li>
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
                     </ul>
                 </div>
             </div>
             <div class="col-sm-3" style="line-height: 34px;">
                 <div class="info_footer">
                     <div class="title_footer">
-                        <h4 class="mb-0 title_border"> Profile <br> <hr class="hr"> </h4>
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
                     </div>
                     <ul class="list-unstyled mb-0">
-                        <li> <a href="" title="Pagination">My Account</a> </li>
-                        <li> <a href="" title="Pagination">Checkout</a> </li>
-                        <li> <a href="" title="Pagination">Order Tracking</a> </li>
-                        <li> <a href="" title="Pagination">Help & Support</a> </li>
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
                     </ul>
                 </div>
             </div>
@@ -363,23 +346,38 @@
         <div class="row align-items-center">
             <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 | <a href="" class="underline_hover bold"> Designed </a> by <a href="" class="underline_hover link"> Mega Mall </a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
-                <p></p>
             </div>
         </div>
     </div>
 </footer>
-<!--END FOOTER-->
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentUsers = [];
 
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+            <div class="toast" role="alert" data-delay="4000">
+                <div class="toast-header bg-${type} text-white">
+                    <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+                    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="toast-body">${message}</div>
+            </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
+
     async function autoLoginAndLoad() {
         try {
-            console.log("Logging in automatically...");
             const loginRes = await fetch(`${BASE_URL}/auth/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -388,15 +386,13 @@
             const loginData = await loginRes.json();
             if (loginData.data?.accessToken) {
                 authToken = loginData.data.accessToken;
-                console.log("Log in successfully!");
                 await loadRoles();
                 loadUsers();
             } else {
-                alert("Unable to log in – check your email/password.");
+                showToast('Unable to log in – check your email/password', 'danger');
             }
         } catch (err) {
-            console.error("Login error:", err);
-            alert("Unable to connect to the server.");
+            showToast('Unable to connect to the server', 'danger');
         }
     }
 
@@ -406,7 +402,7 @@
                 headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }
             });
             if (!res.ok && res.status === 401) {
-                alert("Token expired, trying to log in again...");
+                showToast('Token expired, trying to log in again...', 'warning');
                 return autoLoginAndLoad();
             }
             if (!res.ok) throw new Error("Server error");
@@ -415,8 +411,7 @@
             currentUsers = activeUsers;
             renderTable(currentUsers);
         } catch (err) {
-            console.error(err);
-            document.querySelector("tbody").innerHTML = "<tr><td colspan='8' class='text-danger text-center'>Error loading</td></tr>";
+            document.querySelector("tbody").innerHTML = "<tr><td colspan='7' class='text-danger text-center'>Error loading users</td></tr>";
         }
     }
 
@@ -426,9 +421,9 @@
         if (!users || users.length === 0) {
             const searchQuery = $('#searchUserInput').val().trim();
             if (searchQuery) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-4 text-muted"> No users matching "<strong>${searchQuery}</strong>" </td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">No users matching "<strong>${searchQuery}</strong>"</td></tr>`;
             } else {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center py-5 text-muted">No user</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">No users found</td></tr>`;
             }
             return;
         }
@@ -436,29 +431,27 @@
         users.forEach((user, index) => {
             const fullName = [(user.firstName || ""), (user.lastName || "")].filter(Boolean).join(" ").trim();
             const displayName = fullName || user.email.split('@')[0];
-            const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-';
             const row = document.createElement("tr");
             row.innerHTML = `
-    <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
-    <td>${displayName}</td>
-    <td>${user.fullAddress || "-"}</td>
-    <td>${user.email}</td>
-    <td>${user.phone || "-"}</td>
-    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
-    <td class="text-center" style="width:130px;">
-        <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
-            <i class="fas fa-edit"></i>
-        </button>
-        <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
-            <i class="fas fa-trash-alt"></i>
-        </button>
-    </td>
-`;
+                <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
+                <td>${displayName}</td>
+                <td>${user.fullAddress || "-"}</td>
+                <td>${user.email}</td>
+                <td>${user.phone || "-"}</td>
+                <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
+                <td class="text-center" style="width:130px;">
+                    <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                </td>
+            `;
             tbody.appendChild(row);
         });
     }
 
-    // ADD USER
     $('#addUserModal').on('show.bs.modal', function() {
         renderUserRoles('addUserRolesList', []);
     });
@@ -473,11 +466,10 @@
             fullAddress: $('#fullAddress').val().trim(),
             city: $('#city').val().trim() || null,
             province: $('#province').val().trim() || null,
-            country: $('#country').val().trim() || "Việt Nam",
+            country: $('#country').val().trim() || "Vietnam",
             phone: $('#phone').val().trim() || null,
             status: $('#status').is(':checked') ? 'active' : 'inactive'
         };
-
         const selectedRoleIds = [];
         $('#addUserRolesList .user-role-checkbox:checked').each(function() {
             selectedRoleIds.push($(this).val());
@@ -487,7 +479,6 @@
                 create: selectedRoleIds.map(roleId => ({ role: { connect: { id: roleId } } }))
             };
         }
-
         $('#btnSaveNewUser').prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
         try {
             const res = await fetch(`${BASE_URL}/users`, {
@@ -498,24 +489,22 @@
             if (res.status === 200 || res.status === 201) {
                 const result = await res.json();
                 const newUser = result.data;
-                alert("Add user successfully!");
+                showToast('User added successfully', 'success');
                 $('#addUserModal').modal('hide');
                 $('#addUserForm')[0].reset();
                 currentUsers.push(newUser);
                 renderTable(currentUsers);
             } else {
                 const err = await res.json();
-                alert("Add failed: " + (err.message || "Unknown error"));
+                showToast(`Add failed: ${err.message || 'Unknown error'}`, 'danger');
             }
         } catch (err) {
-            console.error(err);
-            alert("Connection server error: !");
+            showToast('Connection error', 'danger');
         } finally {
-            $('#btnSaveNewUser').prop('disabled', false).html('<i class="fas fa-save"></i> Save user');
+            $('#btnSaveNewUser').prop('disabled', false).html('<i class="fas fa-save"></i> Save');
         }
     });
 
-    // EDIT
     $(document).on('click', '.edit-btn', async function () {
         const user = JSON.parse($(this).attr('data-user'));
         const userId = user.id;
@@ -523,12 +512,11 @@
             const res = await fetch(`${BASE_URL}/users/${userId}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            let fullUser = user; // fallback
+            let fullUser = user;
             if (res.ok) {
                 const json = await res.json();
                 fullUser = json.data;
             }
-            // Populate form
             $('#editUserId').val(fullUser.id);
             $('#editEmail').val(fullUser.email || '');
             $('#editPassword').val('');
@@ -537,10 +525,9 @@
             $('#editFullAddress').val(fullUser.fullAddress || '');
             $('#editCity').val(fullUser.city || '');
             $('#editProvince').val(fullUser.province || '');
-            $('#editCountry').val(fullUser.country || 'Việt Nam');
+            $('#editCountry').val(fullUser.country || 'Vietnam');
             $('#editPhone').val(fullUser.phone || '');
             $('#editStatus').prop('checked', fullUser.status === 'active');
-
             let selectedRoleIds = [];
             if (fullUser.userRoles && Array.isArray(fullUser.userRoles)) {
                 selectedRoleIds = fullUser.userRoles.map(ur => ur.role?.id || ur.roleId).filter(Boolean);
@@ -557,21 +544,15 @@
                             .map(ur => ur.roleId || ur.role?.id)
                             .filter(Boolean);
                     }
-                } catch (e) {
-                    console.warn("Cannot load user-roles", e);
-                }
+                } catch (e) {}
             }
-            // Render list role
             renderUserRoles('editUserRolesList', selectedRoleIds);
-            // Open modal
             $('#editUserModal').modal('show');
         } catch (err) {
-            console.error(err);
-            alert("Loading user information error!");
+            showToast('Error loading user information', 'danger');
         }
     });
 
-    // UPDATE
     $('#editUserForm').on('submit', async function (e) {
         e.preventDefault();
         const submitBtn = $(this).find('button[type="submit"]');
@@ -584,13 +565,12 @@
             fullAddress: $('#editFullAddress').val().trim(),
             city: $('#editCity').val().trim() || null,
             province: $('#editProvince').val().trim() || null,
-            country: $('#editCountry').val().trim() || "Việt Nam",
+            country: $('#editCountry').val().trim() || "Vietnam",
             phone: $('#editPhone').val().trim() || null,
             status: $('#editStatus').is(':checked') ? 'active' : 'inactive'
         };
         const newPassword = $('#editPassword').val().trim();
         if (newPassword) payload.password = newPassword;
-
         const selectedRoleIds = [];
         $('#editUserRolesList .user-role-checkbox:checked').each(function() {
             selectedRoleIds.push($(this).val());
@@ -599,7 +579,6 @@
             deleteMany: {},
             create: selectedRoleIds.map(roleId => ({ role: { connect: { id: roleId } } }))
         };
-
         try {
             const res = await fetch(`${BASE_URL}/users/${userId}`, {
                 method: 'PATCH',
@@ -607,27 +586,24 @@
                 body: JSON.stringify(payload)
             });
             if (res.ok) {
-                alert("User and role updates were successful!");
+                showToast('User and roles updated successfully', 'success');
                 $('#editUserModal').modal('hide');
-                await loadUsers(); // reload table
+                await loadUsers();
             } else {
                 const err = await res.json().catch(() => ({}));
-                alert(`Updated fail!\n${err.message || JSON.stringify(err.errors) || 'Server error'}`);
+                showToast(`Update failed: ${err.message || 'Server error'}`, 'danger');
             }
         } catch (err) {
-            console.error(err);
-            alert("Server connection error!");
+            showToast('Server connection error', 'danger');
         } finally {
             submitBtn.prop('disabled', false).html('<i class="fas fa-save"></i> Update user');
         }
     });
 
-    // DELETE USER
     $(document).on('click', '.delete-btn', async function() {
         const userId = $(this).data('id');
-        const userEmail = $(this).closest('tr').find('td:nth-child(4)').text().trim(); // get email to confirm
-        // Confirm delete
-        if (!confirm(`Are you sure you want to DELETE the user? "${userEmail}"?\nThis action CANNOT be undone!`)) {
+        const userEmail = $(this).closest('tr').find('td:nth-child(4)').text().trim();
+        if (!confirm(`Are you sure you want to delete the user "${userEmail}"? This action cannot be undone.`)) {
             return;
         }
         try {
@@ -636,31 +612,28 @@
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (res.ok || res.status === 204) {
-                alert("Xóa người dùng thành công!");
-                // DELETE FROM LIST RERENDER
+                showToast('User deleted successfully', 'success');
                 currentUsers = currentUsers.filter(user => user.id !== userId);
                 renderTable(currentUsers);
             } else {
                 const err = await res.json();
-                alert("Delete failed: " + (err.message || "Server error"));
+                showToast(`Delete failed: ${err.message || 'Server error'}`, 'danger');
             }
         } catch (err) {
-            console.error("Error while deleting user:", err);
-            alert("Server connection error!");
+            showToast('Server connection error', 'danger');
         }
     });
 
-    // EXPORT EXCEL
     function exportUsersToExcel() {
         if (currentUsers.length === 0) {
-            alert("No user data to export!");
+            showToast('No user data to export', 'warning');
             return;
         }
         if (typeof XLSX === 'undefined') {
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
             script.onload = generateExcelFile;
-            script.onerror = () => alert("Unable to load the Excel export library!");
+            script.onerror = () => showToast('Unable to load Excel export library', 'danger');
             document.head.appendChild(script);
         } else {
             generateExcelFile();
@@ -675,26 +648,24 @@
                     'Email': user.email,
                     'Phone number': user.phone || '-',
                     'Status': user.status === 'active' ? 'Active' : 'Inactive',
-                    'Created at': user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-'
+                    'Created at': user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB') : '-'
                 };
             });
-            // Gen workbook
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Users");
             const colWidths = [
-                { wch: 8 }, // STT
-                { wch: 25 }, // Name
-                { wch: 40 }, // Address
-                { wch: 30 }, // Email
-                { wch: 15 }, // Phone
-                { wch: 15 }, // Status
-                { wch: 15 } // Created at
+                { wch: 8 },
+                { wch: 25 },
+                { wch: 40 },
+                { wch: 30 },
+                { wch: 15 },
+                { wch: 15 },
+                { wch: 15 }
             ];
             ws['!cols'] = colWidths;
-            // Export file
             XLSX.writeFile(wb, 'users_export.xlsx');
-            alert("User list export successful! File has been downloaded.");
+            showToast('User list exported successfully', 'success');
         }
     }
 
@@ -708,8 +679,7 @@
             const json = await res.json();
             currentRoles = json.data.list.filter(r => !r.deletedAt);
         } catch (err) {
-            console.error(err);
-            alert("Unable to load the list of roles!");
+            showToast('Unable to load roles list', 'danger');
             currentRoles = [];
         }
     }
@@ -718,7 +688,7 @@
         const container = document.getElementById(containerId);
         container.innerHTML = "";
         if (currentRoles.length === 0) {
-            container.innerHTML = "<p class='text-muted'>Không có vai trò nào</p>";
+            container.innerHTML = "<p class='text-muted'>No roles available</p>";
             return;
         }
         currentRoles.forEach(role => {
@@ -726,16 +696,15 @@
             const div = document.createElement("div");
             div.className = "form-check";
             div.innerHTML = `
-                    <input class="form-check-input user-role-checkbox" type="checkbox" id="${containerId}_${role.id}" value="${role.id}" ${checked}>
-                    <label class="form-check-label" for="${containerId}_${role.id}">
-                        ${role.name} <small class="text-muted">(${role.description || 'No description available'})</small>
-                    </label>
-                `;
+                <input class="form-check-input user-role-checkbox" type="checkbox" id="${containerId}_${role.id}" value="${role.id}" ${checked}>
+                <label class="form-check-label" for="${containerId}_${role.id}">
+                    ${role.name} <small class="text-muted">(${role.description || 'No description available'})</small>
+                </label>
+            `;
             container.appendChild(div);
         });
     }
 
-    // SEARCH BY NAME / EMAIL / PHONE
     let filteredUsers = currentUsers;
     $('#searchUserInput').on('input', function() {
         const query = $(this).val().trim().toLowerCase();

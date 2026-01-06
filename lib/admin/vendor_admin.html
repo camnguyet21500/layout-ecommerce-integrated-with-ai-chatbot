@@ -61,7 +61,7 @@
         <table class="table table-bordered table-hover">
             <thead class="thead-light">
             <tr>
-                <th>STT</th>
+                <th>NO</th>
                 <th>LOGO</th>
                 <th>NAME</th>
                 <th>SLUG</th>
@@ -76,7 +76,7 @@
             <tbody id="vendorTableBody">
             <tr>
                 <td colspan="10" class="text-center">
-                    <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải danh sách vendor...
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading...
                 </td>
             </tr>
             </tbody>
@@ -84,12 +84,12 @@
     </div>
 </div>
 
-<!-- Add Vendor Modal – ĐÃ BỎ PHẦN USER SỞ HỮU -->
+<!-- Add Vendor Modal -->
 <div class="modal fade" id="addVendorModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Thêm Vendor mới</h5>
+                <h5 class="modal-title">Add new Vendor</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="addVendorForm">
@@ -97,37 +97,37 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Tên Vendor <span class="text-danger">*</span></label>
+                                <label>Vendor Name <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="addName" required>
-                                <small class="text-muted">Slug sẽ tự động tạo từ tên này</small>
+                                <small class="text-muted">Slug will be auto-generated from Vendor Name</small>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Slug <span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="addSlug" readonly>
-                                <small class="text-muted">Tự động tạo từ tên</small>
+                                <small class="text-muted">Auto-generated</small>
                             </div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label>Mô tả (tùy chọn)</label>
+                        <label>Description</label>
                         <textarea class="form-control" id="addDescription" rows="4"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>Logo (URL ảnh, tùy chọn)</label>
+                        <label>Logo </label>
                         <input type="url" class="form-control" id="addLogoUrl" placeholder="https://example.com/logo.jpg">
                     </div>
 
                     <div class="form-group">
-                        <label>Mã số thuế (tùy chọn)</label>
+                        <label>Tax code</label>
                         <input type="text" class="form-control" id="addTaxCode">
                     </div>
 
                     <div class="form-group">
-                        <label>Trạng thái</label>
+                        <label>Status</label>
                         <select class="form-control" id="addStatus">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -135,20 +135,20 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-primary">Thêm Vendor</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Vendor</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
-<!-- Edit Vendor Modal – ĐẦY ĐỦ FIELD THEO UpdateVendorDto -->
+<!-- Edit Vendor Modal  -->
 <div class="modal fade" id="editVendorModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-warning text-dark">
-                <h5 class="modal-title">Chỉnh sửa Vendor</h5>
+                <h5 class="modal-title">Update Vendor</h5>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <form id="editVendorForm">
@@ -157,7 +157,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Tên Vendor</label>
+                                <label>Vendor Name</label>
                                 <input type="text" class="form-control" id="editName">
                             </div>
                         </div>
@@ -170,27 +170,27 @@
                     </div>
 
                     <div class="form-group">
-                        <label>Mô tả</label>
+                        <label>Description</label>
                         <textarea class="form-control" id="editDescription" rows="4"></textarea>
                     </div>
 
                     <div class="form-group">
-                        <label>Logo hiện tại</label><br>
+                        <label>Current logo</label><br>
                         <img id="editCurrentLogo" src="" width="150" class="img-thumbnail mb-2">
                     </div>
 
                     <div class="form-group">
-                        <label>URL Logo mới (tùy chọn)</label>
+                        <label>New logo</label>
                         <input type="url" class="form-control" id="editLogoUrl">
                     </div>
 
                     <div class="form-group">
-                        <label>Mã số thuế</label>
+                        <label>Tax code</label>
                         <input type="text" class="form-control" id="editTaxCode">
                     </div>
 
                     <div class="form-group">
-                        <label>Trạng thái</label>
+                        <label>Status</label>
                         <select class="form-control" id="editStatus">
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
@@ -198,13 +198,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label>User sở hữu (UserID)</label>
+                        <label>User ID</label>
                         <input type="text" class="form-control" id="editUserID" readonly>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
-                    <button type="submit" class="btn btn-warning">Cập nhật</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">Update</button>
                 </div>
             </form>
         </div>
@@ -350,9 +350,6 @@
                 </div>
                 <p></p>
             </div>
-            <!-- <div class="col-lg-6 col-md-6 text-md-right">
-                <img src="images/paymet.jpg" alt="" style="justify-content: right;">
-            </div> -->
         </div>
     </div>
 </footer>
@@ -376,34 +373,32 @@
                 authToken = data.data.accessToken;
                 loadVendors();
             } else {
-                alert("Login thất bại!");
+                alert("Login failed!");
             }
         } catch (err) {
-            alert("Không kết nối server");
+            alert("Cannot connect server");
         }
     }
 
-    // Load danh sách vendor
     async function loadVendors() {
         try {
             const res = await fetch(`${BASE_URL}/vendors?itemPerPage=100&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
-            if (!res.ok) throw new Error("Lỗi load vendor");
+            if (!res.ok) throw new Error("Error load vendor");
             const json = await res.json();
             currentVendors = json.data.list.filter(v => !v.deletedAt);
             renderVendorTable(currentVendors);
         } catch (err) {
-            document.getElementById("vendorTableBody").innerHTML = `<tr><td colspan="10" class="text-danger text-center">Lỗi tải dữ liệu vendor</td></tr>`;
+            document.getElementById("vendorTableBody").innerHTML = `<tr><td colspan="10" class="text-danger text-center">Error load data vendor</td></tr>`;
         }
     }
 
-    // Render bảng vendor
     function renderVendorTable(vendors) {
         const tbody = document.getElementById("vendorTableBody");
         tbody.innerHTML = "";
         if (vendors.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">Chưa có vendor nào</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="text-center py-5 text-muted">Does not exist any vendors</td></tr>`;
             return;
         }
 
@@ -439,17 +434,16 @@
         });
     }
 
-    // ADD VENDOR – FIX THEO CreateVendorDto (KHÔNG GỬI userID)
+    // ADD VENDOR
     $('#addVendorForm').on('submit', async function(e) {
         e.preventDefault();
 
         const name = $('#addName').val().trim();
         if (!name) {
-            alert("Tên vendor là bắt buộc!");
+            alert("Vendor name is mandatory!");
             return;
         }
 
-        // Tạo slug tự động
         const slug = name
             .toLowerCase()
             .normalize('NFD')
@@ -462,7 +456,7 @@
             .replace(/-+/g, '-');
 
         if (!slug) {
-            alert("Không thể tạo slug hợp lệ từ tên!");
+            alert("Cannot generate valid Slug!");
             return;
         }
 
@@ -473,15 +467,13 @@
             logoUrl: $('#addLogoUrl').val().trim() || null,
             taxCode: $('#addTaxCode').val().trim() || null,
             status: $('#addStatus').val()
-            // KHÔNG GỬI userID → backend tự xử lý hoặc không cần
-            // totalProducts và totalOrders backend tự set = 0
         };
 
-        console.log("Payload tạo vendor:", payload);
+        console.log("Payload create vendor:", payload);
 
         const submitBtn = $(this).find('button[type="submit"]');
         const originalHtml = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+        submitBtn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Saving...');
 
         try {
             const res = await fetch(`${BASE_URL}/vendors`, {
@@ -501,18 +493,22 @@
             }
 
             if (res.ok || res.status === 201) {
-                alert("Thêm vendor thành công!");
+                alert("Added successfully.!");
                 $('#addVendorModal').modal('hide');
                 $('#addVendorForm')[0].reset();
-                $('#addSlug').val(''); // reset slug
-                loadVendors(); // reload danh sách
+                $('#addSlug').val('');
+                loadVendors();
+
+                setTimeout(() => {
+                    location.reload();
+                }, 30000);
             } else {
                 console.error("Lỗi backend khi thêm vendor:", res.status, responseData);
-                alert(`Thêm vendor thất bại!\nMã lỗi: ${res.status}\nChi tiết: ${responseData.message || JSON.stringify(responseData)}`);
+                alert(`Failed!\nError: ${res.status}\nDetail: ${responseData.message || JSON.stringify(responseData)}`);
             }
         } catch (err) {
-            console.error("Lỗi kết nối:", err);
-            alert("Lỗi kết nối server!");
+            console.error("Error connection:", err);
+            alert("Error connection server!");
         } finally {
             submitBtn.prop('disabled', false).html(originalHtml);
         }
@@ -557,22 +553,22 @@
             });
 
             if (res.ok) {
-                alert("Cập nhật vendor thành công!");
+                alert("Updated successfully.!");
                 $('#editVendorModal').modal('hide');
                 loadVendors();
             } else {
                 const err = await res.json();
-                alert("Cập nhật thất bại: " + (err.message || "Lỗi server"));
+                alert("Update failed: " + (err.message || "Error server"));
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            alert("Error connection!");
         }
     });
 
     // Delete Vendor
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Xóa vendor này? Tất cả sản phẩm liên quan sẽ bị ảnh hưởng!")) return;
+        if (!confirm("Do you want to delete this vendor?")) return;
 
         try {
             const res = await fetch(`${BASE_URL}/vendors/${id}`, {
@@ -580,73 +576,69 @@
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (res.ok) {
-                alert("Xóa vendor thành công!");
+                alert("Deleted successfully.!");
                 loadVendors();
             } else {
-                alert("Xóa thất bại!");
+                alert("Delete failed!");
             }
         } catch (err) {
-            alert("Lỗi kết nối!");
+            alert("Error connection!");
         }
     });
 
-    // EXPORT EXCEL CHO VENDOR – TỰ TẠO FILE TỪ DỮ LIỆU HIỆN TẠI (GIỐNG USER.HTML)
+    // EXPORT EXCEL
     function exportVendorsToExcel() {
         if (currentVendors.length === 0) {
-            alert("Không có dữ liệu vendor để export!");
+            alert("No data to export!");
             return;
         }
 
-        // Tải thư viện SheetJS nếu chưa có
         if (typeof XLSX === 'undefined') {
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
             script.onload = generateVendorExcelFile;
-            script.onerror = () => alert("Không tải được thư viện export Excel!");
+            script.onerror = () => alert("Cannot download the library export Excel!");
             document.head.appendChild(script);
         } else {
             generateVendorExcelFile();
         }
 
         function generateVendorExcelFile() {
-            // Chuẩn bị dữ liệu từ currentVendors
             const data = currentVendors.map((vendor, index) => {
                 return {
                     'STT': index + 1,
-                    'Tên Vendor': vendor.name,
+                    'Vendor Name': vendor.name,
                     'Slug': vendor.slug,
-                    'Mô tả': vendor.description || '-',
-                    'Mã số thuế': vendor.taxCode || '-',
-                    'Tổng sản phẩm': vendor.totalProducts || 0,
-                    'Tổng đơn hàng': vendor.totalOrders || 0,
-                    'Trạng thái': vendor.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
-                    'Ngày tạo': vendor.createdAt ? new Date(vendor.createdAt).toLocaleDateString('vi-VN') : '-'
+                    'Descripton': vendor.description || '-',
+                    'Tax code': vendor.taxCode || '-',
+                    'Total products': vendor.totalProducts || 0,
+                    'Total orders': vendor.totalOrders || 0,
+                    'Status': vendor.status === 'active' ? 'Hoạt động' : 'Không hoạt động',
+                    'Created at': vendor.createdAt ? new Date(vendor.createdAt).toLocaleDateString('vi-VN') : '-'
                 };
             });
 
-            // Tạo workbook
+            // Create workbook
             const ws = XLSX.utils.json_to_sheet(data);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Vendors");
 
-            // Tự động điều chỉnh độ rộng cột
             const colWidths = [
                 { wch: 8 },   // STT
-                { wch: 25 },  // Tên Vendor
+                { wch: 25 },  // Vendor
                 { wch: 20 },  // Slug
-                { wch: 40 },  // Mô tả
-                { wch: 20 },  // Mã số thuế
-                { wch: 15 },  // Tổng sản phẩm
-                { wch: 15 },  // Tổng đơn hàng
-                { wch: 15 },  // Trạng thái
-                { wch: 15 }   // Ngày tạo
+                { wch: 40 },  // Des
+                { wch: 20 },  // Tax code
+                { wch: 15 },  // Total product
+                { wch: 15 },  // Total order
+                { wch: 15 },  // Status
+                { wch: 15 }   // Created at
             ];
             ws['!cols'] = colWidths;
 
-            // Xuất file
             XLSX.writeFile(wb, 'vendors_export.xlsx');
 
-            alert("Export danh sách vendor thành công! File đã được tải về.");
+            alert("Exported successfully! File is downloaded.");
         }
     }
 
@@ -655,7 +647,6 @@
         autoLoginAndLoad();
     });
 
-    // Khi nhập tên → tự động tạo slug (cho cả Add và Edit)
     $('#addName').on('input', function() {
         const name = $(this).val().trim();
         const slug = name

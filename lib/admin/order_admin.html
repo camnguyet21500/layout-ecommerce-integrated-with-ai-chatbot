@@ -252,61 +252,47 @@
 
             // Fetch thêm thông tin user cho từng order (nếu có userID)
             // === FIX TỐI ƯU: FETCH TẤT CẢ USER CÙNG LÚC (song song) ===
-            const userIds = [...new Set(orders.map(o => o.userID).filter(id => id))]; // Lấy danh sách userID duy nhất
+            // === FIX SIÊU TỐI ƯU: Chỉ fetch danh sách users 1 lần duy nhất ===
+            let userMap = {}; // Map userID → {name, email, phone}
 
-            if (userIds.length > 0) {
+            if (orders.some(o => o.userID)) { // Chỉ fetch nếu có ít nhất 1 đơn có user
                 try {
-                    // Fetch tất cả user cùng lúc
-                    const userRequests = userIds.map(id =>
-                        fetch(`${BASE_URL}/users/${id}`, { headers })
-                            .then(res => res.ok ? res.json() : null)
-                            .catch(() => null)
-                    );
+                    const userRes = await fetch(`${BASE_URL}/users?itemPerPage=500&page=1`, { headers });
+                    if (userRes.ok) {
+                        const userJson = await userRes.json();
+                        const allUsers = userJson.data?.list || [];
 
-                    const userResponses = await Promise.all(userRequests);
-
-                    // Tạo map userID → userData
-                    const userMap = {};
-                    userIds.forEach((id, index) => {
-                        const userData = userResponses[index]?.data;
-                        if (userData) {
-                            userMap[id] = {
-                                name: userData.firstName + " " + (userData.lastName || ""),
-                                email: userData.email || "-",
-                                phone: userData.phone || "-"
-                            };
-                        }
-                    });
-
-                    // Gán vào từng order
-                    orders.forEach(order => {
-                        if (order.userID && userMap[order.userID]) {
-                            order.userName = userMap[order.userID].name;
-                            order.userEmail = userMap[order.userID].email;
-                            order.userPhone = userMap[order.userID].phone;
-                        } else {
-                            order.userName = "Khách vãng lai";
-                            order.userEmail = "-";
-                            order.userPhone = "-";
-                        }
-                    });
+                        // Tạo map nhanh
+                        allUsers.forEach(u => {
+                            if (u.id) {
+                                userMap[u.id] = {
+                                    name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Không tên',
+                                    email: u.email || '-',
+                                    phone: u.phone || '-'
+                                };
+                            }
+                        });
+                    } else {
+                        console.warn("Không tải được danh sách user, dùng fallback");
+                    }
                 } catch (err) {
-                    console.error("Lỗi khi fetch users:", err);
-                    // Fallback: tất cả là khách vãng lai nếu lỗi
-                    orders.forEach(order => {
-                        order.userName = "Khách vãng lai";
-                        order.userEmail = "-";
-                        order.userPhone = "-";
-                    });
+                    console.error("Lỗi fetch users list:", err);
                 }
-            } else {
-                // Không có user nào → tất cả là khách vãng lai
-                orders.forEach(order => {
+            }
+
+// Gán thông tin user cho từng order
+            orders.forEach(order => {
+                if (order.userID && userMap[order.userID]) {
+                    order.userName = userMap[order.userID].name;
+                    order.userEmail = userMap[order.userID].email;
+                    order.userPhone = userMap[order.userID].phone;
+                } else {
                     order.userName = "Khách vãng lai";
                     order.userEmail = "-";
                     order.userPhone = "-";
-                });
-            }
+                }
+            });
+// === KẾT THÚC FIX ===
 // === KẾT THÚC FIX ===
 
             renderOrdersTable(orders);

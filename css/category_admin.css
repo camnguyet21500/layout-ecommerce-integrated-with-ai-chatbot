@@ -1,47 +1,37 @@
-@import url("https://fonts.googleapis.com/css2?family=El+Messiri&display=swap");
-@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;600&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+@import url("");
+@import url('');
+@import url('');
+@import url('');
 
 /* HEADER */
 .navbar {
     padding: 0.5rem 1rem;
 }
-
 .navbar-brand {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
 }
-
-/* Icon hover */
 .icon-hover {
     font-size: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     color: #333;
 }
-
 .icon-hover:hover {
     color: #f9af47;
     transform: scale(1.15);
 }
-
-/* Menu item */
 .font-weight-medium {
     font-size: 15px;
     letter-spacing: 0.5px;
     padding: 0 18px !important;
 }
-
-/* Active */
 .nav-link.active {
     color: #f9af47 !important;
     font-weight: 700 !important;
 }
-
-/* Responsive */
 @media (max-width: 991.98px) {
     .navbar-brand {
         position: relative;
@@ -49,11 +39,9 @@
         left: auto;
         margin: 0 auto;
     }
-
     .navbar-icons {
         margin-left: auto;
     }
-
     .navbar-collapse {
         background: white;
         padding: 15px 0;
@@ -61,144 +49,151 @@
         border-top: 1px solid #eee;
     }
 }
-
 body {
     padding-top: 90px !important;
 }
-
 .sticky-top {
     position: sticky;
     top: 0;
     z-index: 1020;
 }
-/* CATEGORY ADMIN */
+
+/* CATEGORY ADMIN - STYLE GIỐNG PRODUCT ADMIN */
 .category-management {
     margin-top: 80px;
     margin-bottom: 80px;
 }
-
 .category-management .title-heading {
     font-size: 36px;
     font-weight: 600;
     color: #333;
 }
-
 .category-management .sub-heading {
     font-size: 16px;
     color: #777;
     font-weight: 500;
 }
 
-.management-actions .btn-admin {
-    min-width: 172px;
-    border: 2px solid #000;
-    color: #000;
+/* Action buttons */
+.management-actions .btn {
+    min-width: 140px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+/* TABLE STYLE - ĐỒNG NHẤT VỚI PRODUCT */
+.category-management .table thead th {
+    background-color: black !important;
+    color: white !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
     font-weight: 600;
     font-size: 14px;
-    letter-spacing: .2em;
-    line-height: 50px;
-    padding: 0 30px;
-    background-color: transparent;
-    transition: all 0.3s ease;
-    margin-left: 12px;
-    display: inline-block;
     text-align: center;
-    text-decoration: none;
-    background-color: black;
-    color: white;
+    vertical-align: middle;
 }
 
-.management-actions .btn-admin:hover {
-    background-color: #f9af47;
-    color: white;
-    border: 2px solid #f9af47;
+.category-management .table th,
+.category-management .table td {
+    vertical-align: middle;
+    text-align: center;
 }
 
-/* Table style */
-.table th {
-    background-color: black;
-    color: white;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
+.category-management .table tbody td {
+    font-size: 15px;
 }
 
-.badge-success {
+/* Image in table */
+.category-management .table img {
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+}
+
+.category-management .table img:hover {
+    transform: scale(1.8);
+    z-index: 100;
+    position: relative;
+}
+
+/* Badge status */
+.category-management .badge-success {
     background-color: #28a745;
 }
-
-.badge-secondary {
+.category-management .badge-warning {
+    background-color: #ffc107;
+    color: #212529;
+}
+.category-management .badge-secondary {
     background-color: #6c757d;
 }
 
-#categoryTableBody img {
-    transition: transform 0.2s;
-}
-#categoryTableBody img:hover {
-    transform: scale(1.5);
-    z-index: 10;
+/* Action buttons in table */
+.category-management .table .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
 }
 
-/*FOOTER*/
-.footer{
+/* Responsive table */
+@media (max-width: 768px) {
+    .category-management .table-responsive {
+        font-size: 14px;
+    }
+    .category-management .table img {
+        width: 50px;
+        height: 50px;
+    }
+}
+
+/* FOOTER */
+.footer {
     padding: 50px;
     background-color: black;
 }
-
-.top-footer{
+.top-footer {
     padding-bottom: 50px;
 }
-
-.hr{
+.hr {
     margin-right: 200px;
     background-color: white;
     width: 150px;
 }
-
-.title_border{
+.title_border {
     color: #f9af47;
     font-size: 21px;
     font-weight: 600;
 }
-
-.content_footer{
+.content_footer {
     font-size: 14px;
     font-weight: 400;
     color: white;
 }
-
-.list-unstyled li a{
+.list-unstyled li a {
     color: white;
     font-size: 15px;
     font-weight: 600;
 }
-
-.list-unstyled li a:hover{
+.list-unstyled li a:hover {
     color: #f9af47;
     text-decoration: none;
 }
-
-.underline_hover{
+.underline_hover {
     color: #7d7b7b;
 }
-
-.underline_hover:hover{
+.underline_hover:hover {
     color: #f9af47;
     text-decoration: none;
 }
-
-.content{
+.content {
     color: #7d7b7b;
     font-size: 16px;
     font-weight: 400;
     margin-top: 10px;
 }
-
-.content a{
+.content a {
     color: #7d7b7b;
 }
-
-.content a:hover{
+.content a:hover {
     color: #f9af47;
 }
-

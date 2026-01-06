@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Product Management | Mega Mall</title>
-    <!-- CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <script type="module" src="https://cdnjs.cloudflare.com/ajax/libs/ionicons/5.2.3/ionicons/ionicons.esm.js"></script>
@@ -41,7 +40,6 @@
 
 <div class="container" style="margin-top: 120px;">
     <h3 class="text-center my-4">Product Management</h3>
-
     <div class="row mb-4">
         <div class="col-md-6 offset-md-6">
             <div class="input-group">
@@ -54,13 +52,11 @@
             </div>
         </div>
     </div>
-
     <div class="text-right mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addProductModal">Add Product</button>
         <button class="btn btn-success ml-2">Import Excel</button>
         <button class="btn btn-info ml-2" onclick="exportProductsToExcel()">Export Excel</button>
     </div>
-
     <table class="table table-bordered table-hover">
         <thead class="thead-light">
         <tr>
@@ -76,7 +72,7 @@
         </thead>
         <tbody id="productTableBody">
         <tr>
-            <td colspan="9" class="text-center">
+            <td colspan="8" class="text-center">
                 <i class="fas fa-spinner fa-spin mr-2"></i> Loading products...
             </td>
         </tr>
@@ -84,7 +80,6 @@
     </table>
 </div>
 
-<!-- ADD PRODUCT MODAL -->
 <div class="modal fade" id="addProductModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -123,7 +118,7 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Amount <span class="text-danger">*</span></label>
+                                <label>Stock <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="addStock" value="0" min="0" required>
                             </div>
                         </div>
@@ -139,15 +134,12 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Product image URL (enter multiple images, separated by commas or press Enter)</label>
-                        <textarea class="form-control" id="addImageUrls" rows="3" placeholder="Example:
-https://example.com/image1.jpg
-https://example.com/image2.jpg
-https://example.com/image3.jpg"></textarea>
-                        <small class="text-muted">Each line should contain a URL or be separated by commas (,).</small>
+                        <label>Product image URL (multiple URLs separated by commas or new lines)</label>
+                        <textarea class="form-control" id="addImageUrls" rows="3" placeholder="Example: https://example.com/image1.jpg, https://example.com/image2.jpg"></textarea>
+                        <small class="text-muted">Each line or comma-separated value should be a valid image URL.</small>
                     </div>
                     <div class="form-group">
-                        <label>Preview photos</label>
+                        <label>Image preview</label>
                         <div id="addImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
@@ -160,7 +152,6 @@ https://example.com/image3.jpg"></textarea>
     </div>
 </div>
 
-<!-- EDIT PRODUCT MODAL -->
 <div class="modal fade" id="editProductModal" tabindex="-1">
     <div class="modal-dialog modal-xl">
         <div class="modal-content">
@@ -200,7 +191,7 @@ https://example.com/image3.jpg"></textarea>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label>Amount <span class="text-danger">*</span></label>
+                                <label>Stock <span class="text-danger">*</span></label>
                                 <input type="number" class="form-control" id="editStock" required min="0">
                             </div>
                         </div>
@@ -216,16 +207,16 @@ https://example.com/image3.jpg"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label>Current image</label>
+                        <label>Current images</label>
                         <div id="currentImages" class="d-flex flex-wrap"></div>
                     </div>
                     <div class="form-group">
-                        <label>New image URL (optional, enter multiple times separated by commas or press Enter)</label>
-                        <textarea class="form-control" id="editNewImageUrls" rows="3" placeholder="Enter the URL of the new image..."></textarea>
-                        <small class="text-muted">Leave blank if you don't want to add new photos.</small>
+                        <label>New image URLs (optional, multiple URLs separated by commas or new lines)</label>
+                        <textarea class="form-control" id="editNewImageUrls" rows="3" placeholder="Enter new image URLs..."></textarea>
+                        <small class="text-muted">Leave blank if no new images.</small>
                     </div>
                     <div class="form-group">
-                        <label>Preview new photos</label>
+                        <label>New image preview</label>
                         <div id="editImagePreview" class="d-flex flex-wrap"></div>
                     </div>
                 </div>
@@ -238,12 +229,10 @@ https://example.com/image3.jpg"></textarea>
     </div>
 </div>
 
-<!-- TOAST CONTAINER -->
 <div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
     <div id="toastContainer"></div>
 </div>
 
-<!-- FOOTER -->
 <footer class="footer mt-5">
     <div class="top-footer">
         <div class="row footerreponsive">
@@ -317,9 +306,7 @@ https://example.com/image3.jpg"></textarea>
         <div class="row align-items-center">
             <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
                 <div class="text-copyright mb-0">
-                    © Copyright 2025 |
-                    <a href="" class="underline_hover bold">Designed</a> by
-                    <a href="" class="underline_hover link">Mega Mall</a>
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by <a href="" class="underline_hover link">Mega Mall</a>
                 </div>
             </div>
         </div>
@@ -331,7 +318,6 @@ https://example.com/image3.jpg"></textarea>
     let authToken = null;
     let currentProducts = [];
     let currentVendorID = "cf9a9e5d-88d0-4891-99f2-e2862fc86679";
-    let currentCategories = [];
 
     function showToast(message, type = 'success') {
         const toastHtml = `
@@ -346,7 +332,9 @@ https://example.com/image3.jpg"></textarea>
             </div>`;
         $('#toastContainer').append(toastHtml);
         $('.toast').last().toast('show');
-        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
     }
 
     async function autoLoginAndLoad() {
@@ -392,9 +380,9 @@ https://example.com/image3.jpg"></textarea>
         tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading products...</td></tr>";
         if (products.length === 0) {
             const searchQuery = $('#searchProductInput').val().trim();
-            tbody.innerHTML = searchQuery
-                ? `<tr><td colspan="8" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>`
-                : `<tr><td colspan="8" class="text-center text-muted py-4">No products available.</td></tr>`;
+            tbody.innerHTML = searchQuery ?
+                `<tr><td colspan="8" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>` :
+                `<tr><td colspan="8" class="text-center text-muted py-4">No products available.</td></tr>`;
             return;
         }
         let displayProducts = [...products];
@@ -458,7 +446,7 @@ https://example.com/image3.jpg"></textarea>
 
     $(document).on('click', '.delete-btn', async function() {
         const id = $(this).data('id');
-        if (!confirm("Delete this product? Cannot be recovered!")) return;
+        if (!confirm("Delete this product? This action cannot be undone.")) return;
         try {
             const res = await fetch(`${BASE_URL}/products/${id}`, {
                 method: 'DELETE',
@@ -491,14 +479,9 @@ https://example.com/image3.jpg"></textarea>
         $('#editDescription').val(product.description || '');
         $('#editStock').val(product.stockQuantity);
         $('#editStatus').val(product.status);
-        (product.categoryIds || []).forEach(catId => {
-            const checkbox = document.getElementById(`edit_cat_${catId}`);
-            if (checkbox) checkbox.checked = true;
-        });
         const currentImagesDiv = $('#currentImages');
         currentImagesDiv.empty();
         currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
-
         try {
             const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
@@ -511,8 +494,8 @@ https://example.com/image3.jpg"></textarea>
                     productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
                     productImages.forEach(img => {
                         currentImagesDiv.append(`
-                    <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-                `);
+                            <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                        `);
                     });
                 } else {
                     currentImagesDiv.append('<p class="text-muted">No images</p>');
@@ -546,8 +529,6 @@ https://example.com/image3.jpg"></textarea>
         }
         const imageUrlsText = $('#addImageUrls').val().trim();
         const imageUrls = imageUrlsText ? imageUrlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http')) : [];
-        const selectedCats = [];
-        $('#addCategoriesList .form-check-input:checked').each(function() { selectedCats.push($(this).val()); });
         const payload = {
             vendorID: currentVendorID,
             name,
@@ -564,7 +545,7 @@ https://example.com/image3.jpg"></textarea>
                 body: JSON.stringify(payload)
             });
             if (!res.ok) {
-                const err = await res.json().catch(() => ({ }));
+                const err = await res.json().catch(() => ({}));
                 showToast(`Failed to create product: ${err.message || 'Server error'}`, 'danger');
                 return;
             }
@@ -593,9 +574,6 @@ https://example.com/image3.jpg"></textarea>
             $('#addImagePreview').html('<p class="text-muted">No preview images available.</p>');
             await loadProductsAndSetVendorID();
             renderProductTable(currentProducts);
-            setTimeout(() => {
-                location.reload();
-            }, 30000);
         } catch (err) {
             showToast('Network error when creating product', 'danger');
         }
@@ -604,8 +582,6 @@ https://example.com/image3.jpg"></textarea>
     $('#editProductForm').on('submit', async function(e) {
         e.preventDefault();
         const id = $('#editId').val();
-        const selectedCats = [];
-        $('#editCategoriesList .form-check-input:checked').each(function() { selectedCats.push($(this).val()); });
         const basicPayload = {
             name: $('#editName').val().trim(),
             price: parseFloat($('#editPrice').val()),
@@ -649,9 +625,6 @@ https://example.com/image3.jpg"></textarea>
             $('#editProductModal').modal('hide');
             await loadProductsAndSetVendorID();
             renderProductTable(currentProducts);
-            setTimeout(() => {
-                location.reload();
-            }, 30000);
         } catch (err) {
             showToast('Server connection error', 'danger');
         }
@@ -710,7 +683,7 @@ https://example.com/image3.jpg"></textarea>
 
     $('#editProductModal').on('show.bs.modal', function() {
         document.getElementById('editNewImageUrls').value = '';
-        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">No new photos yet</p>';
+        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">No new images yet</p>';
         previewImagesFromUrls('editNewImageUrls', 'editImagePreview');
     });
 
