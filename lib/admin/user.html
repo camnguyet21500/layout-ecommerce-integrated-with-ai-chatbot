@@ -63,7 +63,6 @@
             <th>Email</th>
             <th>Phone</th>
             <th>Status</th>
-            <th>Role</th>
             <th>Actions</th>
         </tr>
         </thead>
@@ -438,25 +437,23 @@
             const fullName = [(user.firstName || ""), (user.lastName || "")].filter(Boolean).join(" ").trim();
             const displayName = fullName || user.email.split('@')[0];
             const createdDate = user.createdAt ? new Date(user.createdAt).toLocaleDateString('vi-VN') : '-';
-            const roleNames = user.userRoles?.map(ur => ur.role?.name).filter(Boolean).join(', ') || '-';
             const row = document.createElement("tr");
             row.innerHTML = `
-                    <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
-                    <td>${displayName}</td>
-                    <td>${user.fullAddress || "-"}</td>
-                    <td>${user.email}</td>
-                    <td>${user.phone || "-"}</td>
-                    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
-                    <td>${roleNames}</td>
-                    <td class="text-center" style="width:130px;">
-                        <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                `;
+    <td class="text-center font-weight-bold" style="width:60px;">${index + 1}</td>
+    <td>${displayName}</td>
+    <td>${user.fullAddress || "-"}</td>
+    <td>${user.email}</td>
+    <td>${user.phone || "-"}</td>
+    <td><span class="badge badge-${user.status === 'active' ? 'success' : 'secondary'}">${user.status || 'unknown'}</span></td>
+    <td class="text-center" style="width:130px;">
+        <button class="btn btn-sm btn-primary mr-1 edit-btn" data-user='${JSON.stringify(user)}' data-toggle="modal" data-target="#editUserModal">
+            <i class="fas fa-edit"></i>
+        </button>
+        <button class="btn btn-sm btn-danger delete-btn" data-id="${user.id}">
+            <i class="fas fa-trash-alt"></i>
+        </button>
+    </td>
+`;
             tbody.appendChild(row);
         });
     }

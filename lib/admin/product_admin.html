@@ -70,7 +70,6 @@
             <th>Description</th>
             <th>Price</th>
             <th>Stock</th>
-            <th>Category</th>
             <th>Status</th>
             <th>Actions</th>
         </tr>
@@ -105,7 +104,7 @@
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Price <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="addPrice" required min="0" step="1000">
+                                <input type="number" class="form-control" id="addPrice" required min="0" step="any">
                             </div>
                         </div>
                     </div>
@@ -137,12 +136,6 @@
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Categories</label>
-                        <div id="addCategoriesList" class="border p-3" style="max-height: 200px; overflow-y: auto;">
-                            <p class="text-muted">Loading categories...</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -188,7 +181,7 @@ https://example.com/image3.jpg"></textarea>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Price <span class="text-danger">*</span></label>
-                                <input type="number" class="form-control" id="editPrice" required min="0" step="1000">
+                                <input type="number" class="form-control" id="editPrice" required min="0" step="any">
                             </div>
                         </div>
                     </div>
@@ -220,12 +213,6 @@ https://example.com/image3.jpg"></textarea>
                                     <option value="inactive">Inactive</option>
                                 </select>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Categories</label>
-                        <div id="editCategoriesList" class="border p-3" style="max-height: 200px; overflow-y: auto;">
-                            <p class="text-muted">Loading categories...</p>
                         </div>
                     </div>
                     <div class="form-group">
@@ -375,9 +362,7 @@ https://example.com/image3.jpg"></textarea>
                 return;
             }
             authToken = loginData.data.accessToken;
-            await loadCategories();
             await loadProductsAndSetVendorID();
-            await loadProductCategories();
             renderProductTable(currentProducts);
         } catch (err) {
             showToast('Unable to connect to server', 'danger');
@@ -398,18 +383,18 @@ https://example.com/image3.jpg"></textarea>
                 currentVendorID = currentProducts[0].vendorID;
             }
         } catch (err) {
-            document.getElementById("productTableBody").innerHTML = `<tr><td colspan="9" class="text-danger text-center p-4">Unable to load product list<br>Error: ${err.message}</td></tr>`;
+            document.getElementById("productTableBody").innerHTML = `<tr><td colspan="8" class="text-danger text-center p-4">Unable to load product list<br>Error: ${err.message}</td></tr>`;
         }
     }
 
     async function renderProductTable(products, sort = true) {
         const tbody = document.getElementById("productTableBody");
-        tbody.innerHTML = "<tr><td colspan='9' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading products...</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading products...</td></tr>";
         if (products.length === 0) {
             const searchQuery = $('#searchProductInput').val().trim();
             tbody.innerHTML = searchQuery
-                ? `<tr><td colspan="9" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>`
-                : `<tr><td colspan="9" class="text-center text-muted py-4">No products available.</td></tr>`;
+                ? `<tr><td colspan="8" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>`
+                : `<tr><td colspan="8" class="text-center text-muted py-4">No products available.</td></tr>`;
             return;
         }
         let displayProducts = [...products];
@@ -437,13 +422,6 @@ https://example.com/image3.jpg"></textarea>
                     productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
                     mainImage = productImages[0].imageUrl;
                 }
-                let categoryName = '-';
-                if (product.categoryIds && product.categoryIds.length > 0) {
-                    categoryName = product.categoryIds.map(id => {
-                        const cat = currentCategories.find(c => c.id === id);
-                        return cat ? cat.name : 'Unknown';
-                    }).join(', ');
-                }
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td class="text-center">${index + 1}</td>
@@ -456,7 +434,6 @@ https://example.com/image3.jpg"></textarea>
                     <td>${product.description || '-'}</td>
                     <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
                     <td>${product.stockQuantity}</td>
-                    <td>${categoryName}</td>
                     <td><span class="badge badge-${product.status === 'active' ? 'success' : product.status === 'draft' ? 'warning' : 'secondary'}">${product.status}</span></td>
                 `;
                 const actionsTd = document.createElement("td");
@@ -475,7 +452,7 @@ https://example.com/image3.jpg"></textarea>
                 tbody.appendChild(row);
             });
         } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="9" class="text-danger text-center">Error loading product images<br><small>${err.message}</small></td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Error loading product images<br><small>${err.message}</small></td></tr>`;
         }
     }
 
@@ -505,8 +482,6 @@ https://example.com/image3.jpg"></textarea>
             showToast('Error loading product data', 'danger');
             return;
         }
-        await loadCategories();
-        await loadProductCategories();
         const freshProduct = currentProducts.find(p => p.id === product.id);
         if (freshProduct) product = freshProduct;
         $('#editId').val(product.id);
@@ -516,19 +491,39 @@ https://example.com/image3.jpg"></textarea>
         $('#editDescription').val(product.description || '');
         $('#editStock').val(product.stockQuantity);
         $('#editStatus').val(product.status);
-        renderEditCategories();
         (product.categoryIds || []).forEach(catId => {
             const checkbox = document.getElementById(`edit_cat_${catId}`);
             if (checkbox) checkbox.checked = true;
         });
         const currentImagesDiv = $('#currentImages');
         currentImagesDiv.empty();
-        if (product.productImages && product.productImages.length > 0) {
-            product.productImages.forEach(img => {
-                currentImagesDiv.append(`<img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px;">`);
+        currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
+
+        try {
+            const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
             });
-        } else {
-            currentImagesDiv.append('<p class="text-muted">No images</p>');
+            if (imagesRes.ok) {
+                const imagesJson = await imagesRes.json();
+                const productImages = imagesJson.data?.list || [];
+                currentImagesDiv.empty();
+                if (productImages.length > 0) {
+                    productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                    productImages.forEach(img => {
+                        currentImagesDiv.append(`
+                    <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                `);
+                    });
+                } else {
+                    currentImagesDiv.append('<p class="text-muted">No images</p>');
+                }
+            } else {
+                currentImagesDiv.empty();
+                currentImagesDiv.append('<p class="text-muted">Unable to load images</p>');
+            }
+        } catch (err) {
+            currentImagesDiv.empty();
+            currentImagesDiv.append('<p class="text-muted">Error loading images</p>');
         }
         $('#editProductModal').modal('show');
     });
@@ -560,10 +555,7 @@ https://example.com/image3.jpg"></textarea>
             stockQuantity,
             status,
             description: description || undefined,
-            sku: sku || undefined,
-            productCategories: {
-                create: selectedCats.map(catId => ({ category: { connect: { id: catId } } }))
-            }
+            sku: sku || undefined
         };
         try {
             const res = await fetch(`${BASE_URL}/products`, {
@@ -572,7 +564,7 @@ https://example.com/image3.jpg"></textarea>
                 body: JSON.stringify(payload)
             });
             if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
+                const err = await res.json().catch(() => ({ }));
                 showToast(`Failed to create product: ${err.message || 'Server error'}`, 'danger');
                 return;
             }
@@ -600,6 +592,10 @@ https://example.com/image3.jpg"></textarea>
             $('#addProductForm')[0].reset();
             $('#addImagePreview').html('<p class="text-muted">No preview images available.</p>');
             await loadProductsAndSetVendorID();
+            renderProductTable(currentProducts);
+            setTimeout(() => {
+                location.reload();
+            }, 30000);
         } catch (err) {
             showToast('Network error when creating product', 'danger');
         }
@@ -616,11 +612,7 @@ https://example.com/image3.jpg"></textarea>
             stockQuantity: parseInt($('#editStock').val()) || 0,
             status: $('#editStatus').val(),
             description: $('#editDescription').val().trim() || undefined,
-            sku: $('#editSku').val().trim() || undefined,
-            productCategories: {
-                deleteMany: {},
-                create: selectedCats.map(catId => ({ category: { connect: { id: catId } } }))
-            }
+            sku: $('#editSku').val().trim() || undefined
         };
         try {
             const patchRes = await fetch(`${BASE_URL}/products/${id}`, {
@@ -656,6 +648,10 @@ https://example.com/image3.jpg"></textarea>
             showToast('Product updated successfully', 'success');
             $('#editProductModal').modal('hide');
             await loadProductsAndSetVendorID();
+            renderProductTable(currentProducts);
+            setTimeout(() => {
+                location.reload();
+            }, 30000);
         } catch (err) {
             showToast('Server connection error', 'danger');
         }
@@ -734,65 +730,6 @@ https://example.com/image3.jpg"></textarea>
     $('#clearSearchBtn').on('click', function() {
         $('#searchProductInput').val('').trigger('input');
     });
-
-    async function loadCategories() {
-        try {
-            const res = await fetch(`${BASE_URL}/categories?itemPerPage=100&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (!res.ok) throw new Error("Unable to load categories");
-            const json = await res.json();
-            currentCategories = json.data?.list?.filter(c => !c.deletedAt) || [];
-            const addList = document.getElementById('addCategoriesList');
-            addList.innerHTML = '';
-            currentCategories.forEach(cat => {
-                addList.innerHTML += `
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="add_cat_${cat.id}" value="${cat.id}">
-                        <label class="form-check-label" for="add_cat_${cat.id}">${cat.name}</label>
-                    </div>
-                `;
-            });
-            renderEditCategories();
-        } catch (err) {
-            showToast('Unable to load categories', 'danger');
-        }
-    }
-
-    function renderEditCategories() {
-        const editList = document.getElementById('editCategoriesList');
-        if (!editList) return;
-        editList.innerHTML = '';
-        currentCategories.forEach(cat => {
-            editList.innerHTML += `
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="edit_cat_${cat.id}" value="${cat.id}">
-                    <label class="form-check-label" for="edit_cat_${cat.id}">${cat.name}</label>
-                </div>
-            `;
-        });
-    }
-
-    async function loadProductCategories() {
-        try {
-            const res = await fetch(`${BASE_URL}/product-categories?itemPerPage=5000&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (!res.ok) return;
-            const json = await res.json();
-            const pcs = json.data?.list || [];
-            const map = {};
-            pcs.forEach(pc => {
-                if (!map[pc.productId]) map[pc.productId] = [];
-                map[pc.productId].push(pc.categoryId);
-            });
-            currentProducts.forEach(p => {
-                p.categoryIds = map[p.id] || [];
-            });
-        } catch (err) {
-            console.error("Error loading product-categories:", err);
-        }
-    }
 
     $(document).ready(function() {
         autoLoginAndLoad();

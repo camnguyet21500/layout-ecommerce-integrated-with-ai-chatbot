@@ -59,7 +59,7 @@
 
     <!-- Action Buttons -->
     <div class="management-actions text-right mb-4">
-        <button class="btn-admin btn-add" data-toggle="modal" data-target="#addCategoryModal">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addCategoryModal">
             Add Category
         </button>
         <button class="btn btn-success ml-2" onclick="importCategoriesFromExcel()">
@@ -78,7 +78,6 @@
                 <th>CATEGORY</th>
                 <th>PARENT CATEGORY</th>
                 <th>DESCRIPTION</th>
-                <th>STATUS</th>
                 <th>ACTION</th>
             </tr>
             </thead>
@@ -374,7 +373,7 @@
             loadParentOptions();
         } catch (err) {
             document.getElementById("categoryTableBody").innerHTML =
-                `<tr><td colspan="7" class="text-danger text-center">Error loading data</td></tr>`;
+                `<tr><td colspan="6" class="text-danger text-center">Error loading data</td></tr>`;
         }
     }
 
@@ -385,17 +384,17 @@
         if (categories.length === 0) {
             const searchQuery = $('#searchCategoryInput').val().trim();
             if (searchQuery) {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-4 text-muted">
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-4 text-muted">
       No categories were found containing "<strong>${searchQuery}</strong>"
     </td></tr>`;
             } else {
-                tbody.innerHTML = `<tr><td colspan="7" class="text-center py-5 text-muted">No categories yet.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">No categories yet.</td></tr>`;
             }
             return;
         }
 
         const categoryMap = new Map();
-        categories.forEach(cat => {
+        currentCategories.forEach(cat => {
             categoryMap.set(cat.id, cat.name);
         });
 
@@ -406,10 +405,6 @@
             if (cat.parentID) {
                 parentName = categoryMap.get(cat.parentID) || 'Cannot find';
             }
-
-            const statusBadge = cat.status === 'active'
-                ? '<span class="badge badge-success">Activity</span>'
-                : '<span class="badge badge-secondary">Hide</span>';
 
             const imageUrl = cat.imageUrl || "https://via.placeholder.com/60";
 
@@ -422,7 +417,6 @@
       <td><strong>${cat.name}</strong></td>
       <td>${parentName}</td>
       <td>${cat.description || '-'}</td>
-      <td>${statusBadge}</td>
       <td class="text-center">
         <button class="btn btn-sm btn-primary edit-btn mr-1" data-cat='${JSON.stringify(cat)}'>
           <i class="fas fa-edit"></i>

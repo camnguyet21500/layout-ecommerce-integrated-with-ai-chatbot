@@ -197,3 +197,17 @@ body {
 .content a:hover{
     color: #f9af47;
 }
+
+#productTableBody img {
+    transition: transform 0.3s ease;
+    cursor: zoom-in;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+#productTableBody img:hover {
+    transform: scale(1.5);
+    z-index: 9999;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    border-radius: 12px;
+}
