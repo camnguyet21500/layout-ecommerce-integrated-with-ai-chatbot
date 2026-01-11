@@ -496,28 +496,6 @@
             const productsJson = await productsRes.json();
             let products = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
 
-            const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, { headers });
-            if (imagesRes.ok) {
-                const imagesJson = await imagesRes.json();
-                allProductImages = imagesJson.data?.list || [];
-            }
-
-            const imagesMap = {};
-            allProductImages.forEach(img => {
-                if (!imagesMap[img.productID]) imagesMap[img.productID] = [];
-                imagesMap[img.productID].push(img);
-            });
-
-            products = products.map(product => {
-                const imgs = imagesMap[product.id] || [];
-                if (imgs.length > 0) {
-                    imgs.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-                }
-                product.mainImage = imgs.length > 0 ? imgs[0].imageUrl : "../../img/default-product.jpg";
-                product.allImages = imgs;
-                return product;
-            });
-
             renderProducts(products);
         } catch (err) {
             console.error(err);
@@ -525,44 +503,68 @@
         }
     }
 
-    function renderProducts(products) {
+    async function renderProducts(products) {
         const grid = document.getElementById("productGrid");
         grid.innerHTML = "";
+
         if (products.length === 0) {
             grid.innerHTML = '<p class="text-center">No products available</p>';
             return;
         }
 
-        products.forEach(product => {
+        const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+
+        for (const product of products) {
+            let mainImage = "../../img/default-product.jpg";
+            let allImages = [];
+
+            try {
+                const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, { headers });
+                if (imagesRes.ok) {
+                    const imagesJson = await imagesRes.json();
+                    const productImages = imagesJson.data?.list || [];
+
+                    if (productImages.length > 0) {
+                        productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                        mainImage = productImages[0].imageUrl;
+                        allImages = productImages;
+                    }
+                }
+            } catch (err) {
+                console.warn(`Failed to load images for product ${product.id}`, err);
+            }
+
+            product.mainImage = mainImage;
+            product.allImages = allImages;
+
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
             const item = document.createElement("div");
             item.className = "col-lg-3 col-md-4 col-sm-6 col-6 product-tab-pd";
             item.innerHTML = `
-          <div class="product-item-v1">
-            <div class="product mb-30 engoj_grid_parent relative">
-              <div class="img-product relative">
-                <div class="engoj_find_img">
-                  <img src="${product.mainImage}" alt="${product.name}" style="width: 100%; height: 300px; object-fit: cover;">
-                </div>
-              </div>
+      <div class="product-item-v1">
+        <div class="product mb-30 engoj_grid_parent relative">
+          <div class="img-product relative">
+            <div class="engoj_find_img">
+              <img src="${product.mainImage}" alt="${product.name}" style="width: 100%; height: 300px; object-fit: cover;">
             </div>
-            <div class="info-product">
-              <h4 class="des-font capital title-product mb-0 flex">
-                <a href="#" class="product-detail-link" data-id="${product.id}">${product.name}</a>
-              </h4>
-              <p class="price-product">
-                <span class="price">${price}</span>
-              </p>
-            </div>
-          </div>`;
+          </div>
+        </div>
+        <div class="info-product">
+          <h4 class="des-font capital title-product mb-0 flex">
+            <a href="#" class="product-detail-link" data-id="${product.id}">${product.name}</a>
+          </h4>
+          <p class="price-product">
+            <span class="price">${price}</span>
+          </p>
+        </div>
+      </div>`;
             grid.appendChild(item);
-        });
+        }
     }
 
     $(document).on('click', '.product-detail-link', async function(e) {
         e.preventDefault();
         const id = $(this).data('id');
-
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
             const res = await fetch(`${BASE_URL}/products/${id}`, { headers });
@@ -570,24 +572,14 @@
             const json = await res.json();
             const product = json.data;
 
-            // Lấy danh sách ảnh (ưu tiên từ allImages nếu có, hoặc productImages)
-            let productImages = product.allImages || [];
+            let productImages = product.productImages || [];
             if (productImages.length === 0) {
-                // Fallback: lấy từ product.productImages nếu API trả về
-                productImages = product.productImages || [];
-                if (productImages.length === 0) {
-                    // Nếu vẫn không có, lấy từ global allProductImages
-                    productImages = allProductImages.filter(img => img.productID === id);
-                }
+                productImages = allProductImages.filter(img => img.productID === id);
             }
-
-            // Sắp xếp ảnh theo sortOrder
             productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
-            // Ảnh chính
             const mainImage = productImages.length > 0 ? productImages[0].imageUrl : "../../img/default-product.jpg";
 
-            // Điền thông tin sản phẩm
             $('#modalProductName').text(product.name);
             $('#modalNewPrice').text(Number(product.price).toLocaleString('vi-VN') + ' ₫');
             $('#modalDescription').text(product.description || 'No description available.');
@@ -595,7 +587,6 @@
             $('#productModal').data('productId', product.id);
             $('.js-qty-num').val(1);
 
-            // Xây dựng carousel
             const indicators = $('#carouselIndicators');
             const inner = $('#carouselInner');
             indicators.empty();
@@ -604,13 +595,7 @@
             if (productImages.length > 0) {
                 productImages.forEach((img, index) => {
                     const isActive = index === 0 ? 'active' : '';
-
-                    // Thêm indicator (dấu chấm)
-                    indicators.append(`
-          <li data-target="#productCarousel" data-slide-to="${index}" class="${isActive}"></li>
-        `);
-
-                    // Thêm slide ảnh
+                    indicators.append(`<li data-target="#productCarousel" data-slide-to="${index}" class="${isActive}"></li>`);
                     inner.append(`
           <div class="carousel-item ${isActive}">
             <img src="${img.imageUrl}" class="d-block w-100" alt="${product.name}" style="height: 450px; object-fit: contain; background: #f8f9fa;">
@@ -618,7 +603,6 @@
         `);
                 });
             } else {
-                // Nếu không có ảnh
                 inner.append(`
         <div class="carousel-item active">
           <img src="../../img/default-product.jpg" class="d-block w-100" alt="No image" style="height: 450px; object-fit: contain;">

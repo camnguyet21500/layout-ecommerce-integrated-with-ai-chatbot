@@ -424,7 +424,7 @@
 
                 if (currentProducts.length > 0 && currentProducts[0].vendorID) {
                     currentVendorID = currentProducts[0].vendorID;
-                }
+                }e
             } catch (err) {
                 document.getElementById("productTableBody").innerHTML =
                     `<tr><td colspan="9" class="text-danger text-center p-4">
@@ -542,7 +542,6 @@
             return;
         }
 
-        // Điền các field
         $('#editId').val(product.id);
         $('#editName').val(product.name);
         $('#editSku').val(product.sku || '');
@@ -551,13 +550,10 @@
         $('#editStock').val(product.stockQuantity);
         $('#editStatus').val(product.status);
 
-        // Load lại categories mới nhất
+        // Load categories
         await loadCategories();
-
-        // Sửa ở đây: dùng categoryIDs[0] thay vì categoryID
         populateCategorySelect('editCategory', product.categoryIDs?.[0] || '');
 
-        // Load ảnh hiện tại
         const currentImagesDiv = $('#currentImages');
         currentImagesDiv.empty();
         currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
@@ -566,16 +562,27 @@
             const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
+
             if (imagesRes.ok) {
                 const imagesJson = await imagesRes.json();
                 const productImages = imagesJson.data?.list || [];
                 currentImagesDiv.empty();
+
                 if (productImages.length > 0) {
                     productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+
                     productImages.forEach(img => {
-                        currentImagesDiv.append(`
-            <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                        const imgWrapper = $(`
+            <div class="position-relative m-2" style="width: 110px;">
+              <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+              <button class="btn btn-danger btn-sm delete-image-btn position-absolute"
+                      style="top: -8px; right: -8px; width: 28px; height: 28px; border-radius: 50%; padding: 0; font-size: 14px;"
+                      data-id="${img.id}">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
           `);
+                        currentImagesDiv.append(imgWrapper);
                     });
                 } else {
                     currentImagesDiv.append('<p class="text-muted">No images</p>');
@@ -674,7 +681,7 @@
             e.preventDefault();
 
             const id = $('#editId').val();
-            const selectedCategoryID = $('#editCategory').val(); // UUID của category được chọn
+            const selectedCategoryID = $('#editCategory').val();
 
             const basicPayload = {
                 name: $('#editName').val().trim(),
@@ -684,11 +691,11 @@
                 description: $('#editDescription').val().trim() || undefined,
                 sku: $('#editSku').val().trim() || undefined,
                 productCategories: {
-                    deleteMany: {},  // Xóa hết các category cũ của product này
+                    deleteMany: {},
                 }
             };
 
-            // Nếu có chọn category mới → tạo liên kết mới
+
             if (selectedCategoryID) {
                 basicPayload.productCategories.create = [
                     {
@@ -807,7 +814,7 @@
             document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">No preview images available.</p>';
             previewImagesFromUrls('addImageUrls', 'addImagePreview');
 
-            await loadCategories(); // Đảm bảo categories mới nhất
+            await loadCategories();
             populateCategorySelect('addCategory');
         });
 
@@ -863,6 +870,34 @@
                 select.appendChild(opt);
             });
         }
+
+    $(document).on('click', '.delete-image-btn', async function () {
+        const imageId = $(this).data('id');
+        if (!confirm("Do you want to delete this image?")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/product-images/${imageId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`
+                }
+            });
+
+            if (res.ok) {
+                showToast('Deleted successfully!', 'success');
+                $(this).closest('.position-relative').remove();
+
+                if ($('#currentImages').children('.position-relative').length === 0) {
+                    $('#currentImages').append('<p class="text-muted">No images</p>');
+                }
+            } else {
+                const err = await res.json().catch(() => ({}));
+                showToast(`Delete failed: ${err.message || 'Server error'}`, 'danger');
+            }
+        } catch (err) {
+            showToast('Connection error', 'danger');
+        }
+    });
 
         $(document).ready(function () {
             autoLoginAndLoad();
