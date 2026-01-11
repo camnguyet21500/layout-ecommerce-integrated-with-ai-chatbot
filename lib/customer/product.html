@@ -264,6 +264,24 @@
                 </ul>
             </div>
             <img src="../../img/mega_mall_logo.png" width="5%" style="margin-right: 450px;">
+            <form class="form-inline my-2 my-lg-0 search-form mx-auto" style="flex: 1; max-width: 450px;">
+                <div class="input-group w-100">
+                    <input
+                            id="searchInput"
+                            class="form-control border-right-0 border"
+                            type="search"
+                            placeholder="Tìm tên sản phẩm..."
+                            aria-label="Search">
+                    <div class="input-group-append">
+                        <button
+                                id="searchBtn"
+                                class="btn btn-outline-secondary bg-white border-left-0"
+                                type="button">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
             <div class="icon" style="display: inherit">
                 <a href="profile.html"><i class="far fa-user fa-fw mx-3" data-toggle="modal" data-target="#exampleModalCenter"></i></a>
                 <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
@@ -487,19 +505,39 @@
         loadProducts();
     }
 
+    let allProducts = []; // Global variable to store all products
+
     async function loadProducts() {
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-
             const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, { headers });
             if (!productsRes.ok) throw new Error("Failed to load products");
-            const productsJson = await productsRes.json();
-            let products = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
 
-            renderProducts(products);
+            const productsJson = await productsRes.json();
+            allProducts = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
+
+            renderProducts(allProducts); // Render full list initially
         } catch (err) {
             console.error(err);
             document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Failed to load products from server</p>';
+        }
+    }
+
+    function filterProductsByName(query) {
+        if (!query || query.trim() === '') {
+            renderProducts(allProducts);
+            return;
+        }
+
+        const filtered = allProducts.filter(product =>
+            product.name.toLowerCase().includes(query.toLowerCase())
+        );
+
+        renderProducts(filtered);
+
+        if (filtered.length === 0) {
+            document.getElementById("productGrid").innerHTML =
+                '<p class="text-center mt-5">No products found</p>';
         }
     }
 
@@ -743,6 +781,22 @@
 
     $(document).ready(function() {
         autoLoginAndLoadProducts();
+
+        document.getElementById('searchBtn')?.addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value;
+            filterProductsByName(query);
+        });
+
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('searchBtn').click();
+            }
+        });
+
+        document.getElementById('searchInput')?.addEventListener('input', function() {
+            filterProductsByName(this.value);
+        });
     });
 </script>
 </body>

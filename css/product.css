@@ -557,3 +557,36 @@ body{
 .content a:hover{
   color: #ffa6a8;
 }
+
+.search-form {
+    position: relative;
+}
+
+.search-form .form-control {
+    border-radius: 20px 0 0 20px;
+    padding: 0.55rem 1rem;
+    height: 42px;
+    border: 1px solid #ced4da;
+}
+
+.search-form .btn-outline-secondary {
+    border-radius: 0 20px 20px 0;
+    border: 1px solid #ced4da;
+    border-left: none;
+    background-color: white;
+}
+
+.search-form .btn-outline-secondary:hover,
+.search-form .btn-outline-secondary:focus {
+    background-color: #f8f9fa;
+    color: #495057;
+}
+
+/* Responsive - trên mobile thu gọn lại */
+@media (max-width: 991px) {
+    .search-form {
+        max-width: 100% !important;
+        margin: 10px 0;
+        order: 3;           /* đẩy xuống dưới menu nếu cần */
+    }
+}
