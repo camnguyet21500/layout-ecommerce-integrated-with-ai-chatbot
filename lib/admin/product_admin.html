@@ -529,75 +529,68 @@
             }
         });
 
-        $(document).on('click', '.edit-btn', async function () {
+    $(document).on('click', '.edit-btn', async function () {
+        const productId = $(this).closest('tr').find('.delete-btn').data('id') || $(this).data('product')?.id;
+        if (!productId) {
+            showToast('Error loading product data', 'danger');
+            return;
+        }
 
-            const productId = $(this).closest('tr').find('.delete-btn').data('id')
-                || $(this).data('product')?.id;
+        const product = currentProducts.find(p => p.id === productId);
+        if (!product) {
+            showToast('Product not found in current list', 'danger');
+            return;
+        }
 
-            if (!productId) {
-                showToast('Error loading product data', 'danger');
-                return;
-            }
+        // Điền các field
+        $('#editId').val(product.id);
+        $('#editName').val(product.name);
+        $('#editSku').val(product.sku || '');
+        $('#editPrice').val(product.price);
+        $('#editDescription').val(product.description || '');
+        $('#editStock').val(product.stockQuantity);
+        $('#editStatus').val(product.status);
 
+        // Load lại categories mới nhất
+        await loadCategories();
 
-            const product = currentProducts.find(p => p.id === productId);
-            if (!product) {
-                showToast('Product not found in current list', 'danger');
-                return;
-            }
+        // Sửa ở đây: dùng categoryIDs[0] thay vì categoryID
+        populateCategorySelect('editCategory', product.categoryIDs?.[0] || '');
 
+        // Load ảnh hiện tại
+        const currentImagesDiv = $('#currentImages');
+        currentImagesDiv.empty();
+        currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
 
-            $('#editId').val(product.id);
-            $('#editName').val(product.name);
-            $('#editSku').val(product.sku || '');
-            $('#editPrice').val(product.price);
-            $('#editDescription').val(product.description || '');
-            $('#editStock').val(product.stockQuantity);
-            $('#editStatus').val(product.status);
-
-
-            await loadCategories();
-
-
-            populateCategorySelect('editCategory', product.categoryID || '');
-
-
-            const currentImagesDiv = $('#currentImages');
-            currentImagesDiv.empty();
-            currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
-
-            try {
-                const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
-                    headers: {'Authorization': `Bearer ${authToken}`}
-                });
-
-                if (imagesRes.ok) {
-                    const imagesJson = await imagesRes.json();
-                    const productImages = imagesJson.data?.list || [];
-
-                    currentImagesDiv.empty();
-                    if (productImages.length > 0) {
-                        productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-                        productImages.forEach(img => {
-                            currentImagesDiv.append(`
-                        <img src="${img.imageUrl}" width="100" height="100"
-                             style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-                    `);
-                        });
-                    } else {
-                        currentImagesDiv.append('<p class="text-muted">No images</p>');
-                    }
-                } else {
-                    currentImagesDiv.empty();
-                    currentImagesDiv.append('<p class="text-muted">Unable to load images</p>');
-                }
-            } catch (err) {
+        try {
+            const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (imagesRes.ok) {
+                const imagesJson = await imagesRes.json();
+                const productImages = imagesJson.data?.list || [];
                 currentImagesDiv.empty();
-                currentImagesDiv.append('<p class="text-muted">Error loading images</p>');
+                if (productImages.length > 0) {
+                    productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                    productImages.forEach(img => {
+                        currentImagesDiv.append(`
+            <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+          `);
+                    });
+                } else {
+                    currentImagesDiv.append('<p class="text-muted">No images</p>');
+                }
+            } else {
+                currentImagesDiv.empty();
+                currentImagesDiv.append('<p class="text-muted">Unable to load images</p>');
             }
+        } catch (err) {
+            currentImagesDiv.empty();
+            currentImagesDiv.append('<p class="text-muted">Error loading images</p>');
+        }
 
-            $('#editProductModal').modal('show');
-        });
+        $('#editProductModal').modal('show');
+    });
 
         $('#addProductForm').on('submit', async function (e) {
             e.preventDefault();
@@ -622,6 +615,8 @@
             }
             const imageUrlsText = $('#addImageUrls').val().trim();
             const imageUrls = imageUrlsText ? imageUrlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http')) : [];
+            const selectedCategoryID = $('#addCategory').val();
+
             const payload = {
                 vendorID: currentVendorID,
                 name,
@@ -630,7 +625,9 @@
                 status,
                 description: description || undefined,
                 sku: sku || undefined,
-                categoryID
+                productCategories: {
+                    create: selectedCategoryID ? [{ category: { connect: { id: selectedCategoryID } } }] : []
+                }
             };
             try {
                 const res = await fetch(`${BASE_URL}/products`, {
