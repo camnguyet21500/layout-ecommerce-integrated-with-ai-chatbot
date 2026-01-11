@@ -82,20 +82,14 @@
                 return;
             }
 
-            // === THÊM DÒNG NÀY ĐỂ ALERT RESPONSE TRƯỚC KHI REDIRECT ===
-            alert("Sign-in response:\n" + JSON.stringify(loginData, null, 2));
-
             const token = loginData.data.accessToken;
             localStorage.setItem('authToken', token);
 
-            // Phần còn lại giữ nguyên (lấy user, lưu localStorage, redirect...)
             const userRes = await fetch(`${BASE_URL}/users?email=${encodeURIComponent(email)}&itemPerPage=1&page=1`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
 
             let user = { email };
-            let isSuperRole = false;
-
             if (userRes.ok) {
                 const userData = await userRes.json();
                 if (userData.data?.list?.length > 0) {
@@ -103,25 +97,27 @@
                 }
             }
 
-            // Kiểm tra isSuperRole (ưu tiên từ sign-in response)
-            if (loginData.data?.isSuperRole !== undefined) {
-                isSuperRole = loginData.data.isSuperRole;
-            } else if (loginData.isSuperRole !== undefined) {
-                isSuperRole = loginData.isSuperRole;
-            } else if (user.isSuperRole !== undefined) {
-                isSuperRole = user.isSuperRole;
-            }
-
             localStorage.setItem('currentUser', JSON.stringify(user));
             if (user.id) {
                 localStorage.setItem('currentUserId', user.id);
             }
 
+            let isSuperAdmin = false;
+
+            if (loginData.data?.isSupperAdmin !== undefined) {
+                isSuperAdmin = loginData.data.isSupperAdmin;
+            } else if (loginData.data?.isSuperAdmin !== undefined) {
+                isSuperAdmin = loginData.data.isSuperAdmin;
+            } else if (loginData.isSupperAdmin !== undefined) {
+                isSuperAdmin = loginData.isSupperAdmin;
+            } else if (loginData.isSuperAdmin !== undefined) {
+                isSuperAdmin = loginData.isSuperAdmin;
+            }
             showToast("Success", "Login successful!");
 
             setTimeout(() => {
-                if (isSuperRole) {
-                    window.location.href = 'index_admin.html';
+                if (isSuperAdmin) {
+                    window.location.href = '../admin/index_admin.html';
                 } else {
                     window.location.href = 'index.html';
                 }

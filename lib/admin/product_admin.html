@@ -65,6 +65,7 @@
             <th>Name</th>
             <th>Description</th>
             <th>Price</th>
+            <th>Category</th>
             <th>Stock</th>
             <th>Status</th>
             <th>Actions</th>
@@ -108,6 +109,16 @@
                             <div class="form-group">
                                 <label>SKU</label>
                                 <input type="text" class="form-control" id="addSku" placeholder="SKU-001">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select class="form-control" id="addCategory" required>
+                                    <option value="">Loading categories...</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -181,6 +192,16 @@
                             <div class="form-group">
                                 <label>SKU</label>
                                 <input type="text" class="form-control" id="editSku">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Category <span class="text-danger">*</span></label>
+                                <select class="form-control" id="editCategory" required>
+                                    <option value="">Loading categories...</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -318,6 +339,7 @@
     let authToken = null;
     let currentProducts = [];
     let currentVendorID = "cf9a9e5d-88d0-4891-99f2-e2862fc86679";
+    let currentCategories = [];
 
     function showToast(message, type = 'success') {
         const toastHtml = `
@@ -351,67 +373,103 @@
             }
             authToken = loginData.data.accessToken;
             await loadProductsAndSetVendorID();
+            await loadCategories();
             renderProductTable(currentProducts);
         } catch (err) {
             showToast('Unable to connect to server', 'danger');
         }
     }
 
-    async function loadProductsAndSetVendorID() {
-        try {
-            const res = await fetch(`${BASE_URL}/products?itemPerPage=200&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const json = await res.json();
-            let products = json.data?.list?.filter(p => !p.deletedAt) || [];
-            products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            currentProducts = products;
-            if (currentProducts.length > 0 && currentProducts[0].vendorID) {
-                currentVendorID = currentProducts[0].vendorID;
-            }
-        } catch (err) {
-            document.getElementById("productTableBody").innerHTML = `<tr><td colspan="8" class="text-danger text-center p-4">Unable to load product list<br>Error: ${err.message}</td></tr>`;
-        }
-    }
+        async function loadProductsAndSetVendorID() {
+            try {
+                const res = await fetch(`${BASE_URL}/products?itemPerPage=200&page=1`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const json = await res.json();
 
-    async function renderProductTable(products, sort = true) {
-        const tbody = document.getElementById("productTableBody");
-        tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading products...</td></tr>";
-        if (products.length === 0) {
-            const searchQuery = $('#searchProductInput').val().trim();
-            tbody.innerHTML = searchQuery ?
-                `<tr><td colspan="8" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>` :
-                `<tr><td colspan="8" class="text-center text-muted py-4">No products available.</td></tr>`;
-            return;
+                console.log('Raw products from API:', json.data?.list);  // Xem toàn bộ list
+                if (json.data?.list?.length > 0) {
+                    console.log('Sample productCategories of first product:', json.data.list[0].productCategories);  // Kiểm tra relation của product đầu tiên
+                }
+
+                let products = json.data?.list?.filter(p => !p.deletedAt) || [];
+
+                products = products.map(p => {
+                    let categoryNames = [];
+                    let categoryIDs = [];
+
+                    if (p.productCategories && p.productCategories.length > 0) {
+                        categoryNames = p.productCategories
+                            .map(pc => pc.category?.name)
+                            .filter(name => name);
+
+                        categoryIDs = p.productCategories.map(pc => pc.category?.id).filter(id => id);
+                    }
+
+                    return {
+                        ...p,
+                        categoryNames: categoryNames.length > 0 ? categoryNames : ['Uncategorized'],
+                        categoryNameDisplay: categoryNames.length > 0
+                            ? categoryNames.join(', ')
+                            : 'Uncategorized',
+
+                        categoryName: categoryNames[0] || 'Uncategorized',
+                        categoryIDs: categoryIDs
+                    };
+                });
+
+                products.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                currentProducts = products;
+
+                if (currentProducts.length > 0 && currentProducts[0].vendorID) {
+                    currentVendorID = currentProducts[0].vendorID;
+                }
+            } catch (err) {
+                document.getElementById("productTableBody").innerHTML =
+                    `<tr><td colspan="9" class="text-danger text-center p-4">
+                Unable to load product list<br>Error: ${err.message}
+             </td></tr>`;
+            }
         }
-        let displayProducts = [...products];
-        if (sort) displayProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-        try {
-            const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            const imagesJson = await imagesRes.json();
-            const allImages = imagesJson.data?.list || [];
-            const imagesMap = {};
-            allImages.forEach(img => {
-                const pid = img.productID;
-                if (pid) {
-                    if (!imagesMap[pid]) imagesMap[pid] = [];
-                    imagesMap[pid].push(img);
-                }
-            });
-            tbody.innerHTML = "";
-            displayProducts.forEach((product, index) => {
-                const productImages = imagesMap[product.id] || [];
-                const imageCount = productImages.length;
-                let mainImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23dee2e6'/%3E%3Ctext x='30' y='30' font-size='10' text-anchor='middle' fill='%238d98a5' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
-                if (imageCount > 0) {
-                    productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-                    mainImage = productImages[0].imageUrl;
-                }
-                const row = document.createElement("tr");
-                row.innerHTML = `
+
+        async function renderProductTable(products, sort = true) {
+            const tbody = document.getElementById("productTableBody");
+            tbody.innerHTML = "<tr><td colspan='8' class='text-center'><i class='fas fa-spinner fa-spin mr-2'></i> Loading products...</td></tr>";
+            if (products.length === 0) {
+                const searchQuery = $('#searchProductInput').val().trim();
+                tbody.innerHTML = searchQuery ?
+                    `<tr><td colspan="8" class="text-center py-4 text-muted">No products found for "<strong>${searchQuery}</strong>"</td></tr>` :
+                    `<tr><td colspan="8" class="text-center text-muted py-4">No products available.</td></tr>`;
+                return;
+            }
+            let displayProducts = [...products];
+            if (sort) displayProducts.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            try {
+                const imagesRes = await fetch(`${BASE_URL}/product-images?itemPerPage=5000&page=1`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                const imagesJson = await imagesRes.json();
+                const allImages = imagesJson.data?.list || [];
+                const imagesMap = {};
+                allImages.forEach(img => {
+                    const pid = img.productID;
+                    if (pid) {
+                        if (!imagesMap[pid]) imagesMap[pid] = [];
+                        imagesMap[pid].push(img);
+                    }
+                });
+                tbody.innerHTML = "";
+                displayProducts.forEach((product, index) => {
+                    const productImages = imagesMap[product.id] || [];
+                    const imageCount = productImages.length;
+                    let mainImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Crect width='60' height='60' fill='%23dee2e6'/%3E%3Ctext x='30' y='30' font-size='10' text-anchor='middle' fill='%238d98a5' dy='.3em'%3ENo Image%3C/text%3E%3C/svg%3E";
+                    if (imageCount > 0) {
+                        productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                        mainImage = productImages[0].imageUrl;
+                    }
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
                     <td class="text-center">${index + 1}</td>
                     <td class="position-relative text-center">
                         <img src="${mainImage}" width="60" height="60" style="object-fit: cover; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -421,190 +479,251 @@
                     <td><strong>${product.name}</strong></td>
                     <td>${product.description || '-'}</td>
                     <td>${Number(product.price).toLocaleString('vi-VN')} ₫</td>
+                   <td>
+  ${product.categoryNames.map(name =>
+                        `<span class="badge badge-info mr-1 mb-1" style="font-size: 0.8em;">${name}</span>`
+                    ).join('')}
+  ${product.categoryNames.length === 0 ?
+                        '<span class="badge badge-secondary">Uncategorized</span>' : ''}
+</td>
                     <td>${product.stockQuantity}</td>
                     <td><span class="badge badge-${product.status === 'active' ? 'success' : product.status === 'draft' ? 'warning' : 'secondary'}">${product.status}</span></td>
                 `;
-                const actionsTd = document.createElement("td");
-                actionsTd.className = "text-center";
-                const editBtn = document.createElement("button");
-                editBtn.className = "btn btn-sm btn-warning edit-btn mr-1";
-                editBtn.innerHTML = '<i class="fas fa-edit"></i>';
-                $(editBtn).data('product', { ...product, productImages: productImages });
-                const deleteBtn = document.createElement("button");
-                deleteBtn.className = "btn btn-sm btn-danger delete-btn";
-                deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                deleteBtn.setAttribute('data-id', product.id);
-                actionsTd.appendChild(editBtn);
-                actionsTd.appendChild(deleteBtn);
-                row.appendChild(actionsTd);
-                tbody.appendChild(row);
-            });
-        } catch (err) {
-            tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Error loading product images<br><small>${err.message}</small></td></tr>`;
-        }
-    }
-
-    $(document).on('click', '.delete-btn', async function() {
-        const id = $(this).data('id');
-        if (!confirm("Delete this product? This action cannot be undone.")) return;
-        try {
-            const res = await fetch(`${BASE_URL}/products/${id}`, {
-                method: 'DELETE',
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (res.ok) {
-                showToast('Product deleted successfully', 'success');
-                currentProducts = currentProducts.filter(p => p.id !== id);
-                renderProductTable(currentProducts);
-            } else {
-                showToast('Delete failed', 'danger');
+                    const actionsTd = document.createElement("td");
+                    actionsTd.className = "text-center";
+                    const editBtn = document.createElement("button");
+                    editBtn.className = "btn btn-sm btn-warning edit-btn mr-1";
+                    editBtn.innerHTML = '<i class="fas fa-edit"></i>';
+                    $(editBtn).data('product', {...product, productImages: productImages});
+                    const deleteBtn = document.createElement("button");
+                    deleteBtn.className = "btn btn-sm btn-danger delete-btn";
+                    deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                    deleteBtn.setAttribute('data-id', product.id);
+                    actionsTd.appendChild(editBtn);
+                    actionsTd.appendChild(deleteBtn);
+                    row.appendChild(actionsTd);
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-danger text-center">Error loading product images<br><small>${err.message}</small></td></tr>`;
             }
-        } catch (err) {
-            showToast('Connection error', 'danger');
         }
-    });
 
-    $(document).on('click', '.edit-btn', async function() {
-        let product = $(this).data('product');
-        if (!product) {
-            showToast('Error loading product data', 'danger');
-            return;
-        }
-        const freshProduct = currentProducts.find(p => p.id === product.id);
-        if (freshProduct) product = freshProduct;
-        $('#editId').val(product.id);
-        $('#editName').val(product.name);
-        $('#editSku').val(product.sku || '');
-        $('#editPrice').val(product.price);
-        $('#editDescription').val(product.description || '');
-        $('#editStock').val(product.stockQuantity);
-        $('#editStatus').val(product.status);
-        const currentImagesDiv = $('#currentImages');
-        currentImagesDiv.empty();
-        currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
-        try {
-            const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
-                headers: { 'Authorization': `Bearer ${authToken}` }
-            });
-            if (imagesRes.ok) {
-                const imagesJson = await imagesRes.json();
-                const productImages = imagesJson.data?.list || [];
-                currentImagesDiv.empty();
-                if (productImages.length > 0) {
-                    productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
-                    productImages.forEach(img => {
-                        currentImagesDiv.append(`
-                            <img src="${img.imageUrl}" width="100" height="100" style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
-                        `);
-                    });
+        $(document).on('click', '.delete-btn', async function () {
+            const id = $(this).data('id');
+            if (!confirm("Delete this product? This action cannot be undone.")) return;
+            try {
+                const res = await fetch(`${BASE_URL}/products/${id}`, {
+                    method: 'DELETE',
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                if (res.ok) {
+                    showToast('Product deleted successfully', 'success');
+                    currentProducts = currentProducts.filter(p => p.id !== id);
+                    renderProductTable(currentProducts);
                 } else {
-                    currentImagesDiv.append('<p class="text-muted">No images</p>');
+                    showToast('Delete failed', 'danger');
                 }
-            } else {
-                currentImagesDiv.empty();
-                currentImagesDiv.append('<p class="text-muted">Unable to load images</p>');
+            } catch (err) {
+                showToast('Connection error', 'danger');
             }
-        } catch (err) {
+        });
+
+        $(document).on('click', '.edit-btn', async function () {
+
+            const productId = $(this).closest('tr').find('.delete-btn').data('id')
+                || $(this).data('product')?.id;
+
+            if (!productId) {
+                showToast('Error loading product data', 'danger');
+                return;
+            }
+
+
+            const product = currentProducts.find(p => p.id === productId);
+            if (!product) {
+                showToast('Product not found in current list', 'danger');
+                return;
+            }
+
+
+            $('#editId').val(product.id);
+            $('#editName').val(product.name);
+            $('#editSku').val(product.sku || '');
+            $('#editPrice').val(product.price);
+            $('#editDescription').val(product.description || '');
+            $('#editStock').val(product.stockQuantity);
+            $('#editStatus').val(product.status);
+
+
+            await loadCategories();
+
+
+            populateCategorySelect('editCategory', product.categoryID || '');
+
+
+            const currentImagesDiv = $('#currentImages');
             currentImagesDiv.empty();
-            currentImagesDiv.append('<p class="text-muted">Error loading images</p>');
-        }
-        $('#editProductModal').modal('show');
-    });
+            currentImagesDiv.append('<p class="text-muted">Loading images...</p>');
 
-    $('#addProductForm').on('submit', async function(e) {
-        e.preventDefault();
-        if (!currentVendorID) {
-            showToast('Invalid Vendor ID', 'danger');
-            return;
-        }
-        const name = $('#addName').val().trim();
-        const price = parseFloat($('#addPrice').val());
-        const stockQuantity = parseInt($('#addStock').val()) || 0;
-        const status = $('#addStatus').val();
-        const description = $('#addDescription').val().trim() || null;
-        const sku = $('#addSku').val().trim() || null;
-        if (!name || isNaN(price) || price <= 0) {
-            showToast('Product name and price are required; price must be greater than 0', 'danger');
-            return;
-        }
-        const imageUrlsText = $('#addImageUrls').val().trim();
-        const imageUrls = imageUrlsText ? imageUrlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http')) : [];
-        const payload = {
-            vendorID: currentVendorID,
-            name,
-            price,
-            stockQuantity,
-            status,
-            description: description || undefined,
-            sku: sku || undefined
-        };
-        try {
-            const res = await fetch(`${BASE_URL}/products`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-                body: JSON.stringify(payload)
-            });
-            if (!res.ok) {
-                const err = await res.json().catch(() => ({}));
-                showToast(`Failed to create product: ${err.message || 'Server error'}`, 'danger');
-                return;
-            }
-            const json = await res.json();
-            const newProduct = json.data;
-            const productId = newProduct.id;
-            if (imageUrls.length > 0) {
-                for (const url of imageUrls) {
-                    const imagePayload = {
-                        name: "Product image from admin",
-                        description: "Added when creating product",
-                        productID: productId,
-                        imageUrl: url,
-                        sortOrder: 0
-                    };
-                    await fetch(`${BASE_URL}/product-images`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-                        body: JSON.stringify(imagePayload)
-                    });
+            try {
+                const imagesRes = await fetch(`${BASE_URL}/product-images?productID=${product.id}&itemPerPage=100&page=1`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+
+                if (imagesRes.ok) {
+                    const imagesJson = await imagesRes.json();
+                    const productImages = imagesJson.data?.list || [];
+
+                    currentImagesDiv.empty();
+                    if (productImages.length > 0) {
+                        productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
+                        productImages.forEach(img => {
+                            currentImagesDiv.append(`
+                        <img src="${img.imageUrl}" width="100" height="100"
+                             style="object-fit: cover; margin: 5px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                    `);
+                        });
+                    } else {
+                        currentImagesDiv.append('<p class="text-muted">No images</p>');
+                    }
+                } else {
+                    currentImagesDiv.empty();
+                    currentImagesDiv.append('<p class="text-muted">Unable to load images</p>');
                 }
+            } catch (err) {
+                currentImagesDiv.empty();
+                currentImagesDiv.append('<p class="text-muted">Error loading images</p>');
             }
-            showToast('Product added successfully', 'success');
-            $('#addProductModal').modal('hide');
-            $('#addProductForm')[0].reset();
-            $('#addImagePreview').html('<p class="text-muted">No preview images available.</p>');
-            await loadProductsAndSetVendorID();
-            renderProductTable(currentProducts);
-        } catch (err) {
-            showToast('Network error when creating product', 'danger');
-        }
-    });
 
-    $('#editProductForm').on('submit', async function(e) {
-        e.preventDefault();
-        const id = $('#editId').val();
-        const basicPayload = {
-            name: $('#editName').val().trim(),
-            price: parseFloat($('#editPrice').val()),
-            stockQuantity: parseInt($('#editStock').val()) || 0,
-            status: $('#editStatus').val(),
-            description: $('#editDescription').val().trim() || undefined,
-            sku: $('#editSku').val().trim() || undefined
-        };
-        try {
-            const patchRes = await fetch(`${BASE_URL}/products/${id}`, {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-                body: JSON.stringify(basicPayload)
-            });
-            if (!patchRes.ok) {
-                const err = await patchRes.json().catch(() => ({ message: "Unknown error" }));
-                showToast(`Update failed: ${err.message || ''}`, 'danger');
+            $('#editProductModal').modal('show');
+        });
+
+        $('#addProductForm').on('submit', async function (e) {
+            e.preventDefault();
+            if (!currentVendorID) {
+                showToast('Invalid Vendor ID', 'danger');
                 return;
             }
-            const newImageUrlsText = $('#editNewImageUrls').val().trim();
-            if (newImageUrlsText) {
-                const imageUrls = newImageUrlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http'));
+            const name = $('#addName').val().trim();
+            const price = parseFloat($('#addPrice').val());
+            const stockQuantity = parseInt($('#addStock').val()) || 0;
+            const status = $('#addStatus').val();
+            const description = $('#addDescription').val().trim() || null;
+            const sku = $('#addSku').val().trim() || null;
+            const categoryID = $('#addCategory').val();
+            if (!categoryID) {
+                showToast('Please select a category', 'danger');
+                return;
+            }
+            if (!name || isNaN(price) || price <= 0) {
+                showToast('Product name and price are required; price must be greater than 0', 'danger');
+                return;
+            }
+            const imageUrlsText = $('#addImageUrls').val().trim();
+            const imageUrls = imageUrlsText ? imageUrlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http')) : [];
+            const payload = {
+                vendorID: currentVendorID,
+                name,
+                price,
+                stockQuantity,
+                status,
+                description: description || undefined,
+                sku: sku || undefined,
+                categoryID
+            };
+            try {
+                const res = await fetch(`${BASE_URL}/products`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`},
+                    body: JSON.stringify(payload)
+                });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    showToast(`Failed to create product: ${err.message || 'Server error'}`, 'danger');
+                    return;
+                }
+                const json = await res.json();
+                const newProduct = json.data;
+                const productId = newProduct.id;
                 if (imageUrls.length > 0) {
+                    for (const url of imageUrls) {
+                        const imagePayload = {
+                            name: "Product image from admin",
+                            description: "Added when creating product",
+                            productID: productId,
+                            imageUrl: url,
+                            sortOrder: 0
+                        };
+                        await fetch(`${BASE_URL}/product-images`, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}`},
+                            body: JSON.stringify(imagePayload)
+                        });
+                    }
+                }
+                showToast('Product added successfully', 'success');
+                $('#addProductModal').modal('hide');
+                $('#addProductForm')[0].reset();
+                $('#addImagePreview').html('<p class="text-muted">No preview images available.</p>');
+                await loadProductsAndSetVendorID();
+                renderProductTable(currentProducts);
+            } catch (err) {
+                showToast('Network error when creating product', 'danger');
+            }
+        });
+
+        $('#editProductForm').on('submit', async function (e) {
+            e.preventDefault();
+
+            const id = $('#editId').val();
+            const selectedCategoryID = $('#editCategory').val(); // UUID của category được chọn
+
+            const basicPayload = {
+                name: $('#editName').val().trim(),
+                price: parseFloat($('#editPrice').val()),
+                stockQuantity: parseInt($('#editStock').val()) || 0,
+                status: $('#editStatus').val(),
+                description: $('#editDescription').val().trim() || undefined,
+                sku: $('#editSku').val().trim() || undefined,
+                productCategories: {
+                    deleteMany: {},  // Xóa hết các category cũ của product này
+                }
+            };
+
+            // Nếu có chọn category mới → tạo liên kết mới
+            if (selectedCategoryID) {
+                basicPayload.productCategories.create = [
+                    {
+                        category: {
+                            connect: {id: selectedCategoryID}
+                        }
+                    }
+                ];
+            }
+
+            try {
+                const patchRes = await fetch(`${BASE_URL}/products/${id}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(basicPayload)
+                });
+
+                if (!patchRes.ok) {
+                    const err = await patchRes.json().catch(() => ({message: "Unknown error"}));
+                    showToast(`Update failed: ${err.message || 'Server error'}`, 'danger');
+                    return;
+                }
+
+                const newImageUrlsText = $('#editNewImageUrls').val().trim();
+                if (newImageUrlsText) {
+                    const imageUrls = newImageUrlsText.split(/[\n,]+/)
+                        .map(u => u.trim())
+                        .filter(u => u.length > 0 && u.startsWith('http'));
+
                     for (const url of imageUrls) {
                         const imagePayload = {
                             name: "Image from admin",
@@ -615,98 +734,142 @@
                         };
                         await fetch(`${BASE_URL}/product-images`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': `Bearer ${authToken}`
+                            },
                             body: JSON.stringify(imagePayload)
                         });
                     }
                 }
+
+                showToast('Product updated successfully', 'success');
+                $('#editProductModal').modal('hide');
+
+
+                await loadCategories();
+                await loadProductsAndSetVendorID();
+                renderProductTable(currentProducts);
+
+            } catch (err) {
+                console.error(err);
+                showToast('Server connection error', 'danger');
             }
-            showToast('Product updated successfully', 'success');
-            $('#editProductModal').modal('hide');
-            await loadProductsAndSetVendorID();
-            renderProductTable(currentProducts);
-        } catch (err) {
-            showToast('Server connection error', 'danger');
-        }
-    });
+        });
 
-    async function exportProductsToExcel() {
-        try {
-            const res = await fetch(`${BASE_URL}/products/export`, {
-                method: 'POST',
-                headers: { 'Authorization': `Bearer ${authToken}` }
+        async function exportProductsToExcel() {
+            try {
+                const res = await fetch(`${BASE_URL}/products/export`, {
+                    method: 'POST',
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                if (!res.ok) throw new Error("Export error");
+                const blob = await res.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'products_export.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            } catch (err) {
+                showToast('Export Excel error', 'danger');
+            }
+        }
+
+        function previewImagesFromUrls(textareaId, previewDivId) {
+            const textarea = document.getElementById(textareaId);
+            const previewDiv = document.getElementById(previewDivId);
+            textarea.addEventListener('input', function () {
+                const urlsText = textarea.value.trim();
+                const urls = urlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http'));
+                previewDiv.innerHTML = '';
+                if (urls.length === 0) {
+                    previewDiv.innerHTML = '<p class="text-muted">No preview images available.</p>';
+                    return;
+                }
+                urls.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.width = 100;
+                    img.height = 100;
+                    img.style.objectFit = 'cover';
+                    img.style.margin = '5px';
+                    img.style.borderRadius = '8px';
+                    img.onerror = () => {
+                        img.src = 'https://via.placeholder.com/100?text=Invalid+URL';
+                    };
+                    previewDiv.appendChild(img);
+                });
             });
-            if (!res.ok) throw new Error("Export error");
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'products_export.xlsx';
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-        } catch (err) {
-            showToast('Export Excel error', 'danger');
         }
-    }
 
-    function previewImagesFromUrls(textareaId, previewDivId) {
-        const textarea = document.getElementById(textareaId);
-        const previewDiv = document.getElementById(previewDivId);
-        textarea.addEventListener('input', function() {
-            const urlsText = textarea.value.trim();
-            const urls = urlsText.split(/[\n,]+/).map(u => u.trim()).filter(u => u.length > 0 && u.startsWith('http'));
-            previewDiv.innerHTML = '';
-            if (urls.length === 0) {
-                previewDiv.innerHTML = '<p class="text-muted">No preview images available.</p>';
+        $('#addProductModal').on('show.bs.modal', async function () {
+            $('#addProductForm')[0].reset();
+            document.getElementById('addImageUrls').value = '';
+            document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">No preview images available.</p>';
+            previewImagesFromUrls('addImageUrls', 'addImagePreview');
+
+            await loadCategories(); // Đảm bảo categories mới nhất
+            populateCategorySelect('addCategory');
+        });
+
+        $('#editProductModal').on('show.bs.modal', function () {
+            document.getElementById('editNewImageUrls').value = '';
+            document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">No new images yet</p>';
+            previewImagesFromUrls('editNewImageUrls', 'editImagePreview');
+        });
+
+        let filteredProducts = [];
+        $('#searchProductInput').on('input', function () {
+            const query = $(this).val().trim().toLowerCase();
+            if (query === '') {
+                filteredProducts = currentProducts;
+                $('#clearSearchBtn').hide();
+            } else {
+                filteredProducts = currentProducts.filter(product => product.name && product.name.toLowerCase().includes(query));
+                $('#clearSearchBtn').show();
+            }
+            renderProductTable(filteredProducts, false);
+        });
+
+        $('#clearSearchBtn').on('click', function () {
+            $('#searchProductInput').val('').trigger('input');
+        });
+
+        async function loadCategories() {
+            try {
+                const res = await fetch(`${BASE_URL}/categories?itemPerPage=100&page=1`, {
+                    headers: {'Authorization': `Bearer ${authToken}`}
+                });
+                if (!res.ok) throw new Error('Failed to load categories');
+                const json = await res.json();
+                currentCategories = json.data?.list || [];
+            } catch (err) {
+                showToast('Unable to load categories', 'danger');
+                currentCategories = [];
+            }
+        }
+
+        function populateCategorySelect(selectId, selectedId = '') {
+            const select = document.getElementById(selectId);
+            select.innerHTML = '<option value="">Select category</option>';
+            if (currentCategories.length === 0) {
+                select.innerHTML += '<option value="" disabled>No categories available</option>';
                 return;
             }
-            urls.forEach(url => {
-                const img = document.createElement('img');
-                img.src = url;
-                img.width = 100;
-                img.height = 100;
-                img.style.objectFit = 'cover';
-                img.style.margin = '5px';
-                img.style.borderRadius = '8px';
-                img.onerror = () => { img.src = 'https://via.placeholder.com/100?text=Invalid+URL'; };
-                previewDiv.appendChild(img);
+            currentCategories.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = cat.name;
+                if (cat.id === selectedId) opt.selected = true;
+                select.appendChild(opt);
             });
-        });
-    }
-
-    $('#addProductModal').on('show.bs.modal', function() {
-        document.getElementById('addImageUrls').value = '';
-        document.getElementById('addImagePreview').innerHTML = '<p class="text-muted">No preview images available.</p>';
-        previewImagesFromUrls('addImageUrls', 'addImagePreview');
-    });
-
-    $('#editProductModal').on('show.bs.modal', function() {
-        document.getElementById('editNewImageUrls').value = '';
-        document.getElementById('editImagePreview').innerHTML = '<p class="text-muted">No new images yet</p>';
-        previewImagesFromUrls('editNewImageUrls', 'editImagePreview');
-    });
-
-    let filteredProducts = [];
-    $('#searchProductInput').on('input', function() {
-        const query = $(this).val().trim().toLowerCase();
-        if (query === '') {
-            filteredProducts = currentProducts;
-            $('#clearSearchBtn').hide();
-        } else {
-            filteredProducts = currentProducts.filter(product => product.name && product.name.toLowerCase().includes(query));
-            $('#clearSearchBtn').show();
         }
-        renderProductTable(filteredProducts, false);
-    });
 
-    $('#clearSearchBtn').on('click', function() {
-        $('#searchProductInput').val('').trigger('input');
-    });
-
-    $(document).ready(function() {
-        autoLoginAndLoad();
-    });
+        $(document).ready(function () {
+            autoLoginAndLoad();
+        });
 </script>
 </body>
 </html>
