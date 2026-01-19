@@ -5,7 +5,6 @@ script.integrity =
 script.crossOrigin = 'anonymous';
 
 script.onload = () => {
-  // socket.io đã sẵn sàng
   const socket = io('http://localhost:8888');
   socket.on('connect', function (socketItem) {
     console.log('Connected');
