@@ -462,7 +462,7 @@
         }
     }
 
-    async function loadCartItems() {
+    async function loadCartItems(retryCount = 0) {
         const cartId = await getOrCreateCartId();
         if (!cartId) return;
 
@@ -474,7 +474,15 @@
             if (!itemsRes.ok) throw new Error('Failed to load cart items');
 
             const itemsData = await itemsRes.json();
-            let items = itemsData.data.list || [];
+            let items = itemsData.data?.list || [];
+
+            if (items.length === 0 && retryCount < 3 && localStorage.getItem('just_added_to_cart') === 'true') {
+                console.log(`Cart rỗng, thử lại lần ${retryCount + 1}...`);
+                await new Promise(resolve => setTimeout(resolve, 800));
+                return loadCartItems(retryCount + 1);
+            }
+
+            localStorage.removeItem('just_added_to_cart');
 
             let total = 0;
             for (let item of items) {

@@ -35,8 +35,31 @@
 </header>
 
 <div class="role-management container mt-5 pt-4">
-    <div class="text-center mb-4">
-        <h3 class="title-heading">Role Management</h3>
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h3 class="title-heading mb-0">Role Management</h3>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input
+                        type="text"
+                        id="searchRoleInput"
+                        class="form-control"
+                        placeholder="Search roles by name..."
+                        aria-label="Search roles"
+                >
+                <div class="input-group-append">
+                    <button
+                            id="clearSearchBtn"
+                            class="btn btn-outline-secondary"
+                            type="button"
+                            style="display: none;"
+                    >
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="text-right mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addRoleModal">
@@ -233,23 +256,22 @@
     let authToken = null;
     let currentRoles = [];
     let currentPermissions = [];
+    let filteredRoles = [];
 
     function showToast(message, type = 'success') {
         const toastHtml = `
-            <div class="toast" role="alert" data-delay="4000">
-                <div class="toast-header bg-${type} text-white">
-                    <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
-                    <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
-                        <span>&times;</span>
-                    </button>
-                </div>
-                <div class="toast-body">${message}</div>
-            </div>`;
+        <div class="toast" role="alert" data-delay="4000">
+            <div class="toast-header bg-${type} text-white">
+                <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+                <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
+                    <span>×</span>
+                </button>
+            </div>
+            <div class="toast-body">${message}</div>
+        </div>`;
         $('#toastContainer').append(toastHtml);
         $('.toast').last().toast('show');
-        $('.toast').last().on('hidden.bs.toast', function () {
-            $(this).remove();
-        });
+        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
     }
 
     async function autoLoginAndLoad() {
@@ -281,9 +303,13 @@
             const json = await res.json();
             currentRoles = json.data.list.filter(r => !r.deletedAt);
             currentRoles.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-            renderRoleTable(currentRoles);
+
+            // Initialize filtered list with all roles
+            filteredRoles = [...currentRoles];
+            renderRoleTable(filteredRoles);
         } catch (err) {
-            document.getElementById("roleTableBody").innerHTML = `<tr><td colspan="5" class="text-danger text-center">Error loading data</td></tr>`;
+            document.getElementById("roleTableBody").innerHTML =
+                `<tr><td colspan="5" class="text-danger text-center">Error loading data</td></tr>`;
         }
     }
 
@@ -303,30 +329,60 @@
     function renderRoleTable(roles) {
         const tbody = document.getElementById("roleTableBody");
         tbody.innerHTML = "";
+
         if (roles.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="text-center py-5 text-muted">No roles available</td></tr>`;
+            const searchQuery = $('#searchRoleInput').val().trim();
+            tbody.innerHTML = searchQuery
+                ? `<tr><td colspan="5" class="text-center py-5 text-muted">No roles found for "<strong>${searchQuery}</strong>"</td></tr>`
+                : `<tr><td colspan="5" class="text-center py-5 text-muted">No roles available.</td></tr>`;
             return;
         }
+
         roles.forEach((role, index) => {
-            const isSystem = role.isSystemRole ? '<span class="badge badge-danger">Yes</span>' : '<span class="badge badge-secondary">No</span>';
+            const isSystem = role.isSystemRole
+                ? '<span class="badge badge-danger">Yes</span>'
+                : '<span class="badge badge-secondary">No</span>';
+
             const row = document.createElement("tr");
             row.innerHTML = `
-    <td class="text-center">${index + 1}</td>
-    <td><strong>${role.name}</strong></td>
-    <td>${role.description || '-'}</td>
-    <td class="text-center">${isSystem}</td>
-    <td class="text-center">
-        <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
-            <i class="fas fa-edit"></i>
-        </button>
-        ${role.isSystemRole ? '' : `<button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
-            <i class="fas fa-trash-alt"></i>
-        </button>`}
-    </td>
-`;
+            <td class="text-center">${index + 1}</td>
+            <td><strong>${role.name}</strong></td>
+            <td>${role.description || '-'}</td>
+            <td class="text-center">${isSystem}</td>
+            <td class="text-center">
+                <button class="btn btn-sm btn-primary edit-btn mr-1" data-role='${JSON.stringify(role)}'>
+                    <i class="fas fa-edit"></i>
+                </button>
+                ${role.isSystemRole ? '' : `
+                    <button class="btn btn-sm btn-danger delete-btn" data-id="${role.id}">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `}
+            </td>
+        `;
             tbody.appendChild(row);
         });
     }
+
+    $('#searchRoleInput').on('input', function () {
+        const query = $(this).val().trim().toLowerCase();
+
+        if (query === '') {
+            filteredRoles = [...currentRoles];
+            $('#clearSearchBtn').hide();
+        } else {
+            filteredRoles = currentRoles.filter(role =>
+                role.name.toLowerCase().includes(query)
+            );
+            $('#clearSearchBtn').show();
+        }
+
+        renderRoleTable(filteredRoles);
+    });
+
+    $('#clearSearchBtn').on('click', function () {
+        $('#searchRoleInput').val('').trigger('input');
+    });
 
     function renderPermissions(containerId, selectedPermissionIds = []) {
         const container = document.getElementById(containerId);

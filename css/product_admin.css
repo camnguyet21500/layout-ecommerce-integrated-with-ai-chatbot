@@ -211,3 +211,20 @@ body {
     box-shadow: 0 10px 30px rgba(0,0,0,0.3);
     border-radius: 12px;
 }
+
+
+.icon-right {
+    margin-left: auto;
+}
+
+.icon-hover {
+    font-size: 22px;
+    color: #333;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.icon-hover:hover {
+    color: #f9af47;
+    transform: scale(1.2);
+}

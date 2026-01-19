@@ -355,34 +355,31 @@
         </div>
     </div>
 </footer>
-
 <script>
     const BASE_URL = "http://localhost:8888/api";
 
     function showToast(message, type = 'success') {
         const toastHtml = `
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
-          <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
-            <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
-            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="toast-body">${message}</div>
+            <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
+                <strong class="mr-auto">${type === 'success' ? 'Thành công' : (type === 'warning' ? 'Cảnh báo' : 'Lỗi')}</strong>
+                <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="toast-body">${message}</div>
         </div>`;
         $('#toastContainer').append(toastHtml);
         $('.toast').last().toast('show');
-        $('.toast').last().on('hidden.bs.toast', function () {
-            $(this).remove();
-        });
+        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
     }
 
-    async function loadOrders() {
+    async function loadOrders(retryCount = 0) {
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
 
         if (!authToken || !savedUser) {
-            showToast('Please log in to view your orders', 'warning');
+            showToast('Vui lòng đăng nhập để xem đơn hàng', 'warning');
             window.location.href = 'login.html';
             return;
         }
@@ -391,14 +388,23 @@
         const userId = user.id;
         const headers = { 'Authorization': `Bearer ${authToken}` };
 
+        const container = $('#ordersContainer');
+        container.html('<div class="text-center my-5"><div class="spinner-border text-warning" role="status"></div><p class="mt-3">Loading orders...</p></div>');
+
         try {
+            console.log(`[DEBUG] Fetching orders for user ${userId} (attempt ${retryCount + 1})`);
             const ordersRes = await fetch(`${BASE_URL}/orders?userID=${userId}&itemPerPage=50&page=1`, { headers });
-            if (!ordersRes.ok) throw new Error('Failed to load orders');
+
+            if (!ordersRes.ok) {
+                const errText = await ordersRes.text();
+                throw new Error(`Failed to fetch orders: ${ordersRes.status} - ${errText}`);
+            }
 
             const ordersData = await ordersRes.json();
+            console.log('[DEBUG] Orders response:', ordersData);
+
             let orders = ordersData.data?.list || [];
 
-            const container = $('#ordersContainer');
             container.empty();
 
             if (orders.length === 0) {
@@ -407,75 +413,138 @@
             }
 
             for (let order of orders) {
-                let orderItems = order.orderItems || [];
+                console.log(`[DEBUG] Processing order #${order.id}`, order);
 
+                let orderItems = order.orderItems || []; // Check if backend includes orderItems
+
+                // If no items included in response, fetch separately
                 if (orderItems.length === 0 && order.id) {
-                    const itemsRes = await fetch(`${BASE_URL}/order-items?orderId=${order.id}&itemPerPage=100&page=1`, { headers });
+                    console.log(`[DEBUG] Fetching order-items for order #${order.id}`);
+                    // FIXED: Changed 'orderId' to 'orderID' to match backend query param convention
+                    const itemsRes = await fetch(`${BASE_URL}/order-items?orderID=${order.id}&itemPerPage=100&page=1`, { headers });
+
                     if (itemsRes.ok) {
                         const itemsData = await itemsRes.json();
                         orderItems = itemsData.data?.list || [];
+                        console.log(`[DEBUG] Fetched ${orderItems.length} order items`);
+                    } else {
+                        console.warn(`[DEBUG] Failed to fetch order-items: ${itemsRes.status}`);
                     }
                 }
 
+                // Retry logic: if still no items after fetch, and this is recent order, try again
+                if (orderItems.length === 0 && retryCount < 2) {
+                    console.warn(`[DEBUG] No items found for order #${order.id} - retrying...`);
+                    await new Promise(r => setTimeout(r, 800));
+                    return loadOrders(retryCount + 1);
+                }
+
                 let totalAmount = order.totalAmount || 0;
-                if (!totalAmount) {
-                    for (let item of orderItems) {
-                        totalAmount += (item.priceAtPurchase || 0) * (item.quantity || 1);
-                    }
+                if (!totalAmount && orderItems.length > 0) {
+                    totalAmount = orderItems.reduce((sum, item) => sum + (item.priceAtPurchase || 0) * (item.quantity || 1), 0);
                 }
 
                 let itemsHTML = '';
                 for (let item of orderItems) {
-                    let productName = item.productName || 'Unnamed Product';
+                    let productName = item.productName || 'Unknown Product';
+                    let variantInfo = '';
                     let productImage = '../../img/default-product.jpg';
 
                     if (item.productVariantID) {
-                        const variantRes = await fetch(`${BASE_URL}/product-variants/${item.productVariantID}`, { headers });
-                        if (variantRes.ok) {
-                            const variantData = await variantRes.json();
-                            const variant = variantData.data;
-                            productName = variant.product?.name || productName;
-                            productImage = variant.product?.productImages?.[0]?.imageUrl || productImage;
+                        try {
+                            console.log(`[DEBUG] Fetching variant ${item.productVariantID}`);
+                            const variantRes = await fetch(`${BASE_URL}/product-variants/${item.productVariantID}`, { headers });
+                            if (variantRes.ok) {
+                                const variantData = await variantRes.json();
+                                const variant = variantData.data || {};
+                                console.log('[DEBUG] Variant data:', variant);
+
+                                productName = variant.product?.name || productName;
+                                productImage = variant.product?.productImages?.[0]?.imageUrl || productImage;
+
+                                if (variant.color || variant.size) {
+                                    variantInfo = `<small class="text-muted">Variant: ${variant.color || ''} ${variant.size || ''}</small>`;
+                                }
+                            } else {
+                                console.warn(`[DEBUG] Variant fetch failed: ${variantRes.status}`);
+                            }
+                        } catch (e) {
+                            console.warn("[DEBUG] Error fetching variant:", e);
                         }
                     }
 
                     const itemTotal = (item.priceAtPurchase || 0) * (item.quantity || 1);
+
                     itemsHTML += `
-              <div class="d-flex align-items-center mb-3 border-bottom pb-3">
-                <img src="${productImage}" style="width: 80px; height: 80px; object-fit: cover; margin-right: 15px;">
-                <div class="flex-grow-1">
-                  <h6 class="mb-0">${productName}</h6>
-                  <small>Quantity: ${item.quantity} × ${Number(item.priceAtPurchase || 0).toLocaleString()} ₫</small>
-                </div>
-                <strong>${Number(itemTotal).toLocaleString()} ₫</strong>
-              </div>`;
+                    <div class="d-flex align-items-center mb-3 p-3 border rounded hover-shadow">
+                        <img src="${productImage}" alt="${productName}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1">${productName}</h6>
+                            ${variantInfo}
+                            <div class="text-muted small">Qty: ${item.quantity} × ${Number(item.priceAtPurchase || 0).toLocaleString('vi-VN')} ₫</div>
+                        </div>
+                        <div class="text-right">
+                            <strong class="text-danger">${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
+                        </div>
+                    </div>`;
                 }
 
-                const statusBadge = order.status
-                    ? `<span class="badge badge-${order.status === 'delivered' ? 'success' : order.status === 'pending' ? 'warning' : 'secondary'}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>`
-                    : '<span class="badge badge-info">Unknown</span>';
+                const statusLower = order.status?.toLowerCase() || '';
+                const statusClass = {
+                    'delivered': 'success',
+                    'pending': 'warning',
+                    'processing': 'info',
+                    'cancelled': 'danger',
+                    'shipped': 'primary'
+                }[statusLower] || 'secondary';
+
+                const statusText = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Unknown';
+
+                const extraInfo = `
+                <div class="mt-3 small text-muted">
+                    <div><i class="fas fa-map-marker-alt mr-2"></i>Address: ${order.shippingAddress || 'N/A'}</div>
+                    <div><i class="fas fa-credit-card mr-2"></i>Payment: ${order.paymentMethod || 'N/A'}</div>
+                    ${order.note ? `<div><i class="fas fa-sticky-note mr-2"></i>Note: ${order.note}</div>` : ''}
+                </div>`;
 
                 const orderHTML = `
-            <div class="card mb-4">
-              <div class="card-header d-flex justify-content-between">
-                <strong>Order #${order.id} - ${new Date(order.createdAt).toLocaleDateString()}</strong>
-                ${statusBadge}
-              </div>
-              <div class="card-body">
-                ${itemsHTML || '<p>No products in this order.</p>'}
-                <hr>
-                <div class="d-flex justify-content-end">
-                  <h5>Total: <strong class="text-danger">${Number(totalAmount).toLocaleString()} ₫</strong></h5>
-                </div>
-              </div>
-            </div>`;
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+                        <div>
+                            <strong>Order #${order.id}</strong><br>
+                            <small class="text-muted">${new Date(order.createdAt).toLocaleString('vi-VN')}</small>
+                        </div>
+                        <span class="badge badge-${statusClass} px-3 py-2">${statusText}</span>
+                    </div>
+                    <div class="card-body">
+                        ${itemsHTML || '<p class="text-center text-muted">No products found in this order.</p>'}
+                        ${extraInfo}
+                        <hr>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-0">Total: <strong class="text-danger">${Number(totalAmount).toLocaleString('vi-VN')} ₫</strong></h5>
+                            </div>
+                            <div>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail(${order.id})">Details</button>
+                                ${statusLower === 'pending' ? `<button class="btn btn-sm btn-outline-danger ml-2">Cancel</button>` : ''}
+                                <button class="btn btn-sm btn-warning ml-2">Buy Again</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+
                 container.append(orderHTML);
             }
         } catch (err) {
-            console.error(err);
-            $('#ordersContainer').html('<p class="text-center text-danger">Failed to load orders</p>');
-            showToast('Failed to load orders', 'danger');
+            console.error('[ERROR] Load orders failed:', err);
+            container.html('<p class="text-center text-danger my-5">Failed to load orders. Please try again later.</p>');
+            showToast('Error loading orders: ' + err.message, 'danger');
         }
+    }
+
+    function viewOrderDetail(orderId) {
+        alert(`View details for order #${orderId} (redirect to order-detail.html?id=${orderId} in future)`);
+        // window.location.href = `order-detail.html?id=${orderId}`;
     }
 
     $(document).ready(function() {
