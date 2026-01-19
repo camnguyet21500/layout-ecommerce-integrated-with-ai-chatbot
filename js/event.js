@@ -15,7 +15,7 @@ script.onload = () => {
     );
   });
   socket.on('notifications', function (data) {
-    loadNotifications();
+    // Load lại noti (gọi lại logic tương tự loadNotifications())
   });
   socket.on('events', function (data) {
     console.log('event', data);
