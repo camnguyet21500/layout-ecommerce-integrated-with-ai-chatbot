@@ -15,6 +15,9 @@ script.onload = () => {
       console.log('Identity:', response),
     );
   });
+  socket.on('notifications', function (data) {
+    loadNotifications();
+  });
   socket.on('events', function (data) {
     console.log('event', data);
   });
