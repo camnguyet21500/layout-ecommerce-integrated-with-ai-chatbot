@@ -58,12 +58,17 @@
                         <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
                              aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
-                                <div class="col-sm">
+<!--                                <div class="col-sm">-->
+<!--                                    <a class="dropdown-item" href="product.html">ALL ITEMS</a>-->
+<!--                                    <div class="dropdown-divider"></div>-->
+<!--                                    <a class="dropdown-item text-secondary" href="#">Sneaker</a>-->
+<!--                                    <a class="dropdown-item text-secondary" href="#">Converse</a>-->
+<!--                                    <a class="dropdown-item text-secondary" href="#">Adidas</a>-->
+<!--                                </div>-->
+                                <div class="col-sm" id="category-list-container">
                                     <a class="dropdown-item" href="product.html">ALL ITEMS</a>
                                     <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item text-secondary" href="#">Sneaker</a>
-                                    <a class="dropdown-item text-secondary" href="#">Converse</a>
-                                    <a class="dropdown-item text-secondary" href="#">Adidas</a>
+                                    <div id="dynamic-categories"></div>
                                 </div>
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">PRODUCTS</a>
@@ -293,11 +298,6 @@
 </header>
 <!--HEADER END-->
 
-<!-- FILTER -->
-<div class="filter">
-    <a href="" class="btnfilter"><i class="fas fa-filter"></i>FILTER</a>
-</div>
-
 <!-- PRODUCTS GRID -->
 <div id="Accessories">
     <div class="tab-pane fade active show">
@@ -305,34 +305,25 @@
     </div>
 </div>
 
-<div class="loadmore">
-    <a href="" class="btnloadmore">LOAD MORE</a>
-</div>
-
 <!-- PRODUCT DETAIL MODAL -->
 <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="productModalTitle">Chi tiết sản phẩm</h5>
+                <h5 class="modal-title" id="productModalTitle">Details</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <!-- Phần ảnh (carousel) -->
                     <div class="col-md-7">
                         <div id="productCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
-                            <!-- Indicators (dấu chấm dưới) -->
                             <ol class="carousel-indicators" id="carouselIndicators"></ol>
 
-                            <!-- Slides ảnh -->
                             <div class="carousel-inner" id="carouselInner">
-                                <!-- Ảnh sẽ được thêm bằng JS -->
                             </div>
 
-                            <!-- Nút điều hướng trái/phải -->
                             <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
@@ -344,7 +335,6 @@
                         </div>
                     </div>
 
-                    <!-- Phần thông tin sản phẩm -->
                     <div class="col-md-5 infor_product">
                         <div class="name" id="modalProductName"></div>
                         <div class="old_price" id="modalOldPrice" style="display: none;"></div>
@@ -505,7 +495,7 @@
         loadProducts();
     }
 
-    let allProducts = []; // Global variable to store all products
+    let allProducts = [];
 
     async function loadProducts() {
         try {
@@ -516,7 +506,8 @@
             const productsJson = await productsRes.json();
             allProducts = productsJson.data.list.filter(p => !p.deletedAt && p.status === 'active');
 
-            renderProducts(allProducts); // Render full list initially
+            const selectedCategoryId = getSelectedCategoryId();
+            filterProductsByCategory(selectedCategoryId);
         } catch (err) {
             console.error(err);
             document.getElementById("productGrid").innerHTML = '<p class="text-center text-danger">Failed to load products from server</p>';
@@ -785,8 +776,93 @@
         }
     });
 
-    $(document).ready(function() {
-        autoLoginAndLoadProducts();
+    async function loadCategoriesForMenu() {
+        console.log("[DEBUG] Bắt đầu loadCategoriesForMenu()");
+        console.log("[DEBUG] authToken hiện tại:", authToken ? "Có token" : "Chưa có token (null)");
+
+        const container = document.getElementById('dynamic-categories');
+        if (!container) {
+            console.error("[ERROR] Không tìm thấy #dynamic-categories trong DOM!");
+            return;
+        }
+        console.log("[DEBUG] Đã tìm thấy container #dynamic-categories");
+
+        try {
+            const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
+            console.log("[DEBUG] Gọi API: /categories?parentID=null&itemPerPage=20&page=1");
+
+            const res = await fetch(`${BASE_URL}/categories?itemPerPage=20&page=1`, { headers });
+
+            console.log("[DEBUG] API response status:", res.status);
+
+            if (!res.ok) {
+                const errorText = await res.text();
+                console.warn("[WARN] API categories thất bại:", res.status, errorText);
+                container.innerHTML = '<a class="dropdown-item text-muted">Lỗi tải danh mục</a>';
+                return;
+            }
+
+            const json = await res.json();
+            console.log("[DEBUG] Dữ liệu API trả về:", json);
+
+            const categories = json.data?.list || [];
+            console.log("[DEBUG] Số lượng category:", categories.length);
+
+            container.innerHTML = '';  // xóa nội dung cũ
+
+            if (categories.length === 0) {
+                container.innerHTML = '<a class="dropdown-item text-muted">Chưa có danh mục nào</a>';
+                console.log("[INFO] Không có category nào (list rỗng)");
+                return;
+            }
+
+            categories.forEach(cat => {
+                const link = document.createElement('a');
+                link.className = 'dropdown-item text-secondary';
+                link.href = `product.html?category=${cat.id}`;
+                link.textContent = cat.name || 'Unnamed Category';
+                container.appendChild(link);
+                console.log("[DEBUG] Đã thêm category:", cat.name, cat.id);
+            });
+
+            console.log("[SUCCESS] Đã render xong categories");
+        } catch (err) {
+            console.error("[ERROR] Lỗi khi load categories:", err);
+            container.innerHTML = '<a class="dropdown-item text-danger">Lỗi hệ thống</a>';
+        }
+    }
+
+    // Đọc category từ URL query param
+    function getSelectedCategoryId() {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('category'); // trả về id hoặc null
+    }
+
+    function filterProductsByCategory(categoryId) {
+        if (!categoryId) {
+            renderProducts(allProducts);
+            return;
+        }
+
+        const filtered = allProducts.filter(product => {
+            return product.productCategories?.some(pc => pc.categoryID === categoryId);
+        });
+
+        renderProducts(filtered);
+
+        if (filtered.length === 0) {
+            document.getElementById("productGrid").innerHTML =
+                '<p class="text-center mt-5">There are no products in this category.</p>';
+        }
+    }
+
+    $(document).ready(async function() {
+        try {
+            await autoLoginAndLoadProducts();
+            loadCategoriesForMenu();
+        } catch (err) {
+            console.error("Lỗi khởi tạo trang:", err);
+        }
 
         document.getElementById('searchBtn')?.addEventListener('click', () => {
             const query = document.getElementById('searchInput').value;
