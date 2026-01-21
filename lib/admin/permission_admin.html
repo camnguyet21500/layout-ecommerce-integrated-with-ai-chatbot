@@ -42,8 +42,20 @@
 </header>
 
 <div class="role-management container mt-5 pt-4">
-    <div class="text-center mb-4">
-        <h3 class="title-heading">Permission Management</h3>
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h3 class="title-heading mb-0">Permission Management</h3>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" id="searchPermissionInput" class="form-control" placeholder="Search permissions by name..." aria-label="Search permissions">
+                <div class="input-group-append">
+                    <button id="clearSearchBtn" class="btn btn-outline-secondary" type="button" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <div class="text-right mb-3">
         <button class="btn btn-primary" data-toggle="modal" data-target="#addPermissionModal">
@@ -258,6 +270,7 @@
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentPermissions = [];
+    let filteredPermissions = [];
 
     function showToast(message, type = 'success') {
         const toastHtml = `
@@ -305,6 +318,7 @@
             const json = await res.json();
             currentPermissions = json.data.list.filter(p => !p.deletedAt);
             currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            filteredPermissions = [...currentPermissions];
             renderPermissionTable(currentPermissions);
         } catch (err) {
             document.getElementById("permissionTableBody").innerHTML = `<tr><td colspan="6" class="text-danger text-center">Error loading data</td></tr>`;
@@ -314,33 +328,60 @@
     function renderPermissionTable(permissions) {
         const tbody = document.getElementById("permissionTableBody");
         tbody.innerHTML = "";
+
         if (permissions.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="text-center py-5 text-muted">No permissions available</td></tr>`;
+            const searchQuery = $('#searchPermissionInput').val().trim();
+            tbody.innerHTML = searchQuery
+                ? `<tr><td colspan="6" class="text-center py-5 text-muted">No permissions found for "<strong>${searchQuery}</strong>"</td></tr>`
+                : `<tr><td colspan="6" class="text-center py-5 text-muted">No permissions available.</td></tr>`;
             return;
         }
+
         permissions.forEach((perm, index) => {
             const isSystem = perm.isSystemPermission ? '<span class="badge badge-danger">Yes</span>' : '<span class="badge badge-secondary">No</span>';
             const row = document.createElement("tr");
             row.innerHTML = `
-                <td class="text-center">${index + 1}</td>
-                <td><strong>${perm.name}</strong></td>
-                <td>${perm.key}</td>
-                <td>${perm.description || '-'}</td>
-                <td class="text-center">${isSystem}</td>
-                <td class="text-center">
-                    <button class="btn btn-sm btn-primary edit-btn mr-1" data-perm='${JSON.stringify(perm)}'>
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    ${perm.isSystemPermission ? '' : `
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="${perm.id}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    `}
-                </td>
-            `;
+      <td class="text-center">${index + 1}</td>
+      <td><strong>${perm.name}</strong></td>
+      <td>${perm.key}</td>
+      <td>${perm.description || '-'}</td>
+      <td class="text-center">${isSystem}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-primary edit-btn mr-1" data-perm='${JSON.stringify(perm)}'>
+          <i class="fas fa-edit"></i>
+        </button>
+        ${perm.isSystemPermission ? '' : `
+          <button class="btn btn-sm btn-danger delete-btn" data-id="${perm.id}">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        `}
+      </td>
+    `;
             tbody.appendChild(row);
         });
     }
+
+    // Tìm kiếm permission theo tên
+    $('#searchPermissionInput').on('input', function () {
+        const query = $(this).val().trim().toLowerCase();
+
+        if (query === '') {
+            filteredPermissions = [...currentPermissions];
+            $('#clearSearchBtn').hide();
+        } else {
+            filteredPermissions = currentPermissions.filter(perm =>
+                perm.name.toLowerCase().includes(query)
+            );
+            $('#clearSearchBtn').show();
+        }
+
+        renderPermissionTable(filteredPermissions);
+    });
+
+    // Xóa nội dung tìm kiếm
+    $('#clearSearchBtn').on('click', function () {
+        $('#searchPermissionInput').val('').trigger('input');
+    });
 
     $(document).on('click', '.edit-btn', function() {
         const perm = JSON.parse($(this).attr('data-perm'));
@@ -386,6 +427,7 @@
             $('#addPermissionForm')[0].reset();
             currentPermissions.push(newPerm);
             currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+            filteredPermissions = [...currentPermissions];
             renderPermissionTable(currentPermissions);
         } catch (err) {
             showToast('Server connection error', 'danger');
@@ -425,6 +467,7 @@
                     currentPermissions[index] = updatedPerm;
                 }
                 currentPermissions.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+                filteredPermissions = [...currentPermissions];
                 renderPermissionTable(currentPermissions);
             } else {
                 const err = await res.json().catch(() => ({ message: "Unknown error" }));
