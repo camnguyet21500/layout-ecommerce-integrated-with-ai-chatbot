@@ -4,39 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Orders | Mabu Store</title>
-
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <link rel="stylesheet" href="../../css/product.css">
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-
 <body>
 <!--HEADER-->
 <header>
     <nav class="navbar navbar-expand-lg navbar-light" style="background-color: white">
         <div class="container-fluid container-fluid-v1">
-            <button class="navbar-toggler" type="button" data-toggle="collapse"
-                    data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                    aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav">
                     <div class="nav-item">
                         <a class="nav-link text-body" href="../customer/index.html">HOME</a>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
+                        <a class="nav-link text-body" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PRODUCT
                             <span class="absolute label_menu">HOT</span>
                         </a>
-
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
-                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="product.html">ALL ITEMS</a>
@@ -101,12 +92,9 @@
                             <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
-
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
-                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0"
-                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown3" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">FEATURED</a>
+                        <div class="dropdown-menu dropdown-menu-left border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -136,12 +124,9 @@
                             <img src="../../img/img_header.jpg" alt="" style="width: 650px; margin: 25px;">
                         </div>
                     </div>
-
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
-                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown4" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">PAGES</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -168,10 +153,8 @@
                         </div>
                     </div>
                     <div class="dropdown">
-                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
-                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0"
-                             aria-labelledby="dropdownMenuButton" style="width: 700px;">
+                        <a class="nav-link text-body" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">BLOGS</a>
+                        <div class="dropdown-menu dropdown-menu-right border-0 rounded-0" aria-labelledby="dropdownMenuButton" style="width: 700px;">
                             <div class="row">
                                 <div class="col-sm">
                                     <a class="dropdown-item" href="#">Action</a>
@@ -254,7 +237,6 @@
     </nav>
 </header>
 <!--HEADER END-->
-
 
 <!-- ORDERS SECTION -->
 <section class="my-5">
@@ -355,44 +337,45 @@
         </div>
     </div>
 </footer>
+
 <script>
     const BASE_URL = "http://localhost:8888/api";
 
     function showToast(message, type = 'success') {
         const toastHtml = `
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
-            <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
-                <strong class="mr-auto">${type === 'success' ? 'Thành công' : (type === 'warning' ? 'Cảnh báo' : 'Lỗi')}</strong>
-                <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-            <div class="toast-body">${message}</div>
+          <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Thành công' : (type === 'warning' ? 'Cảnh báo' : 'Lỗi')}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast" aria-label="Close">
+              <span aria-hidden="true">×</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
         </div>`;
         $('#toastContainer').append(toastHtml);
         $('.toast').last().toast('show');
-        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
     }
 
     async function loadOrders(retryCount = 0) {
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
-
         if (!authToken || !savedUser) {
             showToast('Vui lòng đăng nhập để xem đơn hàng', 'warning');
             window.location.href = 'login.html';
             return;
         }
-
         const user = JSON.parse(savedUser);
         const userId = user.id;
         const headers = { 'Authorization': `Bearer ${authToken}` };
-
         const container = $('#ordersContainer');
         container.html('<div class="text-center my-5"><div class="spinner-border text-warning" role="status"></div><p class="mt-3">Loading orders...</p></div>');
 
         try {
             console.log(`[DEBUG] Fetching orders for user ${userId} (attempt ${retryCount + 1})`);
+
             const ordersRes = await fetch(`${BASE_URL}/orders?userID=${userId}&itemPerPage=50&page=1`, { headers });
 
             if (!ordersRes.ok) {
@@ -400,11 +383,11 @@
                 throw new Error(`Failed to fetch orders: ${ordersRes.status} - ${errText}`);
             }
 
-            const ordersData = await ordersRes.json();
+            const ordersData = await ordersRes.json();  // ← sửa ở đây: ordersRes.json()
+
             console.log('[DEBUG] Orders response:', ordersData);
 
             let orders = ordersData.data?.list || [];
-
             container.empty();
 
             if (orders.length === 0) {
@@ -415,42 +398,56 @@
             for (let order of orders) {
                 console.log(`[DEBUG] Processing order #${order.id}`, order);
 
-                let orderItems = order.orderItems || []; // Check if backend includes orderItems
-
-                // If no items included in response, fetch separately
+                let orderItems = order.orderItems || [];
+                // Fetch order items if not included
                 if (orderItems.length === 0 && order.id) {
                     console.log(`[DEBUG] Fetching order-items for order #${order.id}`);
-                    // FIXED: Changed 'orderId' to 'orderID' to match backend query param convention
                     const itemsRes = await fetch(`${BASE_URL}/order-items?orderID=${order.id}&itemPerPage=100&page=1`, { headers });
-
                     if (itemsRes.ok) {
                         const itemsData = await itemsRes.json();
                         orderItems = itemsData.data?.list || [];
-                        console.log(`[DEBUG] Fetched ${orderItems.length} order items`);
+                        console.log(`[DEBUG] Fetched ${orderItems.length} order items`, orderItems); // Log full items for debug
                     } else {
-                        console.warn(`[DEBUG] Failed to fetch order-items: ${itemsRes.status}`);
+                        console.warn(`[WARN] Failed to fetch order-items: ${itemsRes.status}`);
                     }
                 }
 
-                // Retry logic: if still no items after fetch, and this is recent order, try again
+                // Retry if no items (for recent orders)
                 if (orderItems.length === 0 && retryCount < 2) {
                     console.warn(`[DEBUG] No items found for order #${order.id} - retrying...`);
                     await new Promise(r => setTimeout(r, 800));
                     return loadOrders(retryCount + 1);
                 }
 
-                let totalAmount = order.totalAmount || 0;
-                if (!totalAmount && orderItems.length > 0) {
-                    totalAmount = orderItems.reduce((sum, item) => sum + (item.priceAtPurchase || 0) * (item.quantity || 1), 0);
-                }
-
                 let itemsHTML = '';
-                for (let item of orderItems) {
-                    let productName = item.productName || 'Unknown Product';
-                    let variantInfo = '';
-                    let productImage = '../../img/default-product.jpg';
+                let totalAmount = order.totalAmount || 0; // Ưu tiên dùng totalAmount từ order nếu có
 
-                    if (item.productVariantID) {
+                for (let item of orderItems) {
+                    let productName = 'Unknown Product';
+                    let productImage = '../../img/default-product.jpg';
+                    let variantInfo = '';
+                    let unitPrice = item.unitPrice || item.priceAtPurchase || item.price || 0; // Sửa tên field đúng từ schema
+                    let itemTotal = item.totalPrice || (unitPrice * (item.quantity || 1)); // Dùng totalPrice nếu có, hoặc tính thủ công
+
+                    // Ưu tiên snapshot nếu có
+                    if (item.productVariantSnapshot) {
+                        try {
+                            const snapshot = typeof item.productVariantSnapshot === 'string' ? JSON.parse(item.productVariantSnapshot) : item.productVariantSnapshot;
+                            productName = snapshot?.product?.name || snapshot?.name || productName;
+                            productImage = snapshot?.product?.productImages?.[0]?.imageUrl || snapshot?.imageUrl || productImage;
+                            if (snapshot?.attributes) {
+                                const attrs = snapshot.attributes || {};
+                                variantInfo = `<small class="text-muted">Variant: ${attrs.color || ''} ${attrs.size || ''}</small>`;
+                            }
+                            unitPrice = snapshot?.price || unitPrice;
+                            itemTotal = snapshot?.totalPrice || itemTotal;
+                        } catch (e) {
+                            console.warn("[WARN] Invalid productVariantSnapshot for item", item.id, e);
+                        }
+                    }
+
+                    // Fallback fetch variant nếu snapshot không đầy đủ
+                    if (productName === 'Unknown Product' && item.productVariantID) {
                         try {
                             console.log(`[DEBUG] Fetching variant ${item.productVariantID}`);
                             const variantRes = await fetch(`${BASE_URL}/product-variants/${item.productVariantID}`, { headers });
@@ -458,22 +455,26 @@
                                 const variantData = await variantRes.json();
                                 const variant = variantData.data || {};
                                 console.log('[DEBUG] Variant data:', variant);
-
-                                productName = variant.product?.name || productName;
-                                productImage = variant.product?.productImages?.[0]?.imageUrl || productImage;
-
-                                if (variant.color || variant.size) {
-                                    variantInfo = `<small class="text-muted">Variant: ${variant.color || ''} ${variant.size || ''}</small>`;
+                                productName = variant.name || variant.product?.name || productName;
+                                productImage = variant.product?.productImages?.[0]?.imageUrl
+                                    || variant.productImages?.[0]?.imageUrl
+                                    || 'https://via.placeholder.com/90?text=No+Image';
+                                if (variant.attributes) {
+                                    const attrs = variant.attributes || {};
+                                    variantInfo = `<small class="text-muted">Variant: ${attrs.color || ''} ${attrs.size || ''}</small>`;
                                 }
+                                unitPrice = variant.price || unitPrice;
+                                itemTotal = unitPrice * (item.quantity || 1);
                             } else {
-                                console.warn(`[DEBUG] Variant fetch failed: ${variantRes.status}`);
+                                console.warn(`[WARN] Variant fetch failed: ${variantRes.status}`);
                             }
                         } catch (e) {
-                            console.warn("[DEBUG] Error fetching variant:", e);
+                            console.warn("[WARN] Error fetching variant:", e);
                         }
                     }
 
-                    const itemTotal = (item.priceAtPurchase || 0) * (item.quantity || 1);
+                    // Cập nhật tổng tiền (từ itemTotal)
+                    totalAmount += itemTotal;
 
                     itemsHTML += `
                     <div class="d-flex align-items-center mb-3 p-3 border rounded hover-shadow">
@@ -481,12 +482,17 @@
                         <div class="flex-grow-1">
                             <h6 class="mb-1">${productName}</h6>
                             ${variantInfo}
-                            <div class="text-muted small">Qty: ${item.quantity} × ${Number(item.priceAtPurchase || 0).toLocaleString('vi-VN')} ₫</div>
+                            <div class="text-muted small">Qty: ${item.quantity || 1} × ${Number(unitPrice).toLocaleString('vi-VN')} ₫</div>
                         </div>
                         <div class="text-right">
                             <strong class="text-danger">${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
                         </div>
                     </div>`;
+                }
+
+                // Nếu totalAmount từ order khác với tính toán, ưu tiên từ order
+                if (order.totalAmount && order.totalAmount > 0) {
+                    totalAmount = order.totalAmount;
                 }
 
                 const statusLower = order.status?.toLowerCase() || '';
@@ -497,14 +503,20 @@
                     'cancelled': 'danger',
                     'shipped': 'primary'
                 }[statusLower] || 'secondary';
-
                 const statusText = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Unknown';
+
+                // Lấy địa chỉ từ orderAddresses nếu có
+                let shippingAddress = order.shippingAddress || 'N/A';
+                if (order.orderAddresses && order.orderAddresses.length > 0) {
+                    const shippingAddr = order.orderAddresses.find(addr => addr.type === 'shipping') || order.orderAddresses[0];
+                    shippingAddress = shippingAddr.fullAddress || shippingAddress;
+                }
 
                 const extraInfo = `
                 <div class="mt-3 small text-muted">
-                    <div><i class="fas fa-map-marker-alt mr-2"></i>Address: ${order.shippingAddress || 'N/A'}</div>
+                    <div><i class="fas fa-map-marker-alt mr-2"></i>Address: ${shippingAddress}</div>
                     <div><i class="fas fa-credit-card mr-2"></i>Payment: ${order.paymentMethod || 'N/A'}</div>
-                    ${order.note ? `<div><i class="fas fa-sticky-note mr-2"></i>Note: ${order.note}</div>` : ''}
+                    ${order.notes ? `<div><i class="fas fa-sticky-note mr-2"></i>Note: ${order.notes}</div>` : ''}
                 </div>`;
 
                 const orderHTML = `
@@ -525,14 +537,13 @@
                                 <h5 class="mb-0">Total: <strong class="text-danger">${Number(totalAmount).toLocaleString('vi-VN')} ₫</strong></h5>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail(${order.id})">Details</button>
+                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail('${order.id}')">Details</button>
                                 ${statusLower === 'pending' ? `<button class="btn btn-sm btn-outline-danger ml-2">Cancel</button>` : ''}
                                 <button class="btn btn-sm btn-warning ml-2">Buy Again</button>
                             </div>
                         </div>
                     </div>
                 </div>`;
-
                 container.append(orderHTML);
             }
         } catch (err) {
