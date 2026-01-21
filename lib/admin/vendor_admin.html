@@ -356,6 +356,25 @@
 <!--END FOOTER-->
 
 <script>
+
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+    <div class="toast" role="alert" data-delay="4000">
+      <div class="toast-header bg-${type} text-white">
+        <strong class="mr-auto">${type === 'success' ? 'Success' : (type === 'warning' ? 'Warning' : 'Error')}</strong>
+        <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
+          <span>×</span>
+        </button>
+      </div>
+      <div class="toast-body">${message}</div>
+    </div>`;
+
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () {
+            $(this).remove();
+        });
+    }
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let currentVendors = [];
@@ -440,7 +459,7 @@
 
         const name = $('#addName').val().trim();
         if (!name) {
-            alert("Vendor name is mandatory!");
+            showToast("Vendor name is mandatory!", "danger");
             return;
         }
 
@@ -456,7 +475,7 @@
             .replace(/-+/g, '-');
 
         if (!slug) {
-            alert("Cannot generate valid Slug!");
+            showToast("Cannot generate valid Slug!", "danger");
             return;
         }
 
@@ -493,7 +512,7 @@
             }
 
             if (res.ok || res.status === 201) {
-                alert("Added successfully.!");
+                showToast("Added successfully!", "success");
                 $('#addVendorModal').modal('hide');
                 $('#addVendorForm')[0].reset();
                 $('#addSlug').val('');
@@ -553,7 +572,7 @@
             });
 
             if (res.ok) {
-                alert("Updated successfully.!");
+                showToast("Updated successfully!", "success");
                 $('#editVendorModal').modal('hide');
                 loadVendors();
             } else {
@@ -576,10 +595,10 @@
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (res.ok) {
-                alert("Deleted successfully.!");
+                showToast("Deleted successfully!", "success");
                 loadVendors();
             } else {
-                alert("Delete failed!");
+                showToast("Delete failed!", "danger");
             }
         } catch (err) {
             alert("Error connection!");
@@ -589,7 +608,7 @@
     // EXPORT EXCEL
     function exportVendorsToExcel() {
         if (currentVendors.length === 0) {
-            alert("No data to export!");
+            showToast("No data to export!", "warning");
             return;
         }
 
@@ -597,7 +616,7 @@
             const script = document.createElement('script');
             script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
             script.onload = generateVendorExcelFile;
-            script.onerror = () => alert("Cannot download the library export Excel!");
+            script.onerror = () => showToast("Cannot download the library export Excel!", "danger");
             document.head.appendChild(script);
         } else {
             generateVendorExcelFile();
@@ -638,7 +657,7 @@
 
             XLSX.writeFile(wb, 'vendors_export.xlsx');
 
-            alert("Exported successfully! File is downloaded.");
+            showToast("Exported successfully! File is downloaded.", "success");
         }
     }
 
@@ -677,5 +696,8 @@
         $('#editSlug').val(slug);
     });
 </script>
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
 </body>
 </html>
