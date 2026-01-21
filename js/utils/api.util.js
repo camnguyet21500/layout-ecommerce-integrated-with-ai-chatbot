@@ -5,10 +5,22 @@ const fetchHandler = async (endpoint, body, configs = {}) => {
   const baseUrl = 'http://localhost:8888/api';
 
   try {
+    let token = localStorage.getItem('authToken');
+    if (!token) {
+      const res = await fetch(`${baseUrl}/auth/sign-in`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: 'nvo28@example.com', password: 'nvo28' }),
+      });
+      const { data } = await res.json();
+      token = data.accessToken;
+    }
     const res = await fetch(`${baseUrl}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('authToken')}`,
+        Authorization: `Bearer ${token}`,
       },
       ...configs,
       body: JSON.stringify(body),
