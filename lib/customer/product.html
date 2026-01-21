@@ -532,6 +532,19 @@
         }
     }
 
+    const autoOpenProduct = () => {
+        const productID = new URLSearchParams(location.search).get('productID');
+        if (!productID) return;
+
+        const $productLink = $(
+            `.product-detail-link[data-id="${productID}"]`
+        );
+
+        if ($productLink.length > 0) {
+            $productLink.trigger('click');
+        }
+    }
+
     async function renderProducts(products) {
         const grid = document.getElementById("productGrid");
         grid.innerHTML = "";
@@ -589,8 +602,9 @@
       </div>`;
             grid.appendChild(item);
         }
-    }
 
+        autoOpenProduct()
+    }
     $(document).on('click', '.product-detail-link', async function(e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -859,7 +873,7 @@
     $(document).ready(async function() {
         try {
             await autoLoginAndLoadProducts();
-            loadCategoriesForMenu();
+            await loadCategoriesForMenu();
         } catch (err) {
             console.error("Lỗi khởi tạo trang:", err);
         }
