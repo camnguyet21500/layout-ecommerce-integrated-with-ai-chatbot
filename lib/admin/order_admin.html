@@ -58,9 +58,9 @@
     <!-- Orders Table -->
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle">
-            <thead class="thead-light">
+            <thead class="thead-light"><thead class="thead-light">
             <tr>
-                <th>STT</th>        <!-- Cột mới -->
+                <th>STT</th>
                 <th>ID</th>
                 <th>NAME</th>
                 <th>EMAIL</th>
@@ -311,34 +311,102 @@
 
     // Render bảng đơn hàng
     function renderOrdersTable(orders) {
-        const tbody = $('#ordersTableBody');
-        tbody.empty();
+        const tbody = document.getElementById("orderTableBody");
+        tbody.innerHTML = "";
 
         if (orders.length === 0) {
-            tbody.html('<tr><td colspan="9" class="text-center">Chưa có đơn hàng nào</td></tr>');
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center">Chưa có đơn hàng nào</td></tr>';
             return;
         }
 
         orders.forEach((order, index) => {
-            const row = `
-                <tr data-order-id="${order.id}">
-                    <td>${index + 1}</td>
-                    <td>${order.id}</td>
-                    <td><strong>${order.userName || 'Khách vãng lai'}</strong></td> <!-- ĐÃ FIX: HIỂN THỊ TÊN -->
-                    <td>${order.userEmail || '-'}</td>
-                    <td>${order.userPhone || '-'}</td>
-                    <td>${order.orderNumber}</td>
-                    <td>${Number(order.totalAmount).toLocaleString('vi-VN')} ₫</td>
-                    <td>${new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
-                    <td><span class="badge badge-${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>
-                    <td>
-                        <button class="btn btn-sm btn-info view-detail" data-id="${order.id}">Xem</button>
-                    </td>
-                </tr>
-            `;
-            tbody.append(row);
+            const canConfirm = order.status === 'pending';
+            const canCancel = order.status === 'pending' || order.status === 'confirmed';
+
+            const row = document.createElement("tr");
+            row.dataset.orderId = order.id;
+            row.innerHTML = `
+      <td>${index + 1}</td>
+      <td>${order.id}</td>
+      <td><strong>${order.userName || 'Khách vãng lai'}</strong></td>
+      <td>${order.userEmail || '-'}</td>
+      <td>${order.userPhone || '-'}</td>
+      <td>${Number(order.totalAmount).toLocaleString('vi-VN')} ₫</td>
+      <td>${new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
+      <td><span class="badge badge-${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>
+      <td>
+        <button class="btn btn-sm btn-info view-detail mr-1" data-id="${order.id}">Xem</button>
+        ${canConfirm ? `
+          <button class="btn btn-sm btn-success confirm-order mr-1" data-id="${order.id}">
+            <i class="fas fa-check"></i> Xác nhận
+          </button>
+        ` : ''}
+        ${canCancel ? `
+          <button class="btn btn-sm btn-danger cancel-order" data-id="${order.id}">
+            <i class="fas fa-times"></i> Hủy
+          </button>
+        ` : ''}
+      </td>
+    `;
+            tbody.appendChild(row);
         });
     }
+
+    // Xử lý click nút Xác nhận đơn
+    $(document).on('click', '.confirm-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
+
+        try {
+            const headers = {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            };
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ status: 'confirmed' })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || "Cập nhật thất bại");
+            }
+
+            showToast("Đơn hàng đã được xác nhận!", "success");
+            loadOrders(); // Reload bảng để cập nhật trạng thái
+        } catch (err) {
+            showToast("Lỗi khi xác nhận đơn: " + err.message, "danger");
+        }
+    });
+
+    // Xử lý click nút Hủy đơn
+    $(document).on('click', '.cancel-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Bạn có chắc muốn hủy đơn hàng này? Hành động không thể hoàn tác.")) return;
+
+        try {
+            const headers = {
+                'Authorization': `Bearer ${authToken}`,
+                'Content-Type': 'application/json'
+            };
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ status: 'canceled' })
+            });
+
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.message || "Cập nhật thất bại");
+            }
+
+            showToast("Đơn hàng đã được hủy!", "success");
+            loadOrders(); // Reload bảng
+        } catch (err) {
+            showToast("Lỗi khi hủy đơn: " + err.message, "danger");
+        }
+    });
 
     // Helper: class cho status badge
     function getStatusClass(status) {
@@ -423,10 +491,27 @@
         }
     });
 
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+    <div class="toast" role="alert" data-delay="4000">
+      <div class="toast-header bg-${type} text-white">
+        <strong class="mr-auto">${type === 'success' ? 'Thành công' : 'Lỗi'}</strong>
+        <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast"><span>×</span></button>
+      </div>
+      <div class="toast-body">${message}</div>
+    </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
+    }
+
     // Load khi mở trang
     $(document).ready(function() {
         loadOrders();
     });
 </script>
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
 </body>
 </html>
