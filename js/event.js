@@ -7,15 +7,10 @@ script.crossOrigin = 'anonymous';
 script.onload = () => {
   const socket = io('http://localhost:8888');
   socket.on('connect', function (socketItem) {
-    console.log('Connected');
-
-    socket.emit('events', { test: 'test' });
-    socket.emit('identity', 0, (response) =>
-      console.log('Identity:', response),
-    );
+    console.log('Socket Connected');
   });
   socket.on('notifications', async function (data) {
-      console.log('Notifications:');
+      if(!data) return;
 
       function escapeHtml(text) {
           if (!text) return '';
@@ -93,7 +88,12 @@ script.onload = () => {
           console.error(err);
           $('#notificationsList').html('<div class="alert alert-danger text-center">Connection error or notifications endpoint not working properly.</div>');
       }
-      console.log(">>> reload noti")
+
+      const {message, type} = data;
+      showToast(message, type)
+  });
+  socket.on('events', function (data) {
+    console.log('event', data);
   });
   socket.on('events', function (data) {
     console.log('event', data);
