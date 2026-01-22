@@ -343,6 +343,9 @@
     const BASE_URL = "http://localhost:8888/api";
 
     function showToast(message, type = 'success') {
+        if (!message || message === 'undefined' || typeof message !== 'string') {
+            return; 
+        }
         const toastHtml = `
         <div class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-delay="4000">
           <div class="toast-header bg-${type === 'success' ? 'success' : (type === 'warning' ? 'warning' : 'danger')} text-white">
@@ -433,10 +436,11 @@
 
                 let itemsHTML = '';
                 let totalAmount = order.totalAmount || 0;
+                let productImage = 'https://placehold.co/90x90?text=No+Image&font=roboto';
 
                 for (let item of orderItems) {
                     let productName = 'Unknown Product';
-                    let productImage = `https://placehold.co/90x90?text=${encodeURIComponent(productName.substring(0, 12))}&font=roboto`;
+
                     let variantInfo = '';
                     let unitPrice = item.unitPrice || item.price || 0;
                     let itemTotal = item.totalPrice || (unitPrice * (item.quantity || 1));
@@ -563,8 +567,8 @@
                                 <h5 class="mb-0">Total: <strong class="text-danger">${Number(totalAmount).toLocaleString('vi-VN')} ₫</strong></h5>
                             </div>
                             <div>
-                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail('${order.id}')">Details</button>
-                                ${statusLower === 'pending' ? `<button class="btn btn-sm btn-outline-danger ml-2">Cancel</button>` : ''}
+<!--                                <button class="btn btn-sm btn-outline-primary" onclick="viewOrderDetail('${order.id}')">Details</button>-->
+                               ${statusLower === 'pending' ? `<button class="btn btn-sm btn-outline-danger ml-2" onclick="cancelOrder('${order.id}')"><i class="fas fa-times mr-1"></i>Cancel</button>` : ''}
                                 <button class="btn btn-sm btn-warning ml-2">Buy Again</button>
                             </div>
                         </div>
@@ -582,6 +586,50 @@
     function viewOrderDetail(orderId) {
         alert(`View details for order #${orderId} (redirect to order-detail.html?id=${orderId} in future)`);
         // window.location.href = `order-detail.html?id=${orderId}`;
+    }
+
+    async function cancelOrder(orderId) {
+        if (!confirm('Are you sure you want to cancel this order?')) return;
+
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            showToast('Please login again', 'warning');
+            return;
+        }
+
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+        };
+
+        try {
+            console.log(`[DEBUG] Cancelling order ${orderId}`);
+
+            const response = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ status: 'canceled' })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                const errorMessage = errText.includes('Expected OrderStatus')
+                    ? 'Cancel is not valid. Please try again later.'
+                    : errText;
+                throw new Error(`Cancel failed: ${response.status} - ${errorMessage}`);
+            }
+
+            const result = await response.json();
+            console.log('[DEBUG] Cancel response:', result);
+
+            showToast('Cancelled successfully!', 'success');
+
+            await loadOrders();
+
+        } catch (err) {
+            console.error('[ERROR] Cancel order failed:', err);
+            showToast('Error: ' + err.message, 'danger');
+        }
     }
 
     $(document).ready(function() {
