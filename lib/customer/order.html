@@ -364,7 +364,7 @@
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
         if (!authToken || !savedUser) {
-            showToast('Vui lòng đăng nhập để xem đơn hàng', 'warning');
+            showToast('Please login to see the order', 'warning');
             window.location.href = 'login.html';
             return;
         }
@@ -384,7 +384,7 @@
                 throw new Error(`Failed to fetch orders: ${ordersRes.status} - ${errText}`);
             }
 
-            const ordersData = await ordersRes.json();  // ← sửa ở đây: ordersRes.json()
+            const ordersData = await ordersRes.json();
 
             console.log('[DEBUG] Orders response:', ordersData);
 
@@ -400,20 +400,31 @@
                 console.log(`[DEBUG] Processing order #${order.id}`, order);
 
                 let orderItems = order.orderItems || [];
-                // Fetch order items if not included
+
                 if (orderItems.length === 0 && order.id) {
                     console.log(`[DEBUG] Fetching order-items for order #${order.id}`);
                     const itemsRes = await fetch(`${BASE_URL}/order-items?orderID=${order.id}&itemPerPage=100&page=1`, { headers });
                     if (itemsRes.ok) {
                         const itemsData = await itemsRes.json();
                         orderItems = itemsData.data?.list || [];
-                        console.log(`[DEBUG] Fetched ${orderItems.length} order items`, orderItems); // Log full items for debug
-                    } else {
-                        console.warn(`[WARN] Failed to fetch order-items: ${itemsRes.status}`);
+                        console.log(`[DEBUG] Fetched ${orderItems.length} order items`, orderItems);
+
+                        orderItems.forEach((item, idx) => {
+                            console.log(`[ITEM ${idx}] Full structure:`, JSON.stringify(item, null, 2));
+
+                            if (item.product) {
+                                console.log(`[ITEM ${idx}] product:`, item.product);
+                                console.log(`[ITEM ${idx}] product.productImages?`, item.product.productImages);
+                                console.log(`[ITEM ${idx}] product imageUrl?`, item.product.imageUrl);
+                            }
+
+                            if (item.productVariantSnapshot) {
+                                console.log(`[ITEM ${idx}] snapshot:`, item.productVariantSnapshot);
+                            }
+                        });
                     }
                 }
 
-                // Retry if no items (for recent orders)
                 if (orderItems.length === 0 && retryCount < 2) {
                     console.warn(`[DEBUG] No items found for order #${order.id} - retrying...`);
                     await new Promise(r => setTimeout(r, 800));
@@ -421,77 +432,91 @@
                 }
 
                 let itemsHTML = '';
-                let totalAmount = order.totalAmount || 0; // Ưu tiên dùng totalAmount từ order nếu có
+                let totalAmount = order.totalAmount || 0;
 
                 for (let item of orderItems) {
                     let productName = 'Unknown Product';
-                    let productImage = '../../img/default-product.jpg';
+                    let productImage = `https://placehold.co/90x90?text=${encodeURIComponent(productName.substring(0, 12))}&font=roboto`;
                     let variantInfo = '';
-                    let unitPrice = item.unitPrice || item.priceAtPurchase || item.price || 0; // Sửa tên field đúng từ schema
-                    let itemTotal = item.totalPrice || (unitPrice * (item.quantity || 1)); // Dùng totalPrice nếu có, hoặc tính thủ công
+                    let unitPrice = item.unitPrice || item.price || 0;
+                    let itemTotal = item.totalPrice || (unitPrice * (item.quantity || 1));
 
-                    // Ưu tiên snapshot nếu có
-                    if (item.productVariantSnapshot) {
-                        try {
-                            const snapshot = typeof item.productVariantSnapshot === 'string' ? JSON.parse(item.productVariantSnapshot) : item.productVariantSnapshot;
-                            productName = snapshot?.product?.name || snapshot?.name || productName;
-                            productImage = snapshot?.product?.productImages?.[0]?.imageUrl || snapshot?.imageUrl || productImage;
-                            if (snapshot?.attributes) {
-                                const attrs = snapshot.attributes || {};
-                                variantInfo = `<small class="text-muted">Variant: ${attrs.color || ''} ${attrs.size || ''}</small>`;
-                            }
-                            unitPrice = snapshot?.price || unitPrice;
-                            itemTotal = snapshot?.totalPrice || itemTotal;
-                        } catch (e) {
-                            console.warn("[WARN] Invalid productVariantSnapshot for item", item.id, e);
+
+                    if (item.productVariant?.product) {
+                        productName = item.productVariant.product.name || productName;
+
+                        if (item.productVariant.product.productImages?.length > 0) {
+                            productImage = item.productVariant.product.productImages[0].imageUrl;
+                        } else if (item.productVariant.product.mainImageUrl) {
+                            productImage = item.productVariant.product.mainImageUrl;
+                        } else if (item.productVariant.product.imageUrl) {
+                            productImage = item.productVariant.product.imageUrl;
                         }
                     }
 
-                    // Fallback fetch variant nếu snapshot không đầy đủ
-                    if (productName === 'Unknown Product' && item.productVariantID) {
+                    else if (item.productVariantSnapshot) {
                         try {
-                            console.log(`[DEBUG] Fetching variant ${item.productVariantID}`);
+                            const snapshot = typeof item.productVariantSnapshot === 'string'
+                                ? JSON.parse(item.productVariantSnapshot)
+                                : item.productVariantSnapshot;
+                            productName = snapshot?.product?.name || snapshot?.name || productName;
+                            productImage = snapshot?.product?.productImages?.[0]?.imageUrl
+                                || snapshot?.imageUrl
+                                || productImage;
+                            if (snapshot?.attributes) {
+                                variantInfo = `<small class="text-muted">Variant: ${snapshot.attributes.color || ''} ${snapshot.attributes.size || ''} ${snapshot.attributes.material || ''}</small>`;
+                            }
+                        } catch (e) {}
+                    }
+                    else if (item.productVariantID) {
+                        try {
+                            console.log(`[DEBUG] Fetching variant ${item.productVariantID} for image`);
                             const variantRes = await fetch(`${BASE_URL}/product-variants/${item.productVariantID}`, { headers });
                             if (variantRes.ok) {
-                                const variantData = await variantRes.json();
-                                const variant = variantData.data || {};
-                                console.log('[DEBUG] Variant data:', variant);
-                                productName = variant.name || variant.product?.name || productName;
+                                const variant = (await variantRes.json()).data || {};
+                                console.log(`[DEBUG] Variant full data:`, variant);
+
+
+                                productName = variant.product?.name || variant.name || productName;
+
                                 productImage = variant.product?.productImages?.[0]?.imageUrl
-                                    || variant.productImages?.[0]?.imageUrl
-                                    || 'https://via.placeholder.com/90?text=No+Image';
+                                    || variant.product?.imageUrl
+                                    || variant.imageUrl
+                                    || productImage;
+
+                                console.log(`[DEBUG] Selected image URL: ${productImage}`);
+
                                 if (variant.attributes) {
-                                    const attrs = variant.attributes || {};
-                                    variantInfo = `<small class="text-muted">Variant: ${attrs.color || ''} ${attrs.size || ''}</small>`;
+                                    variantInfo = `<small class="text-muted">Variant: ${variant.attributes.color || ''} ${variant.attributes.size || ''} ${variant.attributes.material || ''}</small>`;
                                 }
                                 unitPrice = variant.price || unitPrice;
-                                itemTotal = unitPrice * (item.quantity || 1);
-                            } else {
-                                console.warn(`[WARN] Variant fetch failed: ${variantRes.status}`);
                             }
                         } catch (e) {
-                            console.warn("[WARN] Error fetching variant:", e);
+                            console.error(`[ERROR] Fetch variant failed:`, e);
                         }
                     }
 
-                    // Cập nhật tổng tiền (từ itemTotal)
-                    totalAmount += itemTotal;
+
+                    if (!variantInfo && (item.attributes || item.productVariant?.attributes)) {
+                        const attrs = item.attributes || item.productVariant?.attributes || {};
+                        variantInfo = `<small class="text-muted">Variant: ${attrs.color || ''} ${attrs.size || ''} ${attrs.material || ''} ${attrs.storage || ''}</small>`;
+                    }
 
                     itemsHTML += `
-                    <div class="d-flex align-items-center mb-3 p-3 border rounded hover-shadow">
-                        <img src="${productImage}" alt="${productName}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
-                        <div class="flex-grow-1">
-                            <h6 class="mb-1">${productName}</h6>
-                            ${variantInfo}
-                            <div class="text-muted small">Qty: ${item.quantity || 1} × ${Number(unitPrice).toLocaleString('vi-VN')} ₫</div>
-                        </div>
-                        <div class="text-right">
-                            <strong class="text-danger">${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
-                        </div>
-                    </div>`;
+    <div class="d-flex align-items-center mb-3 p-3 border rounded hover-shadow">
+        <img src="${productImage}" alt="${productName}" style="width: 90px; height: 90px; object-fit: cover; border-radius: 6px; margin-right: 15px;">
+        <div class="flex-grow-1">
+            <h6 class="mb-1">${productName}</h6>
+            ${variantInfo}
+            <div class="text-muted small">Qty: ${item.quantity || 1} × ${Number(unitPrice).toLocaleString('vi-VN')} ₫</div>
+        </div>
+        <div class="text-right">
+            <strong class="text-danger">${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
+        </div>
+    </div>`;
                 }
 
-                // Nếu totalAmount từ order khác với tính toán, ưu tiên từ order
+
                 if (order.totalAmount && order.totalAmount > 0) {
                     totalAmount = order.totalAmount;
                 }
@@ -506,7 +531,7 @@
                 }[statusLower] || 'secondary';
                 const statusText = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : 'Unknown';
 
-                // Lấy địa chỉ từ orderAddresses nếu có
+
                 let shippingAddress = order.shippingAddress || 'N/A';
                 if (order.orderAddresses && order.orderAddresses.length > 0) {
                     const shippingAddr = order.orderAddresses.find(addr => addr.type === 'shipping') || order.orderAddresses[0];
