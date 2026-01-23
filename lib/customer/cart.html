@@ -664,110 +664,105 @@
         showToast('Cart updated successfully', 'success');
     });
 
-        $('#proceedCheckoutBtn').on('click', async function(e) {
+    $('#proceedCheckoutBtn').on('click', async function(e) {
         e.preventDefault();
-
         const authToken = localStorage.getItem('authToken');
         const savedUser = localStorage.getItem('currentUser');
-
         if (!authToken || !savedUser) {
-        showToast('Please log in to place an order', 'warning');
-        window.location.href = 'login.html';
-        return;
-    }
-
+            showToast('Please log in to place your order.', 'warning');
+            window.location.href = 'login.html';
+            return;
+        }
         const user = JSON.parse(savedUser);
         const userId = user.id;
-        const headers = { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' };
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+        };
 
         try {
-        const cartId = await getOrCreateCartId();
-        if (!cartId) throw new Error('Cart not found');
+            const cartId = await getOrCreateCartId();
+            if (!cartId) throw new Error('Không tìm thấy giỏ hàng');
 
-        const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
-        if (!itemsRes.ok) throw new Error('Failed to retrieve cart items');
+            const itemsRes = await fetch(`${BASE_URL}/cart-items?cartID=${cartId}&itemPerPage=100&page=1`, { headers });
+            if (!itemsRes.ok) throw new Error('Không lấy được sản phẩm trong giỏ');
+            const itemsData = await itemsRes.json();
+            const cartItems = itemsData.data?.list || [];
 
-        const itemsData = await itemsRes.json();
-        const cartItems = itemsData.data?.list || [];
+            if (cartItems.length === 0) {
+                showToast('Your shopping cart is empty.', 'warning');
+                return;
+            }
 
-        if (cartItems.length === 0) {
-        showToast('Your cart is empty', 'warning');
-        return;
-    }
+            let subtotal = 0;
+            const orderItemsCreate = [];
+            for (let item of cartItems) {
+                const variantId = item.productVariantID || item.productVariantId;
+                const quantity = item.quantity || 1;
+                let price = 0;
+                if (variantId) {
+                    const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
+                    if (variantRes.ok) {
+                        const vData = await variantRes.json();
+                        price = vData.data.price || 0;
+                    }
+                }
+                const itemTotal = price * quantity;
+                subtotal += itemTotal;
+                orderItemsCreate.push({
+                    productVariantID: variantId,
+                    quantity: quantity,
+                    unitPrice: price,
+                    totalPrice: itemTotal
+                });
+            }
 
-        let subtotal = 0;
-        const orderItemsCreate = [];
+            const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            const payload = {
+                orderNumber: orderNumber,
+                userID: userId,
+                subtotal: subtotal,
+                taxAmount: 0,
+                shippingAmount: 0,
+                discountAmount: 0,
+                totalAmount: subtotal,
+                currency: "VND",
+                status: 'pending',
+                orderItems: { create: orderItemsCreate }
+            };
 
-        for (let item of cartItems) {
-        const variantId = item.productVariantID || item.productVariantId;
-        const quantity = item.quantity || 1;
-        let price = 0;
+            const createOrderRes = await fetch(`${BASE_URL}/orders`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify(payload)
+            });
 
-        if (variantId) {
-        const variantRes = await fetch(`${BASE_URL}/product-variants/${variantId}`, { headers });
-        if (variantRes.ok) {
-        const vData = await variantRes.json();
-        price = vData.data.price || 0;
-    }
-    }
+            if (!createOrderRes.ok) {
+                const errData = await createOrderRes.json();
+                throw new Error(errData.message || 'Tạo đơn hàng thất bại');
+            }
 
-        const itemTotal = price * quantity;
-        subtotal += itemTotal;
+            const orderData = await createOrderRes.json();
+            const paymentUrl = orderData.data?.paymentUrl;
 
-        orderItemsCreate.push({
-        productVariantID: variantId,
-        quantity: quantity,
-        unitPrice: price,
-        totalPrice: itemTotal
-    });
-    }
+            showToast(`Order successful! ID: ${orderData.data.orderNumber}`, 'success');
 
-        const orderNumber = 'ORD-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
+            // Xóa giỏ hàng
+            for (let item of cartItems) {
+                await fetch(`${BASE_URL}/cart-items/${item.id}`, { method: 'DELETE', headers });
+            }
 
-        const payload = {
-        orderNumber: orderNumber,
-        userID: userId,
-        subtotal: subtotal,
-        taxAmount: 0,
-        shippingAmount: 0,
-        discountAmount: 0,
-        totalAmount: subtotal,
-        currency: "VND",
-        status: 'pending',
-        orderItems: { create: orderItemsCreate }
-    };
+            // Redirect đến VNPay
+            if (paymentUrl) {
+                setTimeout(() => {
+                    window.location.href = paymentUrl;
+                }, 1500);
+            }
 
-        const createOrderRes = await fetch(`${BASE_URL}/orders`, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload)
-    });
-
-        if (!createOrderRes.ok) {
-        const errData = await createOrderRes.json();
-        throw new Error(errData.message || 'Failed to create order');
-    }
-
-        const orderData = await createOrderRes.json();
-        showToast(`Order placed successfully! Order ID: ${orderData.data.orderNumber}`, 'success');
-
-        for (let item of cartItems) {
-        await fetch(`${BASE_URL}/cart-items/${item.id}`, {
-        method: 'DELETE',
-        headers
-    });
-    }
-
-        showToast('Cart cleared after successful order', 'success');
-
-        setTimeout(() => {
-        window.location.reload();
-    }, 2000);
-
-    } catch (err) {
-        console.error(err);
-        showToast('Order failed: ' + err.message, 'danger');
-    }
+        } catch (err) {
+            console.error('Lỗi đặt hàng:', err);
+            showToast('Order failed: ' + err.message, 'danger');
+        }
     });
 
     $(document).ready(function() {
