@@ -245,35 +245,31 @@
 
 <script>
     const BASE_URL = "http://localhost:8888/api";
-    let authToken = localStorage.getItem('authToken'); // Giả sử admin đã login và có token
+    let authToken = localStorage.getItem('authToken');
 
     // Load danh sách đơn hàng
     async function loadOrders() {
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
             const res = await fetch(`${BASE_URL}/orders?itemPerPage=100&page=1`, { headers });
-            if (!res.ok) throw new Error("Không tải được đơn hàng");
-
+            if (!res.ok) throw new Error("Cannot load orders");
             const data = await res.json();
-            let orders = data.data.list || [];
+            let orders = data.data?.list || [];
 
-            // Fetch thêm thông tin user cho từng order (nếu có userID)
-            // === FIX TỐI ƯU: FETCH TẤT CẢ USER CÙNG LÚC (song song) ===
-            // === FIX SIÊU TỐI ƯU: Chỉ fetch danh sách users 1 lần duy nhất ===
-            let userMap = {}; // Map userID → {name, email, phone}
 
-            if (orders.some(o => o.userID)) { // Chỉ fetch nếu có ít nhất 1 đơn có user
+            let userMap = {};
+
+            if (orders.some(o => o.userID)) {
                 try {
                     const userRes = await fetch(`${BASE_URL}/users?itemPerPage=500&page=1`, { headers });
                     if (userRes.ok) {
                         const userJson = await userRes.json();
                         const allUsers = userJson.data?.list || [];
 
-                        // Tạo map nhanh
                         allUsers.forEach(u => {
                             if (u.id) {
                                 userMap[u.id] = {
-                                    name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'Không tên',
+                                    name: `${u.firstName || ''} ${u.lastName || ''}`.trim() || 'No name',
                                     email: u.email || '-',
                                     phone: u.phone || '-'
                                 };
@@ -284,32 +280,33 @@
                     }
                 } catch (err) {
                     console.error("Lỗi fetch users list:", err);
+
                 }
             }
 
-// Gán thông tin user cho từng order
             orders.forEach(order => {
                 if (order.userID && userMap[order.userID]) {
                     order.userName = userMap[order.userID].name;
                     order.userEmail = userMap[order.userID].email;
                     order.userPhone = userMap[order.userID].phone;
                 } else {
-                    order.userName = "Khách vãng lai";
+                    order.userName = "Visitor";
                     order.userEmail = "-";
                     order.userPhone = "-";
                 }
             });
-// === KẾT THÚC FIX ===
-// === KẾT THÚC FIX ===
 
             renderOrdersTable(orders);
+
         } catch (err) {
-            console.error(err);
-            $('#ordersTableBody').html('<tr><td colspan="9" class="text-center text-danger">Lỗi tải đơn hàng</td></tr>');
+            console.error("Lỗi loadOrders:", err);
+            const tbody = document.getElementById("orderTableBody");
+            if (tbody) {
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center text-danger py-5">Order loading error: ' + err.message + '</td></tr>';
+            }
         }
     }
 
-    // Render bảng đơn hàng
     function renderOrdersTable(orders) {
         const tbody = document.getElementById("orderTableBody");
         tbody.innerHTML = "";
@@ -328,22 +325,22 @@
             row.innerHTML = `
       <td>${index + 1}</td>
       <td>${order.id}</td>
-      <td><strong>${order.userName || 'Khách vãng lai'}</strong></td>
+      <td><strong>${order.userName || 'Visitors'}</strong></td>
       <td>${order.userEmail || '-'}</td>
       <td>${order.userPhone || '-'}</td>
       <td>${Number(order.totalAmount).toLocaleString('vi-VN')} ₫</td>
       <td>${new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
       <td><span class="badge badge-${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>
       <td>
-        <button class="btn btn-sm btn-info view-detail mr-1" data-id="${order.id}">Xem</button>
+        <button class="btn btn-sm btn-info view-detail mr-1" data-id="${order.id}">Details</button>
         ${canConfirm ? `
           <button class="btn btn-sm btn-success confirm-order mr-1" data-id="${order.id}">
-            <i class="fas fa-check"></i> Xác nhận
+            <i class="fas fa-check"></i> Confirm
           </button>
         ` : ''}
         ${canCancel ? `
           <button class="btn btn-sm btn-danger cancel-order" data-id="${order.id}">
-            <i class="fas fa-times"></i> Hủy
+            <i class="fas fa-times"></i> Cancel
           </button>
         ` : ''}
       </td>
@@ -352,10 +349,10 @@
         });
     }
 
-    // Xử lý click nút Xác nhận đơn
+
     $(document).on('click', '.confirm-order', async function() {
         const orderId = $(this).data('id');
-        if (!confirm("Bạn có chắc muốn xác nhận đơn hàng này?")) return;
+        if (!confirm("Are you sure you want to confirm this order?")) return;
 
         try {
             const headers = {
@@ -370,20 +367,20 @@
 
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.message || "Cập nhật thất bại");
+                throw new Error(err.message || "Update failed");
             }
 
-            showToast("Đơn hàng đã được xác nhận!", "success");
-            loadOrders(); // Reload bảng để cập nhật trạng thái
+            showToast("The order has been confirmed!", "success");
+            loadOrders();
         } catch (err) {
-            showToast("Lỗi khi xác nhận đơn: " + err.message, "danger");
+            showToast("Error when confirming the order: " + err.message, "danger");
         }
     });
 
-    // Xử lý click nút Hủy đơn
+
     $(document).on('click', '.cancel-order', async function() {
         const orderId = $(this).data('id');
-        if (!confirm("Bạn có chắc muốn hủy đơn hàng này? Hành động không thể hoàn tác.")) return;
+        if (!confirm("Are you sure you want to cancel this order? The action cannot be reversed.")) return;
 
         try {
             const headers = {
@@ -398,17 +395,17 @@
 
             if (!res.ok) {
                 const err = await res.json();
-                throw new Error(err.message || "Cập nhật thất bại");
+                throw new Error(err.message || "Update failed");
             }
 
-            showToast("Đơn hàng đã được hủy!", "success");
+            showToast("The order has been cancelled!", "success");
             loadOrders(); // Reload bảng
         } catch (err) {
-            showToast("Lỗi khi hủy đơn: " + err.message, "danger");
+            showToast("Error while canceling order: " + err.message, "danger");
         }
     });
 
-    // Helper: class cho status badge
+
     function getStatusClass(status) {
         switch (status) {
             case 'pending': return 'warning';
@@ -424,70 +421,152 @@
 
     function getStatusText(status) {
         switch (status) {
-            case 'pending': return 'Chờ xác nhận';
-            case 'confirmed': return 'Đã xác nhận';
-            case 'processing': return 'Đang xử lý';
-            case 'shipped': return 'Đang giao';
-            case 'delivered': return 'Đã giao';
-            case 'canceled': return 'Đã hủy';
-            case 'refunded': return 'Đã hoàn tiền';
+            case 'pending': return 'Pending';
+            case 'confirmed': return 'Confirmed';
+            case 'processing': return 'Processing';
+            case 'shipped': return 'Shipped';
+            case 'delivered': return 'Delivered';
+            case 'canceled': return 'Canceled';
+            case 'refunded': return 'Refunded';
             default: return status;
         }
     }
 
-    // Xem chi tiết đơn hàng (giữ nguyên như cũ)
     $(document).on('click', '.view-detail', async function() {
         const orderId = $(this).data('id');
         try {
             const headers = authToken ? { 'Authorization': `Bearer ${authToken}` } : {};
-            const res = await fetch(`${BASE_URL}/orders/${orderId}?include=orderItems,orderItems.productVariant,orderItems.productVariant.product,user`, { headers });
-            if (!res.ok) throw new Error("Không tải được chi tiết");
 
-            const data = await res.json();
-            const order = data.data;
+            const orderRes = await fetch(`${BASE_URL}/orders/${orderId}?include=user`, { headers });
+            if (!orderRes.ok) throw new Error(`Unable to load the order: ${orderRes.status}`);
+            const orderData = await orderRes.json();
+            const order = orderData.data || orderData;
 
-            // Hiển thị thông tin khách hàng (nếu có)
-            let customerInfo = 'Khách vãng lai';
-            if (order.user) {
-                customerInfo = `
-                    <strong>${order.user.firstName} ${order.user.lastName || ''}</strong><br>
-                    Email: ${order.user.email || '-'}<br>
-                    Phone: ${order.user.phone || '-'}<br>
-                    Địa chỉ: ${order.user.fullAddress || '-'}
-                `;
+            let orderItems = order.orderItems || [];
+            if (orderItems.length === 0 && order.id) {
+                console.log(`[ADMIN DETAIL] Fetching order-items for #${order.id}`);
+                const itemsRes = await fetch(`${BASE_URL}/order-items?orderID=${order.id}&itemPerPage=100&page=1`, { headers });
+                if (itemsRes.ok) {
+                    const itemsData = await itemsRes.json();
+                    orderItems = itemsData.data?.list || [];
+                }
             }
 
-            // Render chi tiết sản phẩm
-            let itemsHtml = '';
-            if (order.orderItems && order.orderItems.length > 0) {
-                order.orderItems.forEach(item => {
-                    const productName = item.productVariant?.product?.name || 'Sản phẩm không tên';
-                    const variantName = item.productVariant?.name || '';
-                    const price = Number(item.unitPrice || item.price || 0).toLocaleString('vi-VN');
-                    const total = Number(item.totalPrice || item.unitPrice * item.quantity).toLocaleString('vi-VN');
+            let itemsHTML = '';
+            let totalAmount = order.totalAmount || 0;
+            const productImageFallback = 'https://placehold.co/90x90?text=No+Image';
 
-                    itemsHtml += `
-                        <tr>
-                            <td>${productName} ${variantName}</td>
-                            <td>${price} ₫</td>
-                            <td>${item.quantity}</td>
-                            <td>${total} ₫</td>
-                        </tr>
-                    `;
-                });
+            if (orderItems.length === 0) {
+                itemsHTML = '<p class="text-center text-muted my-4">There are no products in this order.</p>';
             } else {
-                itemsHtml = '<tr><td colspan="4" class="text-center">Không có sản phẩm</td></tr>';
+                for (let item of orderItems) {
+                    let productName = 'Unidentified product';
+                    let variantInfo = '';
+                    let productImage = productImageFallback;
+                    let unitPrice = item.unitPrice || item.price || 0;
+                    let itemTotal = item.totalPrice || (unitPrice * (item.quantity || 1));
+
+                    if (item.productVariant?.product) {
+                        productName = item.productVariant.product.name || productName;
+                        if (item.productVariant.product.productImages?.length > 0) {
+                            productImage = item.productVariant.product.productImages[0].imageUrl;
+                        } else if (item.productVariant.product.imageUrl || item.productVariant.product.mainImageUrl) {
+                            productImage = item.productVariant.product.imageUrl || item.productVariant.product.mainImageUrl;
+                        }
+                    } else if (item.productVariantSnapshot) {
+                        try {
+                            const snapshot = typeof item.productVariantSnapshot === 'string'
+                                ? JSON.parse(item.productVariantSnapshot)
+                                : item.productVariantSnapshot;
+                            productName = snapshot?.product?.name || snapshot?.name || productName;
+                            productImage = snapshot?.product?.productImages?.[0]?.imageUrl
+                                || snapshot?.imageUrl
+                                || productImage;
+                            if (snapshot?.attributes) {
+                                variantInfo = `<small class="text-muted">Variant: ${Object.values(snapshot.attributes).filter(v => v).join(' - ')}</small>`;
+                            }
+                        } catch (e) {}
+                    } else if (item.productVariantID) {
+                        try {
+                            const variantRes = await fetch(`${BASE_URL}/product-variants/${item.productVariantID}`, { headers });
+                            if (variantRes.ok) {
+                                const variant = (await variantRes.json()).data || {};
+                                productName = variant.product?.name || variant.name || productName;
+                                productImage = variant.product?.productImages?.[0]?.imageUrl
+                                    || variant.product?.imageUrl
+                                    || variant.imageUrl
+                                    || productImage;
+                            }
+                        } catch {}
+                    }
+
+                    itemsHTML += `
+          <div class="d-flex align-items-center mb-3 p-3 border rounded hover-shadow">
+            <img src="${productImage}" alt="${productName}"
+                 style="width:90px; height:90px; object-fit:cover; border-radius:6px; margin-right:15px;"
+                 onerror="this.src='${productImageFallback}'">
+            <div class="flex-grow-1">
+              <h6 class="mb-1">${productName}</h6>
+              ${variantInfo}
+              <div class="text-muted small">Số lượng: ${item.quantity || 1} × ${Number(unitPrice).toLocaleString('vi-VN')} ₫</div>
+            </div>
+            <div class="text-right">
+              <strong class="text-danger">${Number(itemTotal).toLocaleString('vi-VN')} ₫</strong>
+            </div>
+          </div>
+        `;
+                }
             }
 
-            // Cập nhật modal
-            $('#modalCustomerInfo').html(customerInfo);
-            $('#modalOrderItems').html(itemsHtml);
-            $('#modalOrderNumber').text(order.orderNumber);
-            $('#modalTotalAmount').text(Number(order.totalAmount).toLocaleString('vi-VN') + ' ₫');
-            $('#modalStatus').text(getStatusText(order.status));
+            const user = order.user || {};
+            const customerInfo = user.id
+                ? `<strong>${user.firstName || ''} ${user.lastName || ''}</strong><br>Email: ${user.email || '-'}<br>Phone: ${user.phone || '-'}<br>Địa chỉ: ${user.fullAddress || 'Không có'}`
+                : 'Visitor';
+
+            let shippingAddress = order.shippingAddress || 'None';
+            if (order.orderAddresses?.length > 0) {
+                const addr = order.orderAddresses.find(a => a.type === 'shipping') || order.orderAddresses[0];
+                shippingAddress = addr.fullAddress || shippingAddress;
+            }
+
+            const modalHTML = `
+      <div class="card mb-3 shadow-sm">
+        <div class="card-header bg-light d-flex justify-content-between">
+          <div>
+            <strong>Mã đơn hàng:</strong> #${order.orderNumber || order.id}<br>
+            <small class="text-muted">${new Date(order.createdAt).toLocaleString('vi-VN')}</small>
+          </div>
+          <span class="badge badge-${getStatusClass(order.status)} px-3 py-2">
+            ${getStatusText(order.status)}
+          </span>
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <strong>Khách hàng:</strong><br>${customerInfo}
+          </div>
+          <strong>Sản phẩm:</strong>
+          ${itemsHTML}
+          <div class="mt-3 small text-muted">
+            <div><i class="fas fa-map-marker-alt mr-2"></i>Địa chỉ: ${shippingAddress}</div>
+            <div><i class="fas fa-credit-card mr-2"></i>Thanh toán: ${order.paymentMethod || 'Visitor'}</div>
+            ${order.notes ? `<div><i class="fas fa-sticky-note mr-2"></i>Ghi chú: ${order.notes}</div>` : ''}
+          </div>
+          <hr>
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Tổng tiền:</h5>
+            <h4 class="text-danger mb-0">${Number(totalAmount).toLocaleString('vi-VN')} ₫</h4>
+          </div>
+        </div>
+      </div>
+    `;
+
+            $('#orderDetailBody').html(modalHTML);
             $('#orderDetailModal').modal('show');
+
         } catch (err) {
-            alert("Lỗi tải chi tiết đơn hàng: " + err.message);
+            console.error("Lỗi tải chi tiết:", err);
+            $('#orderDetailBody').html(`<div class="alert alert-danger">Lỗi: ${err.message}</div>`);
+            $('#orderDetailModal').modal('show');
         }
     });
 
@@ -505,7 +584,7 @@
         $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
     }
 
-    // Load khi mở trang
+
     $(document).ready(function() {
         loadOrders();
     });
