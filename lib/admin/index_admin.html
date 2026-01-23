@@ -15,6 +15,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <link rel="stylesheet" href="../../css/product_admin.css">
     <script src="../../js/cart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body ng-app="myApp">
 <header class="fixed-top">
@@ -38,5 +39,377 @@
         </div>
     </nav>
 </header>
+<!-- Phần dashboard top products -->
+<div class="container mt-5 pt-5">
+    <h3 class="text-center mb-4">Dashboard - Top 3 Sản Phẩm Bán Chạy Nhất</h3>
+
+    <!-- Bảng -->
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <table class="table table-hover table-bordered text-center">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th>Xếp hạng</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng đã bán</th>
+                            <th>Doanh thu (ước tính)</th>
+                        </tr>
+                        </thead>
+                        <tbody id="topProductsTable">
+                        <tr><td colspan="4" class="text-center py-4">Đang tải dữ liệu...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ - size nhỏ gọn hơn -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-light text-center">
+                    <h5 class="mb-0">Biểu đồ Top 3 Sản Phẩm Bán Chạy</h5>
+                </div>
+                <div class="card-body p-3" style="height: 280px;">
+                    <canvas id="topProductsChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard 1: Tổng quan Doanh thu & Đơn hàng -->
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Tổng quan Doanh thu & Đơn hàng</h3>
+    <div class="row">
+        <!-- Card thống kê nhanh -->
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-primary">
+                <div class="card-body text-center">
+                    <h5>Tổng doanh thu</h5>
+                    <h3 id="totalRevenue">0 ₫</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-success">
+                <div class="card-body text-center">
+                    <h5>Tổng đơn hàng</h5>
+                    <h3 id="totalOrders">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-warning">
+                <div class="card-body text-center">
+                    <h5>Đơn chờ xác nhận</h5>
+                    <h3 id="pendingOrders">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Biểu đồ doanh thu 7 ngày gần nhất -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card shadow">
+                <div class="card-header bg-light text-center">
+                    <h5 class="mb-0">Doanh thu 7 ngày gần nhất</h5>
+                </div>
+                <div class="card-body p-3" style="height: 300px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard 2: Trạng thái kho hàng -->
+<div class="container mt-5">
+    <h3 class="text-center mb-4">Trạng thái Kho hàng</h3>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-danger">
+                <div class="card-body text-center">
+                    <h5>Sản phẩm hết hàng</h5>
+                    <h3 id="outOfStock">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-warning">
+                <div class="card-body text-center">
+                    <h5>Sắp hết hàng (< 10)</h5>
+                    <h3 id="lowStock">0</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card shadow text-white bg-info">
+                <div class="card-body text-center">
+                    <h5>Tổng sản phẩm</h5>
+                    <h3 id="totalProducts">0</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top 3 tồn kho thấp -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="text-center mb-3">Top 3 sản phẩm tồn kho thấp nhất</h5>
+                    <ul class="list-group" id="lowStockList">
+                        <li class="list-group-item text-center">Đang tải...</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const BASE_URL = "http://localhost:8888/api";
+    let authToken = localStorage.getItem('authToken');
+
+    // Lưu instance chart để destroy khi cần
+    let topChartInstance = null;
+    let revenueChartInstance = null;
+
+    async function loadTopProducts() {
+        if (!authToken) {
+            alert("Vui lòng đăng nhập admin để xem báo cáo");
+            return;
+        }
+
+        try {
+            const res = await fetch(`${BASE_URL}/order-items?itemPerPage=1000&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            if (!res.ok) throw new Error("Không tải được dữ liệu bán hàng");
+
+            const data = await res.json();
+            const items = data.data?.list || [];
+
+            const productSales = {};
+            for (const item of items) {
+                const variantId = item.productVariantID;
+                if (!variantId) continue;
+
+                let productName = 'Sản phẩm #' + variantId;
+                if (item.productVariant?.product?.name) {
+                    productName = item.productVariant.product.name;
+                }
+
+                if (!productSales[variantId]) {
+                    productSales[variantId] = { name: productName, quantity: 0, revenue: 0 };
+                }
+
+                const qty = item.quantity || 1;
+                const price = item.unitPrice || item.price || 0;
+                productSales[variantId].quantity += qty;
+                productSales[variantId].revenue += qty * price;
+            }
+
+            const topList = Object.values(productSales)
+                .sort((a, b) => b.quantity - a.quantity)
+                .slice(0, 3);
+
+            // Render bảng
+            const tbody = document.getElementById('topProductsTable');
+            tbody.innerHTML = '';
+            if (topList.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">Chưa có dữ liệu bán hàng</td></tr>';
+            } else {
+                topList.forEach((prod, index) => {
+                    tbody.innerHTML += `
+          <tr>
+            <td><strong>${index + 1}</strong></td>
+            <td>${prod.name}</td>
+            <td>${prod.quantity}</td>
+            <td>${Number(prod.revenue).toLocaleString('vi-VN')} ₫</td>
+          </tr>
+        `;
+                });
+            }
+
+            // Destroy chart cũ nếu tồn tại
+            if (topChartInstance) {
+                topChartInstance.destroy();
+                topChartInstance = null;
+            }
+
+            // Vẽ chart mới
+            const ctx = document.getElementById('topProductsChart').getContext('2d');
+            topChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: topList.map(p => p.name.length > 20 ? p.name.substring(0, 17) + '...' : p.name),
+                    datasets: [{
+                        label: 'Số lượng bán',
+                        data: topList.map(p => p.quantity),
+                        backgroundColor: ['#007bff', '#28a745', '#ffc107'],
+                        borderColor: ['#0056b3', '#1e7e34', '#d39e00'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { font: { size: 12 } } },
+                        x: { ticks: { font: { size: 12 }, maxRotation: 45, minRotation: 45 } }
+                    },
+                    plugins: { legend: { display: false }, tooltip: { enabled: true } },
+                    layout: { padding: { top: 10, bottom: 20, left: 10, right: 10 } }
+                }
+            });
+
+        } catch (err) {
+            console.error(err);
+            document.getElementById('topProductsTable').innerHTML =
+                '<tr><td colspan="4" class="text-center text-danger py-4">Lỗi tải dữ liệu: ' + err.message + '</td></tr>';
+        }
+    }
+
+    async function loadRevenueOverview() {
+        if (!authToken) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/orders?itemPerPage=500&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            if (!res.ok) throw new Error("Không tải được đơn hàng");
+
+            const data = await res.json();
+            const orders = data.data?.list || [];
+
+            let totalRevenue = 0;
+            let totalOrders = orders.length;
+            let pendingOrders = 0;
+            const revenueByDate = {};
+
+            orders.forEach(order => {
+                const amount = Number(order.totalAmount || 0);
+                totalRevenue += amount;
+                if (order.status === 'pending') pendingOrders++;
+
+                const date = new Date(order.createdAt).toISOString().split('T')[0];
+                revenueByDate[date] = (revenueByDate[date] || 0) + amount;
+            });
+
+            document.getElementById('totalRevenue').textContent = Number(totalRevenue).toLocaleString('vi-VN') + ' ₫';
+            document.getElementById('totalOrders').textContent = totalOrders;
+            document.getElementById('pendingOrders').textContent = pendingOrders;
+
+            const today = new Date();
+            const dates = [];
+            const revenues = [];
+            for (let i = 6; i >= 0; i--) {
+                const d = new Date(today);
+                d.setDate(today.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                dates.push(dateStr);
+                revenues.push(revenueByDate[dateStr] || 0);
+            }
+
+            // Destroy chart cũ nếu tồn tại
+            if (revenueChartInstance) {
+                revenueChartInstance.destroy();
+                revenueChartInstance = null;
+            }
+
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            revenueChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates.map(d => d.split('-').reverse().join('/').slice(0,5)),
+                    datasets: [{
+                        label: 'Doanh thu (₫)',
+                        data: revenues,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: v => Number(v).toLocaleString('vi-VN') } }
+                    }
+                }
+            });
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    async function loadStockStatus() {
+        if (!authToken) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+
+            if (!res.ok) throw new Error("Không tải được sản phẩm");
+
+            const data = await res.json();
+            const products = data.data?.list || [];
+
+            let outOfStock = 0;
+            let lowStock = 0;
+            const lowStockProducts = [];
+
+            products.forEach(p => {
+                const stock = p.stock || 0;
+                if (stock === 0) outOfStock++;
+                if (stock > 0 && stock < 10) {
+                    lowStock++;
+                    lowStockProducts.push({ name: p.name, stock });
+                }
+            });
+
+            document.getElementById('outOfStock').textContent = outOfStock;
+            document.getElementById('lowStock').textContent = lowStock;
+            document.getElementById('totalProducts').textContent = products.length;
+
+            const list = document.getElementById('lowStockList');
+            list.innerHTML = '';
+            lowStockProducts
+                .sort((a, b) => a.stock - b.stock)
+                .slice(0, 3)
+                .forEach(p => {
+                    list.innerHTML += `
+          <li class="list-group-item d-flex justify-content-between">
+            <span>${p.name}</span>
+            <span class="badge bg-warning">${p.stock} còn lại</span>
+          </li>`;
+                });
+
+            if (lowStockProducts.length === 0) {
+                list.innerHTML = '<li class="list-group-item text-center text-muted">Không có sản phẩm sắp hết hàng</li>';
+            }
+
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    // Chỉ gọi 1 lần khi trang load xong
+    window.addEventListener('load', () => {
+        loadTopProducts();
+        loadRevenueOverview();
+        loadStockStatus();
+    });
+</script>
 </body>
 </html>
