@@ -17,6 +17,125 @@
     <script src="../../js/cart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<style>
+    .chatbot-toggler {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: #f9af47;
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        cursor: pointer;
+        z-index: 1000;
+        transition: all 0.3s;
+    }
+    .chatbot-toggler:hover {
+        transform: scale(1.1);
+    }
+    .chatbot-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #dc3545;
+        color: white;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 12px;
+    }
+    .chatbot-box {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 360px;
+        height: 500px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        display: none;
+        flex-direction: column;
+        z-index: 1000;
+        overflow: hidden;
+    }
+    .chatbot-header {
+        background: #f9af47;
+        color: white;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .chatbot-header-left {
+        display: flex;
+        align-items: center;
+    }
+    .chatbot-avatar {
+        font-size: 28px;
+        margin-right: 10px;
+    }
+    .chatbot-close {
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .chatbot-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        background: #f8f9fa;
+    }
+    .chatbot-message {
+        margin-bottom: 15px;
+        display: flex;
+    }
+    .chatbot-message.user {
+        justify-content: flex-end;
+    }
+    .chatbot-bubble {
+        max-width: 80%;
+        padding: 10px 15px;
+        border-radius: 18px;
+        line-height: 1.4;
+    }
+    .chatbot-message.bot .chatbot-bubble {
+        background: #e9ecef;
+        border-bottom-left-radius: 4px;
+    }
+    .chatbot-message.user .chatbot-bubble {
+        background: #f9af47;
+        color: white;
+        border-bottom-right-radius: 4px;
+    }
+    .chatbot-input-area {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+        background: white;
+    }
+    .chatbot-input-area input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        margin-right: 10px;
+    }
+    .chatbot-input-area button {
+        background: #f9af47;
+        color: white;
+        border: none;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+</style>
 <body ng-app="myApp">
 <header class="fixed-top">
     <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
@@ -157,25 +276,11 @@
         </div>
     </div>
 
-    <!-- Top 3 tồn kho thấp -->
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card shadow">
-                <div class="card-body">
-                    <h5 class="text-center mb-3">Top 3 sản phẩm tồn kho thấp nhất</h5>
-                    <ul class="list-group" id="lowStockList">
-                        <li class="list-group-item text-center">Đang tải...</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 <script>
     const BASE_URL = "http://localhost:8888/api";
     let authToken = localStorage.getItem('authToken');
 
-    // Lưu instance chart để destroy khi cần
     let topChartInstance = null;
     let revenueChartInstance = null;
 
@@ -237,7 +342,6 @@
                 });
             }
 
-            // Destroy chart cũ nếu tồn tại
             if (topChartInstance) {
                 topChartInstance.destroy();
                 topChartInstance = null;
@@ -318,7 +422,6 @@
                 revenues.push(revenueByDate[dateStr] || 0);
             }
 
-            // Destroy chart cũ nếu tồn tại
             if (revenueChartInstance) {
                 revenueChartInstance.destroy();
                 revenueChartInstance = null;
@@ -404,12 +507,316 @@
         }
     }
 
-    // Chỉ gọi 1 lần khi trang load xong
+
     window.addEventListener('load', () => {
         loadTopProducts();
         loadRevenueOverview();
         loadStockStatus();
     });
 </script>
+<!-- AI Chatbot Container -->
+<div id="chatbot-container">
+    <!-- Floating Icon -->
+    <div id="chatbot-toggler" class="chatbot-toggler">
+        <i class="fas fa-comment-dots chatbot-icon"></i>
+        <span class="chatbot-badge">Chat AI</span>
+    </div>
+
+    <!-- Chatbox Popup -->
+    <div id="chatbot-box" class="chatbot-box">
+        <!-- Header -->
+        <div class="chatbot-header">
+            <div class="chatbot-header-left">
+                <i class="fas fa-robot chatbot-avatar"></i>
+                <div class="chatbot-info">
+                    <h5>Mega Mall AI Assistant</h5>
+                    <span class="online-status">● Đang online</span>
+                </div>
+            </div>
+            <span id="chatbot-close" class="chatbot-close">×</span>
+        </div>
+
+        <!-- Messages Area -->
+        <div id="chatbot-messages" class="chatbot-messages">
+            <div class="chatbot-message bot">
+                <div class="chatbot-bubble">
+                    Xin chào Admin! Tôi là AI Assistant của Mega Mall. Bạn cần hỗ trợ gì hôm nay? 😊
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chatbot-input-area">
+            <input type="text" id="chatbot-input" placeholder="Nhập tin nhắn của bạn..." autocomplete="off" />
+            <button id="chatbot-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>
+<script>
+
+    async function autoLoginForChat() {
+        try {
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+            });
+            if (res.ok) {
+                const data = await res.json();
+                authToken = data.data.accessToken;
+                console.log("[Chat Admin] Login thành công! Token:", authToken);
+            }
+        } catch (err) {
+            console.error("[Chat Admin] Lỗi auto login:", err);
+        }
+    }
+
+
+    autoLoginForChat();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatbotToggler = document.getElementById('chatbot-toggler');
+        const chatbotBox = document.getElementById('chatbot-box');
+        const chatbotClose = document.getElementById('chatbot-close');
+        const chatbotInput = document.getElementById('chatbot-input');
+        const chatbotSend = document.getElementById('chatbot-send');
+        const chatbotMessages = document.getElementById('chatbot-messages');
+
+        if (!chatbotToggler || !chatbotBox) return;
+
+        chatbotToggler.addEventListener('click', () => {
+            const isVisible = chatbotBox.style.display === 'flex';
+            chatbotBox.style.display = isVisible ? 'none' : 'flex';
+            if (!isVisible) chatbotInput.focus();
+        });
+
+        chatbotClose.addEventListener('click', () => {
+            chatbotBox.style.display = 'none';
+        });
+
+        chatbotSend.addEventListener('click', sendChatMessage);
+        chatbotInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChatMessage();
+        });
+
+        async function sendChatMessage() {
+            const message = chatbotInput.value.trim();
+            if (!message) return;
+
+            appendChatMessage(message, 'user');
+            chatbotInput.value = '';
+
+            const typing = appendChatMessage('Đang suy nghĩ...', 'bot');
+            typing.classList.add('typing');
+
+            const headers = { 'Content-Type': 'application/json' };
+            if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
+            try {
+                const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
+                    method: 'POST',
+                    headers,
+                    body: JSON.stringify({
+                        question: message,
+                        sessionID: localStorage.getItem('chatSessionIDAdmin') || 'admin-' + Date.now()
+                    })
+                });
+
+                const data = await res.json();
+                typing.remove();
+
+                let botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
+
+                const lowerMsg = message.toLowerCase();
+                if (lowerMsg.includes('giá tốt nhất') || lowerMsg.includes('rẻ nhất') || lowerMsg.includes('giá thấp nhất')) {
+                    try {
+                        const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, { headers });
+                        if (productsRes.ok) {
+                            const productsData = await productsRes.json();
+                            const allProducts = productsData.data?.list || [];
+                            const activeProducts = allProducts.filter(p => p.status === 'active' && !p.deletedAt);
+
+                            if (activeProducts.length > 0) {
+                                const cheapest = activeProducts.reduce((prev, curr) =>
+                                    (prev.price || Infinity) < (curr.price || Infinity) ? prev : curr
+                                );
+                                const priceFormatted = Number(cheapest.price).toLocaleString('vi-VN') + ' ₫';
+                                botReply = `Sản phẩm giá tốt nhất hiện tại là:\n\n${cheapest.name}.\nGiá: ${priceFormatted}`;
+                            } else {
+                                botReply = "Hiện tại không có sản phẩm nào đang bán.";
+                            }
+                        }
+                    } catch (err) {
+                        console.error("Lỗi lọc giá:", err);
+                    }
+                }
+
+                appendChatMessage(botReply, 'bot');
+
+                if (data.sessionID) {
+                    localStorage.setItem('chatSessionIDAdmin', data.sessionID);
+                }
+
+            } catch (err) {
+                typing.remove();
+                appendChatMessage("Lỗi kết nối server!", 'bot');
+                console.error(err);
+            }
+        }
+
+        function appendChatMessage(text, sender) {
+            const div = document.createElement('div');
+            div.className = `chatbot-message ${sender}`;
+            const bubble = document.createElement('div');
+            bubble.className = 'chatbot-bubble';
+            bubble.textContent = text;
+            div.appendChild(bubble);
+            chatbotMessages.appendChild(div);
+            chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+            return div;
+        }
+    });
+</script>
+<!--FOOTER-->
+<footer class="footer mt-5">
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/mega_mall_logo_black.png" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        University of Information Technology (VNUHCM – UIT)<br>
+                        (028) 372 52002 <br>
+                        (028) 372 52148 <br>
+                        info@uit.edu.vn</p>
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-twitter"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weixin"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-weibo"></i>
+                                </a>
+                            </li>
+                            <li class="list-inline-item">
+                                <a href="" class="social-item">
+                                    <i class="fab fa-skype"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Help & Information <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Pagination</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Terms & Conditions</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Contact</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Accessories</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Term of use</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            About Us <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">Help Center</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Address Store</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Privacy Policy</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Receivers & Amplifiers</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">
+                            Profile <br>
+                            <hr class="hr">
+                        </h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li>
+                            <a href="" title="Pagination">My Account</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Checkout</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Order Tracking</a>
+                        </li>
+                        <li>
+                            <a href="" title="Pagination">Help & Support</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6  text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2025 |
+                    <a href="" class="underline_hover bold">
+                        Designed
+                    </a>
+                    by
+                    <a href="" class="underline_hover link">
+                        Mega Mall
+                    </a>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!--END FOOTER-->
 </body>
 </html>
