@@ -644,8 +644,9 @@
         let failed = 0;         // số sản phẩm thất bại hoàn toàn
 
         try {
+            const userID = localStorage.getItem("currentUserId")
             // Lấy cartID (giữ nguyên)
-            const cartRes = await fetch(`${BASE_URL}/carts`, {
+            const cartRes = await fetch(`${BASE_URL}/carts?userID=${userID}`, {
                 headers: { 'Authorization': `Bearer ${authToken}` }
             });
             if (!cartRes.ok) throw new Error('Không thể lấy giỏ hàng');
