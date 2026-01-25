@@ -559,6 +559,191 @@
         // window.location.href = `order-detail.html?id=${orderId}`;
     }
 
+    async function cancelOrder(orderId) {
+        if (!confirm('Are you sure you want to cancel this order?')) return;
+
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            showToast('Please login again', 'warning');
+            return;
+        }
+
+        const headers = {
+            'Authorization': `Bearer ${authToken}`,
+            'Content-Type': 'application/json'
+        };
+
+        try {
+            console.log(`[DEBUG] Cancelling order ${orderId}`);
+
+            const response = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers,
+                body: JSON.stringify({ status: 'canceled' })
+            });
+
+            if (!response.ok) {
+                const errText = await response.text();
+                const errorMessage = errText.includes('Expected OrderStatus')
+                    ? 'Cancel is not valid. Please try again later.'
+                    : errText;
+                throw new Error(`Cancel failed: ${response.status} - ${errorMessage}`);
+            }
+
+            const result = await response.json();
+            console.log('[DEBUG] Cancel response:', result);
+
+            showToast('Cancelled successfully!', 'success');
+
+            await loadOrders();
+
+        } catch (err) {
+            console.error('[ERROR] Cancel order failed:', err);
+            showToast('Error: ' + err.message, 'danger');
+        }
+    }
+
+    async function buyAgain(orderId) {
+        const authToken = localStorage.getItem('authToken');
+        if (!authToken) {
+            showToast('Vui lòng đăng nhập lại để thêm vào giỏ hàng', 'warning');
+            return;
+        }
+
+        let addedNew = 0;       // số sản phẩm thêm mới thành công
+        let updatedQty = 0;     // số sản phẩm đã tồn tại, tăng quantity thành công
+        let failed = 0;         // số sản phẩm thất bại hoàn toàn
+
+        try {
+            const userID = localStorage.getItem("currentUserId")
+            // Lấy cartID (giữ nguyên)
+            const cartRes = await fetch(`${BASE_URL}/carts?userID=${userID}`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!cartRes.ok) throw new Error('Không thể lấy giỏ hàng');
+
+            const cartData = await cartRes.json();
+            let cartID;
+            if (cartData.data?.id) {
+                cartID = cartData.data.id;
+            } else if (Array.isArray(cartData.data?.list) && cartData.data.list.length > 0) {
+                cartID = cartData.data.list[0].id;
+            } else {
+                throw new Error('Không tìm thấy giỏ hàng của bạn');
+            }
+            console.log(`[DEBUG] Using cartID: ${cartID}`);
+
+            // Lấy order items
+            const itemsRes = await fetch(`${BASE_URL}/order-items?orderID=${orderId}&itemPerPage=100&page=1`, {
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!itemsRes.ok) throw new Error('Không thể lấy sản phẩm từ đơn hàng');
+
+            const itemsData = await itemsRes.json();
+            const orderItems = itemsData.data?.list || [];
+
+            if (orderItems.length === 0) {
+                showToast('Đơn hàng không có sản phẩm để thêm lại', 'warning');
+                return;
+            }
+
+            // Xử lý từng item
+            for (const item of orderItems) {
+                const payload = {
+                    cartID: cartID,
+                    productVariantID: item.productVariantID,
+                    quantity: item.quantity || 1
+                };
+
+                const addRes = await fetch(`${BASE_URL}/cart-items`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (addRes.ok) {
+                    addedNew++;
+                    console.log(`[ADDED NEW] Sản phẩm ${item.productVariantID}`);
+                    continue;
+                }
+
+                // Nếu thất bại, kiểm tra duplicate
+                const errText = await addRes.text();
+                console.log(`[DEBUG] POST thất bại cho ${item.productVariantID}: ${errText}`);
+
+                if (errText.includes('Unique constraint') || errText.includes('cartID`,`productVariantID`')) {
+                    try {
+                        // Tìm cart-item hiện có
+                        const findRes = await fetch(
+                            `${BASE_URL}/cart-items?cartID=${cartID}&productVariantID=${item.productVariantID}`,
+                            { headers: { 'Authorization': `Bearer ${authToken}` } }
+                        );
+
+                        if (findRes.ok) {
+                            const findData = await findRes.json();
+                            const existing = findData.data?.list?.[0];
+
+                            if (existing && existing.id) {
+                                const newQty = (existing.quantity || 0) + (item.quantity || 1);
+
+                                const patchRes = await fetch(`${BASE_URL}/cart-items/${existing.id}`, {
+                                    method: 'PATCH',
+                                    headers: {
+                                        'Authorization': `Bearer ${authToken}`,
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({ quantity: newQty })
+                                });
+
+                                if (patchRes.ok) {
+                                    updatedQty++;
+                                    console.log(`[UPDATED QTY] Sản phẩm ${item.productVariantID} → ${newQty}`);
+                                } else {
+                                    failed++;
+                                    console.warn(`PATCH thất bại: ${await patchRes.text()}`);
+                                }
+                            } else {
+                                failed++;
+                            }
+                        } else {
+                            failed++;
+                        }
+                    } catch (patchErr) {
+                        failed++;
+                        console.error('[PATCH ERROR]', patchErr);
+                    }
+                } else {
+                    failed++;
+                }
+            }
+
+            // Toast kết quả chính xác
+            let toastMsg = '';
+            let toastType = 'success';
+
+            if (addedNew > 0 || updatedQty > 0) {
+                if (addedNew > 0) toastMsg += `Đã thêm mới ${addedNew} sản phẩm. `;
+                if (updatedQty > 0) toastMsg += `Đã cập nhật số lượng cho ${updatedQty} sản phẩm đã có trong giỏ.`;
+                toastType = 'success';
+            } else if (failed > 0) {
+                toastMsg = `Không thêm được sản phẩm nào (có thể do lỗi server hoặc đã tồn tại)`;
+                toastType = 'warning';
+            } else {
+                toastMsg = 'Không có thay đổi nào trong giỏ hàng';
+                toastType = 'info';
+            }
+
+            showToast(toastMsg.trim(), toastType);
+
+        } catch (err) {
+            console.error('[BUY AGAIN ERROR]', err);
+            showToast('Lỗi hệ thống: ' + err.message, 'danger');
+        }
+    }
+
     $(document).ready(function() {
         loadOrders();
     });
