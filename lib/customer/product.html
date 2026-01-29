@@ -781,10 +781,6 @@
             $('#productModal').modal('hide');
 
             localStorage.setItem('just_added_to_cart', 'true');
-
-            setTimeout(() => {
-                window.location.href = 'cart.html';
-            }, 2000);
         } catch (err) {
             console.error(err);
             showToast("Failed to add to cart: " + err.message, "danger");
