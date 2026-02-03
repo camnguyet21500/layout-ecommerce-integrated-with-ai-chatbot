@@ -405,7 +405,7 @@
             const res = await fetch(`${BASE_URL}/auth/sign-in`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: "nvo28@example.com", password: "nvo28" })
+                body: JSON.stringify({ email: "admin@gmail.com", password: "123456" })
             });
             const data = await res.json();
             if (data.data?.accessToken) {

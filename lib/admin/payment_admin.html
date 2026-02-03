@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Management | Mega Mall Store Admin</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <link rel="stylesheet" href="../../css/role_admin.css"> <!-- giữ nguyên css cũ -->
+</head>
+<body>
+<header class="fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-light shadow-sm" style="background-color: white; height: 90px;">
+        <div class="container-fluid container-fluid-v1">
+            <div class="collapse navbar-collapse justify-content-start" id="navbarLeft">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="product_admin.html">PRODUCT</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="category_admin.html">CATEGORY</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="user.html">USER</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="order_admin.html">ORDER</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="role_admin.html">ROLE</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="permission_admin.html">PERMISSION</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium active" href="payment_admin.html">PAYMENT</a></li>
+                    <li class="nav-item"><a class="nav-link text-body font-weight-medium" href="vendor_admin.html">VENDOR</a></li>
+                </ul>
+            </div>
+            <a class="navbar-brand mx-auto d-block" href="../customer/index.html">
+                <img src="../../img/mega_mall_logo.png" alt="Logo" width="80">
+            </a>
+            <div class="icon-right d-flex align-items-center">
+                <a href="../admin/profile_admin.html" class="icon-hover mx-3" title="Profile">
+                    <i class="far fa-user fa-fw mx-3"></i>
+                </a>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<div class="role-management container mt-5 pt-4">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h3 class="title-heading mb-0">Payment Management</h3>
+        </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="text" id="searchPaymentInput" class="form-control" placeholder="Tìm theo orderID, type, status...">
+                <div class="input-group-append">
+                    <button id="clearSearchBtn" class="btn btn-outline-secondary" type="button" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-right mb-3">
+        <button class="btn btn-success" onclick="exportPaymentsToExcel()">
+            <i class="fas fa-file-excel mr-1"></i> Export Excel
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover">
+            <thead class="thead-light">
+            <tr>
+                <th>STT</th>
+                <th>ORDER ID</th>
+                <th>ORDER CODE</th>
+                <th>AMOUNT</th>
+                <th>PAYMENT METHOD</th>
+                <th>BANK CODE</th>
+                <th>STATUS</th>
+                <th>CREATED AT</th>
+                <th>ACTION</th>
+            </tr>
+            </thead>
+            <tbody id="paymentTableBody">
+            <tr>
+                <td colspan="9" class="text-center">
+                    <i class="fas fa-spinner fa-spin mr-2"></i> Loading payments...
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal xem chi tiết payment -->
+<div class="modal fade" id="paymentDetailModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">Payment Detail</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Order ID:</strong> <span id="detailOrderId"></span></p>
+                        <p><strong>Order Code:</strong> <span id="detailOrderCode"></span></p>
+                        <p><strong>Amount:</strong> <span id="detailAmount"></span></p>
+                        <p><strong>Payment Method:</strong> <span id="detailMethod"></span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Bank Code:</strong> <span id="detailBankCode"></span></p>
+                        <p><strong>Status:</strong> <span id="detailStatus"></span></p>
+                        <p><strong>Created At:</strong> <span id="detailCreatedAt"></span></p>
+                    </div>
+                </div>
+                <hr>
+                <p><strong>Transaction Code:</strong> <span id="detailTransactionCode"></span></p>
+                <p><strong>Response Code:</strong> <span id="detailResponseCode"></span></p>
+                <p><strong>Message:</strong> <span id="detailMessage"></span></p>
+                <p><strong>Payment Info (JSON):</strong></p>
+                <pre id="detailPaymentInfo" class="bg-light p-3 rounded" style="max-height: 200px; overflow-y: auto;"></pre>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast container -->
+<div aria-live="polite" aria-atomic="true" style="position: fixed; top: 20px; right: 20px; z-index: 1050;">
+    <div id="toastContainer"></div>
+</div>
+
+<!-- Footer (copy từ role_admin.html) -->
+<footer class="footer mt-5">
+    <div class="top-footer">
+        <div class="row footerreponsive">
+            <div class="col-sm-3">
+                <div class="info_footer end">
+                    <div class="logo-top">
+                        <a href="" class="logo">
+                            <img src="../../img/mega_mall_logo_black.png" style="width: 50%;">
+                        </a>
+                    </div>
+                    <div class="mb-0 content_footer" style="margin-top: 23px;">
+                        University of Information Technology (VNUHCM – UIT)<br>
+                        (028) 372 52002 <br>
+                        (028) 372 52148 <br>
+                        info@uit.edu.vn
+                    </div>
+                    <div class="list-icon">
+                        <ul class="list-inline list-unstyled mb-0">
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-twitter"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weixin"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-weibo"></i></a></li>
+                            <li class="list-inline-item"><a href="" class="social-item"><i class="fab fa-skype"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Các cột footer khác giữ nguyên như role_admin.html -->
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">Help & Information <br><hr class="hr"></h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="">Pagination</a></li>
+                        <li><a href="">Terms & Conditions</a></li>
+                        <li><a href="">Contact</a></li>
+                        <li><a href="">Accessories</a></li>
+                        <li><a href="">Term of use</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">About Us <br><hr class="hr"></h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="">Help Center</a></li>
+                        <li><a href="">Address Store</a></li>
+                        <li><a href="">Privacy Policy</a></li>
+                        <li><a href="">Receivers & Amplifiers</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-3" style="line-height: 34px;">
+                <div class="info_footer">
+                    <div class="title_footer">
+                        <h4 class="mb-0 title_border">Profile <br><hr class="hr"></h4>
+                    </div>
+                    <ul class="list-unstyled mb-0">
+                        <li><a href="">My Account</a></li>
+                        <li><a href="">Checkout</a></li>
+                        <li><a href="">Order Tracking</a></li>
+                        <li><a href="">Help & Support</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr style="background-color: white;">
+    <div class="copyright" style="color: white;">
+        <div class="row align-items-center">
+            <div class="col-lg-6 col-md-6 text-lg-left text-md-left">
+                <div class="text-copyright mb-0">
+                    © Copyright 2025 | <a href="" class="underline_hover bold">Designed</a> by
+                    <a href="" class="underline_hover link">Mega Mall</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const BASE_URL = "http://localhost:8888/api";
+    let authToken = null;
+    let currentPayments = [];
+    let filteredPayments = [];
+
+    function showToast(message, type = 'success') {
+        const toastHtml = `
+        <div class="toast" role="alert" data-delay="4000">
+          <div class="toast-header bg-${type} text-white">
+            <strong class="mr-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
+            <button type="button" class="ml-2 mb-1 close text-white" data-dismiss="toast">
+              <span>×</span>
+            </button>
+          </div>
+          <div class="toast-body">${message}</div>
+        </div>`;
+        $('#toastContainer').append(toastHtml);
+        $('.toast').last().toast('show');
+        $('.toast').last().on('hidden.bs.toast', function () { $(this).remove(); });
+    }
+
+    async function autoLoginAndLoad() {
+        console.log("[DEBUG] Bắt đầu autoLoginAndLoad()");
+
+        try {
+            console.log("[DEBUG] Gọi API login...");
+            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: "admin@gmail.com", password: "123456" })
+            });
+
+            console.log("[DEBUG] Login status:", res.status);
+
+            if (!res.ok) {
+                const errorText = await res.text().catch(() => "No error text");
+                console.error("[ERROR] Login thất bại:", res.status, errorText);
+                showToast(`Login thất bại: ${res.status} - ${errorText}`, 'danger');
+                document.getElementById("paymentTableBody").innerHTML =
+                    `<tr><td colspan="9" class="text-danger text-center">Login thất bại: ${res.status}</td></tr>`;
+                return;
+            }
+
+            const data = await res.json();
+            console.log("[DEBUG] Login response data:", data);
+
+            if (data.data?.accessToken) {
+                authToken = data.data.accessToken;
+                console.log("[SUCCESS] Login OK, token:", authToken.substring(0, 20) + "...");
+                await loadPayments();
+            } else {
+                console.warn("[WARN] Không có accessToken trong response");
+                showToast('Login thành công nhưng không có token', 'danger');
+                document.getElementById("paymentTableBody").innerHTML =
+                    `<tr><td colspan="9" class="text-danger text-center">Không có token sau khi login</td></tr>`;
+            }
+
+        } catch (err) {
+            console.error("[ERROR] Lỗi khi gọi API login:", err);
+            showToast('Không kết nối được server (login error)', 'danger');
+            document.getElementById("paymentTableBody").innerHTML =
+                `<tr><td colspan="9" class="text-danger text-center">Lỗi kết nối server</td></tr>`;
+        }
+    }
+
+    async function loadPayments() {
+        console.log("[DEBUG] Bắt đầu loadPayments()");
+
+        try {
+            if (!authToken) {
+                console.warn("[WARN] Không có authToken → bỏ qua load payments");
+                document.getElementById("paymentTableBody").innerHTML =
+                    `<tr><td colspan="9" class="text-danger text-center">Chưa đăng nhập (không có token)</td></tr>`;
+                showToast("Chưa đăng nhập thành công", "danger");
+                return;
+            }
+
+            console.log("[DEBUG] Gọi API payments với token:", authToken.substring(0, 20) + "...");
+
+            const res = await fetch(`${BASE_URL}/payments?itemPerPage=100&page=1`, {
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'  // thêm để an toàn
+                }
+            });
+
+            console.log("[DEBUG] Status code của API payments:", res.status);
+
+            if (!res.ok) {
+                let errorText = "Không có response text";
+                try {
+                    errorText = await res.text();
+                } catch (e) {}
+                console.error("[ERROR] API payments thất bại:", res.status, errorText);
+                document.getElementById("paymentTableBody").innerHTML =
+                    `<tr><td colspan="9" class="text-danger text-center">Lỗi tải dữ liệu: ${res.status}</td></tr>`;
+                showToast(`Lỗi tải payments: ${res.status} - ${errorText}`, "danger");
+                return;
+            }
+
+            const json = await res.json();
+            console.log("[DEBUG] Response JSON từ payments:", json);
+
+            currentPayments = json.data?.list || [];
+            console.log("[DEBUG] Số lượng payments nhận được:", currentPayments.length);
+
+            currentPayments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            filteredPayments = [...currentPayments];
+            renderPaymentTable(filteredPayments);
+
+        } catch (err) {
+            console.error("[ERROR] Lỗi nghiêm trọng trong loadPayments:", err.message, err.stack);
+            document.getElementById("paymentTableBody").innerHTML =
+                `<tr><td colspan="9" class="text-danger text-center">Lỗi hệ thống: ${err.message}</td></tr>`;
+            showToast("Lỗi tải payments: " + err.message, "danger");
+        }
+    }
+
+    function getStatusBadge(status) {
+        if (!status) return '<span class="badge badge-secondary">Unknown</span>';
+        switch (status.toUpperCase()) {
+            case 'SUCCESS':
+            case 'PAID':
+            case 'COMPLETED':
+                return '<span class="badge badge-success">Success</span>';
+            case 'PENDING':
+            case 'PROCESSING':
+                return '<span class="badge badge-warning">Pending</span>';
+            case 'FAILED':
+            case 'CANCELLED':
+                return '<span class="badge badge-danger">Failed</span>';
+            default:
+                return `<span class="badge badge-secondary">${status}</span>`;
+        }
+    }
+
+    function renderPaymentTable(payments) {
+        const tbody = document.getElementById("paymentTableBody");
+        tbody.innerHTML = "";
+
+        if (payments.length === 0) {
+            const query = $('#searchPaymentInput').val().trim();
+            tbody.innerHTML = query
+                ? `<tr><td colspan="9" class="text-center py-5 text-muted">Không tìm thấy thanh toán nào cho "${query}"</td></tr>`
+                : `<tr><td colspan="9" class="text-center py-5 text-muted">Chưa có giao dịch thanh toán nào</td></tr>`;
+            return;
+        }
+
+        payments.forEach((payment, index) => {
+            const amount = Number(payment.amount || 0).toLocaleString('vi-VN') + ' ₫';
+            const statusBadge = getStatusBadge(payment.status);
+            const createdAt = payment.createdAt ? new Date(payment.createdAt).toLocaleString('vi-VN') : '-';
+
+            // Các trường chính từ response thực tế
+            const orderId = payment.orderID || '-';
+            const paymentType = payment.type || 'Unknown';           // thay cho paymentMethod
+            const transactionId = payment.transactionID || '-';      // thay cho transactionCode
+
+            const row = document.createElement("tr");
+            row.innerHTML = `
+      <td class="text-center">${index + 1}</td>
+      <td>${orderId}</td>
+      <td>-</td>  <!-- tạm để trống vì không có orderCode trong response -->
+      <td class="text-right">${amount}</td>
+      <td>${paymentType}</td>
+      <td>-</td>  <!-- không có bankCode -->
+      <td class="text-center">${statusBadge}</td>
+      <td>${createdAt}</td>
+      <td class="text-center">
+        <button class="btn btn-sm btn-info view-detail-btn"
+                data-payment='${JSON.stringify(payment)}'>
+          <i class="fas fa-eye"></i> Detail
+        </button>
+      </td>
+    `;
+            tbody.appendChild(row);
+        });
+    }
+
+    $('#searchPaymentInput').on('input', function () {
+        const query = $(this).val().trim().toLowerCase();
+        if (query === '') {
+            filteredPayments = [...currentPayments];
+            $('#clearSearchBtn').hide();
+        } else {
+            filteredPayments = currentPayments.filter(p => {
+                const orderId = (p.orderID || '').toLowerCase();
+                const type = (p.type || '').toLowerCase();
+                const status = (p.status || '').toLowerCase();
+                return orderId.includes(query) || type.includes(query) || status.includes(query);
+            });
+            $('#clearSearchBtn').show();
+        }
+        renderPaymentTable(filteredPayments);
+    });
+
+    $('#clearSearchBtn').on('click', function () {
+        $('#searchPaymentInput').val('').trigger('input');
+    });
+
+    $(document).on('click', '.view-detail-btn', function () {
+        const payment = JSON.parse($(this).attr('data-payment'));
+
+        // Lấy đúng trường từ response
+        const orderId = payment.orderID || 'N/A';
+
+        $('#detailOrderId').text(orderId);
+        $('#detailOrderCode').text('N/A (không có mã đơn trong response)');  // hoặc bỏ dòng này nếu không cần
+        $('#detailAmount').text(Number(payment.amount || 0).toLocaleString('vi-VN') + ' ₫');
+        $('#detailMethod').text(payment.type || 'Unknown');
+        $('#detailBankCode').text('-');  // không có bankCode
+        $('#detailStatus').html(getStatusBadge(payment.status));
+        $('#detailCreatedAt').text(payment.createdAt ? new Date(payment.createdAt).toLocaleString('vi-VN') : '-');
+
+        $('#detailTransactionCode').text(payment.transactionID || '-');
+        $('#detailResponseCode').text('-');     // không có responseCode
+        $('#detailMessage').text('-');          // không có message
+
+        // Hiển thị toàn bộ object payment dưới dạng JSON để debug/dễ xem
+        $('#detailPaymentInfo').text(JSON.stringify(payment, null, 2));
+
+        $('#paymentDetailModal').modal('show');
+    });
+
+    async function exportPaymentsToExcel() {
+        try {
+            const res = await fetch(`${BASE_URL}/payments/export`, {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${authToken}` }
+            });
+            if (!res.ok) throw new Error("Export error");
+            const blob = await res.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'payments_export.xlsx';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            showToast('Export successful', 'success');
+        } catch (err) {
+            showToast('Export Excel failed: ' + err.message, 'danger');
+        }
+    }
+
+    $(document).ready(function() {
+        autoLoginAndLoad();
+    });
+</script>
+</body>
+</html>
