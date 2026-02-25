@@ -3,7 +3,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
 
-
+.chatbot-bubble a {
+    color: #0066cc;
+    font-weight: bold;
+    text-decoration: underline;
+}
+.chatbot-bubble a:hover {
+    color: #003366;
+    text-decoration: none;
+}
 
 /*HEADER*/
 .icon a{
