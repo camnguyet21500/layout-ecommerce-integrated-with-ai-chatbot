@@ -310,41 +310,88 @@
     function renderOrdersTable(orders) {
         const tbody = document.getElementById("orderTableBody");
         tbody.innerHTML = "";
-
         if (orders.length === 0) {
             tbody.innerHTML = '<tr><td colspan="9" class="text-center">Chưa có đơn hàng nào</td></tr>';
             return;
         }
 
         orders.forEach((order, index) => {
-            const canConfirm = order.status === 'pending';
-            const canCancel = order.status === 'pending' || order.status === 'confirmed';
+            const status = order.status;
+
+            // Xác định các nút có thể hiển thị dựa trên status hiện tại
+            let actionsHTML = `
+            <button class="btn btn-sm btn-info view-detail mr-1" data-id="${order.id}">
+                Details
+            </button>
+        `;
+
+            // Nút Confirm (chỉ hiện khi pending)
+            if (status === 'pending') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-success confirm-order mr-1" data-id="${order.id}">
+                    <i class="fas fa-check"></i> Confirm
+                </button>
+            `;
+            }
+
+            // Nút Processing (chỉ hiện khi confirmed)
+            if (status === 'confirmed') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-primary process-order mr-1" data-id="${order.id}">
+                    <i class="fas fa-cogs"></i> Processing
+                </button>
+            `;
+            }
+
+            // Nút Shipped (chỉ hiện khi processing)
+            if (status === 'processing') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-warning ship-order mr-1" data-id="${order.id}">
+                    <i class="fas fa-truck"></i> Shipped
+                </button>
+            `;
+            }
+
+            // Nút Delivered (chỉ hiện khi shipped)
+            if (status === 'shipped') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-success deliver-order mr-1" data-id="${order.id}">
+                    <i class="fas fa-check-double"></i> Delivered
+                </button>
+            `;
+            }
+
+            // Nút Refunded (có thể hiện ở mọi trạng thái trừ refunded/canceled, nhưng thường chỉ dùng khi cần hoàn tiền)
+            if (status !== 'refunded' && status !== 'canceled') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-danger refund-order mr-1" data-id="${order.id}">
+                    <i class="fas fa-undo"></i> Refund
+                </button>
+            `;
+            }
+
+            // Nút Cancel (đã có, giữ nguyên)
+            if (status === 'pending' || status === 'confirmed' || status === 'processing') {
+                actionsHTML += `
+                <button class="btn btn-sm btn-danger cancel-order" data-id="${order.id}">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+            `;
+            }
 
             const row = document.createElement("tr");
             row.dataset.orderId = order.id;
             row.innerHTML = `
-      <td>${index + 1}</td>
-      <td>${order.id}</td>
-      <td><strong>${order.userName || 'Visitors'}</strong></td>
-      <td>${order.userEmail || '-'}</td>
-      <td>${order.userPhone || '-'}</td>
-      <td>${Number(order.totalAmount).toLocaleString('vi-VN')} ₫</td>
-      <td>${new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
-      <td><span class="badge badge-${getStatusClass(order.status)}">${getStatusText(order.status)}</span></td>
-      <td>
-        <button class="btn btn-sm btn-info view-detail mr-1" data-id="${order.id}">Details</button>
-        ${canConfirm ? `
-          <button class="btn btn-sm btn-success confirm-order mr-1" data-id="${order.id}">
-            <i class="fas fa-check"></i> Confirm
-          </button>
-        ` : ''}
-        ${canCancel ? `
-          <button class="btn btn-sm btn-danger cancel-order" data-id="${order.id}">
-            <i class="fas fa-times"></i> Cancel
-          </button>
-        ` : ''}
-      </td>
-    `;
+            <td>${index + 1}</td>
+            <td>${order.id}</td>
+            <td><strong>${order.userName || 'Visitor'}</strong></td>
+            <td>${order.userEmail || '-'}</td>
+            <td>${order.userPhone || '-'}</td>
+            <td>${Number(order.totalAmount).toLocaleString('vi-VN')} ₫</td>
+            <td>${new Date(order.createdAt).toLocaleDateString('vi-VN')}</td>
+            <td><span class="badge badge-${getStatusClass(status)}">${getStatusText(status)}</span></td>
+            <td>${actionsHTML}</td>
+        `;
             tbody.appendChild(row);
         });
     }
@@ -402,6 +449,94 @@
             loadOrders(); // Reload bảng
         } catch (err) {
             showToast("Error while canceling order: " + err.message, "danger");
+        }
+    });
+
+    // Processing
+    $(document).on('click', '.process-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Confirm that the order has been moved to the Processing status?")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'processing' })
+            });
+            if (!res.ok) throw new Error("Update failed!");
+            showToast("The order has been moved to Processing!", "success");
+            loadOrders(); // Reload bảng
+        } catch (err) {
+            showToast("Error: " + err.message, "danger");
+        }
+    });
+
+    // Shipped
+    $(document).on('click', '.ship-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Confirm that the package has been handed over to the shipping company?")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'shipped' })
+            });
+            if (!res.ok) throw new Error("Update failed!");
+            showToast("The order has been shipped!", "success");
+            loadOrders();
+        } catch (err) {
+            showToast("Error: " + err.message, "danger");
+        }
+    });
+
+    // Delivered
+    $(document).on('click', '.deliver-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Confirm that the order has been successfully delivered to the customer?")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'delivered' })
+            });
+            if (!res.ok) throw new Error("Update failed!");
+            showToast("Your order has been delivered!", "success");
+            loadOrders();
+        } catch (err) {
+            showToast("Error: " + err.message, "danger");
+        }
+    });
+
+    // Refunded
+    $(document).on('click', '.refund-order', async function() {
+        const orderId = $(this).data('id');
+        if (!confirm("Confirm the refund and change the status to Refunded?")) return;
+
+        try {
+            const res = await fetch(`${BASE_URL}/orders/${orderId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${authToken}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ status: 'refunded' })
+            });
+            if (!res.ok) throw new Error("Update failed!");
+            showToast("The order has been refunded!", "success");
+            loadOrders();
+        } catch (err) {
+            showToast("Error: " + err.message, "danger");
         }
     });
 
