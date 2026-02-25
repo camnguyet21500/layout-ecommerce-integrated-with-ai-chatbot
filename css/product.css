@@ -590,3 +590,76 @@ body{
         order: 3;           /* đẩy xuống dưới menu nếu cần */
     }
 }
+
+/* Căn giữa modal chi tiết sản phẩm */
+#productModal .modal-dialog.modal-xl {
+    max-width: 1100px; /* Tăng chiều rộng modal để thoáng hơn */
+}
+
+#productModal .modal-body {
+    padding: 2rem;
+}
+
+#productModal .infor_product {
+    padding: 0 1.5rem;
+}
+
+#productModal .name {
+    font-family: "El Messiri", sans-serif;
+    font-weight: 600;
+    color: #333;
+}
+
+#productModal .price-block .new_price {
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+#productModal .summary {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: #555;
+}
+
+/* Carousel hình ảnh căn giữa */
+#productCarousel .carousel-inner img {
+    max-height: 500px;
+    object-fit: contain;
+    margin: 0 auto;
+    background: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Nút số lượng đẹp hơn */
+.js-qty {
+    width: 140px;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.js-qty button {
+    width: 40px;
+    height: 46px;
+    font-size: 1.2rem;
+    border: none;
+    background: #f1f3f5;
+}
+
+.js-qty input {
+    height: 46px;
+    border: none;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #productModal .modal-dialog {
+        margin: 1rem;
+    }
+    #productCarousel .carousel-inner img {
+        max-height: 350px;
+    }
+}

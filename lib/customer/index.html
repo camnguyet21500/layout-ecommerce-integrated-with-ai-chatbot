@@ -349,7 +349,25 @@
                 <!--                    </div>-->
                 <!--                </div>-->
                 <!-- END LOGIN -->
-                <a href="notification.html"><i class="fas fa-bell fa-fw mx-3"></i></a>
+                <div class="dropdown notification-dropdown mx-3">
+                    <a class="icon-hover" href="#" id="notificationDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-bell fa-fw"></i>
+                        <!-- Badge số thông báo chưa đọc (tùy chọn) -->
+                        <span id="notiBadge" class="badge badge-danger noti-badge" style="display: none;">0</span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right shadow-lg border-0 rounded" aria-labelledby="notificationDropdown" style="width: 320px; max-height: 400px; overflow-y: auto;">
+                        <div class="dropdown-header bg-light border-bottom d-flex justify-content-between align-items-center">
+                            <strong>Thông báo mới</strong>
+                            <small><a href="notification.html" class="text-primary">Xem tất cả</a></small>
+                        </div>
+                        <div id="notificationList" class="list-group list-group-flush">
+                            <!-- Thông báo sẽ được đổ động vào đây -->
+                            <div class="text-center py-4 text-muted">
+                                <i class="fas fa-spinner fa-spin mr-2"></i> Đang tải thông báo...
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <a href="order.html"><i class="fas fa-list-alt fa-fw mx-3"></i></a>
                 <a href="cart.html"><i class="fas fa-dolly fa-fw mx-3"></i></a>
             </div>
@@ -654,31 +672,112 @@
 
 <!--END FOOTER-->
 <script>
-    const BASE_URL = "http://localhost:8888/api";
-    let authToken = null;
 
-    // Auto login để lấy token
-    async function autoLogin() {
-        try {
-            const res = await fetch(`${BASE_URL}/auth/sign-in`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: "admin@gmail.com", password: "123456" })
-            });
-            if (res.ok) {
-                const data = await res.json();
-                authToken = data.data.accessToken;
-                console.log("Login thành công! Token:", authToken);
-            } else {
-                console.error("Login thất bại:", await res.text());
-            }
-        } catch (err) {
-            console.error("Lỗi kết nối login:", err);
-        }
+        const BASE_URL = "http://localhost:8888/api";
+        let authToken = null;
+
+        // ==================== AUTO LOGIN + LOAD NOTIFICATIONS ====================
+        async function initializeApp() {
+        await autoLogin();           // Chờ login xong
+        await loadNotifications();   // Sau đó mới load thông báo
     }
-    autoLogin();
 
-    document.addEventListener('DOMContentLoaded', function() {
+        async function autoLogin() {
+        try {
+        const res = await fetch(`${BASE_URL}/auth/sign-in`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+        email: "admin@gmail.com",   // ← Dùng tài khoản test đã biết hoạt động
+        password: "123456"
+    })
+    });
+
+        if (res.ok) {
+        const data = await res.json();
+        authToken = data.data.accessToken;
+        console.log("✅ Login thành công! Token:", authToken);
+    } else {
+        console.error("❌ Login thất bại:", await res.text());
+    }
+    } catch (err) {
+        console.error("❌ Lỗi kết nối login:", err);
+    }
+    }
+
+        async function loadNotifications() {
+            // if (!authToken) {
+            //     console.warn("Chưa có token, bỏ qua load thông báo");
+            //     document.getElementById('notificationList').innerHTML =
+            //         '<div class="text-center py-4 text-muted">Vui lòng đăng nhập để xem thông báo</div>';
+            //     document.getElementById('notiBadge').style.display = 'none';
+            //     return;
+            // }
+
+            try {
+                // Chỉ log token nếu có (tránh lỗi null)
+                console.log("Đang gọi API notifications với token:", authToken.substring(0, 20) + "...");
+
+                const res = await fetch(`${BASE_URL}/users/notifications?itemPerPage=6&page=1&sort=createdAt:desc`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Accept': 'application/json'
+                    }
+                });
+
+                console.log("Response status:", res.status);
+
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    console.error("Chi tiết lỗi từ server:", errorText);
+                    throw new Error(`HTTP ${res.status} - ${errorText || 'Unauthorized hoặc lỗi server'}`);
+                }
+
+                const data = await res.json();
+                console.log("Dữ liệu notifications:", data);
+
+                const notifications = data.data?.list || [];
+
+                const notiList = document.getElementById('notificationList');
+                notiList.innerHTML = '';
+
+                if (notifications.length === 0) {
+                    notiList.innerHTML = '<div class="text-center py-4 text-muted">Chưa có thông báo nào</div>';
+                    document.getElementById('notiBadge').style.display = 'none';
+                    return;
+                }
+
+                const unreadCount = notifications.filter(n => !n.isRead).length;
+                const badge = document.getElementById('notiBadge');
+                badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+                badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+
+                notifications.forEach(noti => {
+                    const item = document.createElement('div');
+                    item.className = `list-group-item noti-item ${!noti.isRead ? 'unread' : ''}`;
+                    item.innerHTML = `
+                <div class="noti-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="noti-content">
+                    <p class="noti-title">${noti.title || 'Thông báo từ hệ thống'}</p>
+                    <p class="noti-time">${new Date(noti.createdAt).toLocaleString('vi-VN')}</p>
+                </div>
+            `;
+                    notiList.appendChild(item);
+                });
+
+            } catch (err) {
+                console.error("❌ Lỗi tải thông báo:", err);
+                document.getElementById('notificationList').innerHTML =
+                    `<div class="text-center py-4 text-danger">Lỗi: ${err.message}</div>`;
+            }
+        }
+
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        await initializeApp();  // Chờ login + load noti xong
+
         const chatbotToggler = document.getElementById('chatbot-toggler');
         const chatbotBox = document.getElementById('chatbot-box');
         const chatbotClose = document.getElementById('chatbot-close');

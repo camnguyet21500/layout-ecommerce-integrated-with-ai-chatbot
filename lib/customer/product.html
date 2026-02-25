@@ -316,15 +316,13 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="col-md-7">
+            <div class="modal-body p-4">
+                <div class="row align-items-center justify-content-center">
+                    <!-- Hình ảnh (trái) -->
+                    <div class="col-md-6 text-center mb-4 mb-md-0">
                         <div id="productCarousel" class="carousel slide" data-ride="carousel" data-interval="false">
                             <ol class="carousel-indicators" id="carouselIndicators"></ol>
-
-                            <div class="carousel-inner" id="carouselInner">
-                            </div>
-
+                            <div class="carousel-inner" id="carouselInner"></div>
                             <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
                                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                                 <span class="sr-only">Previous</span>
@@ -336,31 +334,44 @@
                         </div>
                     </div>
 
-                    <div class="col-md-5 infor_product">
-                        <div class="name" id="modalProductName"></div>
-                        <div class="old_price" id="modalOldPrice" style="display: none;"></div>
-                        <div class="new_price" id="modalNewPrice"></div>
-                        <div class="vote">
-                            <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                            <i class="far fa-star"></i><i class="far fa-star"></i>
-                            <span>No reviews</span>
-                        </div>
-                        <hr>
-                        <div class="summary" id="modalDescription">No description available.</div>
+                    <!-- Thông tin sản phẩm (phải) -->
+                    <div class="col-md-6">
+                        <div class="infor_product text-center text-md-left">
+                            <div class="name h3 mb-3" id="modalProductName"></div>
 
-                        <div class="active mt-4">
-                            <div class="js-qty d-inline-block">
-                                <button class="qty-minus btn btn-outline-dark" type="button">-</button>
-                                <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="1" style="width: 60px;">
-                                <button class="qty-plus btn btn-outline-dark" type="button">+</button>
+                            <div class="price-block mb-3">
+                                <div class="old_price text-muted" id="modalOldPrice" style="display: none; text-decoration: line-through;"></div>
+                                <div class="new_price h4 text-danger font-weight-bold" id="modalNewPrice"></div>
                             </div>
-                            <div class="addtocart d-inline-block ml-3">
-                                <a href="#" class="btn btn-warning text-white add-to-cart-btn">ADD TO CART</a>
-                            </div>
-                        </div>
 
-                        <div class="buyitnow mt-3">
-                            <button class="button btn btn-dark">BUY IT NOW</button>
+                            <div class="vote mb-3">
+                                <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                                <i class="far fa-star"></i><i class="far fa-star"></i>
+                                <span class="ml-2 text-muted">No reviews</span>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <div class="summary mb-4" id="modalDescription">
+                                No description available.
+                            </div>
+
+                            <!-- Số lượng + nút -->
+                            <div class="d-flex flex-column flex-sm-row justify-content-center align-items-center">
+                                <div class="js-qty d-inline-block mb-3 mb-sm-0 mr-sm-3">
+                                    <button class="qty-minus btn btn-outline-dark px-3" type="button">-</button>
+                                    <input type="text" class="js-qty-num form-control text-center d-inline-block mx-2" value="1" style="width: 70px;">
+                                    <button class="qty-plus btn btn-outline-dark px-3" type="button">+</button>
+                                </div>
+
+                                <div class="addtocart d-inline-block">
+                                    <a href="#" class="btn btn-warning text-white add-to-cart-btn px-5 py-3">ADD TO CART</a>
+                                </div>
+                            </div>
+
+                            <div class="buyitnow mt-3">
+                                <button class="button btn btn-dark px-5 py-3">BUY IT NOW</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -456,6 +467,19 @@
 </footer>
 
 <script>
+
+    function debounce(func, wait) {
+        let timeout;
+        return function executedFunction(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
+    }
+
     const BASE_URL = "http://localhost:8888/api";
     let authToken = null;
     let allProductImages = [];
@@ -516,20 +540,23 @@
     }
 
     function filterProductsByName(query) {
-        if (!query || query.trim() === '') {
+        // Nếu query rỗng hoặc undefined → hiển thị tất cả
+        if (!query || typeof query !== 'string' || query.trim() === '') {
             renderProducts(allProducts);
             return;
         }
 
-        const filtered = allProducts.filter(product =>
-            product.name.toLowerCase().includes(query.toLowerCase())
-        );
+        const lowerQuery = query.toLowerCase().trim();
+
+        const filtered = allProducts.filter(product => {
+            return product.name && product.name.toLowerCase().includes(lowerQuery);
+        });
 
         renderProducts(filtered);
 
         if (filtered.length === 0) {
             document.getElementById("productGrid").innerHTML =
-                '<p class="text-center mt-5">No products found</p>';
+                `<p class="text-center mt-5">Không tìm thấy sản phẩm nào với từ khóa "${query}"</p>`;
         }
     }
 
@@ -548,10 +575,10 @@
 
     async function renderProducts(products) {
         const grid = document.getElementById("productGrid");
-        grid.innerHTML = "";
+        grid.innerHTML = "";  // ← XÓA SẠCH GRID TRƯỚC KHI RENDER MỚI (quan trọng nhất!)
 
         if (products.length === 0) {
-            grid.innerHTML = '<p class="text-center">No products available</p>';
+            grid.innerHTML = '<p class="text-center mt-5">No products found</p>';
             return;
         }
 
@@ -566,7 +593,6 @@
                 if (imagesRes.ok) {
                     const imagesJson = await imagesRes.json();
                     const productImages = imagesJson.data?.list || [];
-
                     if (productImages.length > 0) {
                         productImages.sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
                         mainImage = productImages[0].imageUrl;
@@ -581,6 +607,7 @@
             product.allImages = allImages;
 
             const price = Number(product.price).toLocaleString('vi-VN') + ' ₫';
+
             const item = document.createElement("div");
             item.className = "col-lg-3 col-md-4 col-sm-6 col-6 product-tab-pd";
             item.innerHTML = `
@@ -604,8 +631,9 @@
             grid.appendChild(item);
         }
 
-        autoOpenProduct()
+        autoOpenProduct();
     }
+
     $(document).on('click', '.product-detail-link', async function(e) {
         e.preventDefault();
         const id = $(this).data('id');
@@ -875,21 +903,26 @@
             console.error("Lỗi khởi tạo trang:", err);
         }
 
+        // Nút tìm kiếm (click icon kính lúp)
         document.getElementById('searchBtn')?.addEventListener('click', () => {
-            const query = document.getElementById('searchInput').value;
+            const input = document.getElementById('searchInput');
+            const query = (input?.value || '').trim();
             filterProductsByName(query);
         });
 
+        // Enter phím trong ô search
         document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                document.getElementById('searchBtn').click();
+                document.getElementById('searchBtn')?.click();
             }
         });
 
-        document.getElementById('searchInput')?.addEventListener('input', function() {
-            filterProductsByName(this.value);
-        });
+        // Search realtime khi gõ (debounce 300ms để tránh gọi quá nhiều)
+        document.getElementById('searchInput')?.addEventListener('input', debounce(function() {
+            const query = (this?.value || '').trim();
+            filterProductsByName(query);
+        }, 300));
     });
 </script>
 </body>
