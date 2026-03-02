@@ -143,7 +143,7 @@ body{
 }
 
 .container  h3 {
-    font-size: 80px;
+    /*font-size: 80px;*/
     padding-bottom: 15px;
     background: none;
 }
