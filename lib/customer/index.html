@@ -823,12 +823,13 @@
             }
 
             try {
+                const sessionID = localStorage.getItem('chatSessionID') || 'homepage-' + Date.now();
                 const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify({
                         question: message,
-                        sessionID: localStorage.getItem('chatSessionID') || 'homepage-' + Date.now()
+                        sessionID,
                     })
                 });
 
@@ -839,51 +840,51 @@
                     let botReply = data.data || "Xin lỗi, tôi chưa hiểu rõ câu hỏi của bạn.";
 
                     // Chỉ xử lý khi user hỏi về giá tốt nhất / rẻ nhất
-                    const lowerMessage = message.toLowerCase();
-                    if (lowerMessage.includes('giá tốt nhất') ||
-                        lowerMessage.includes('rẻ nhất') ||
-                        lowerMessage.includes('giá thấp nhất')) {
+                    // const lowerMessage = message.toLowerCase();
+                    // if (lowerMessage.includes('giá tốt nhất') ||
+                    //     lowerMessage.includes('rẻ nhất') ||
+                    //     lowerMessage.includes('giá thấp nhất')) {
 
-                        // Gọi API lấy danh sách sản phẩm
-                        try {
-                            const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
-                                headers: headers
-                            });
+                    //     // Gọi API lấy danh sách sản phẩm
+                    //     try {
+                    //         const productsRes = await fetch(`${BASE_URL}/products?itemPerPage=100&page=1`, {
+                    //             headers: headers
+                    //         });
 
-                            if (productsRes.ok) {
-                                const productsData = await productsRes.json();
-                                const allProducts = productsData.data.list || [];
+                    //         if (productsRes.ok) {
+                    //             const productsData = await productsRes.json();
+                    //             const allProducts = productsData.data.list || [];
 
-                                // LỌC CHỈ SẢN PHẨM ACTIVE
-                                const activeProducts = allProducts.filter(p =>
-                                    p.status === 'active' && p.deletedAt === null
-                                );
+                    //             // LỌC CHỈ SẢN PHẨM ACTIVE
+                    //             const activeProducts = allProducts.filter(p =>
+                    //                 p.status === 'active' && p.deletedAt === null
+                    //             );
 
-                                if (activeProducts.length === 0) {
-                                    botReply = "Hiện tại không có sản phẩm nào đang bán.";
-                                } else {
-                                    // Tìm sản phẩm rẻ nhất trong active
-                                    const cheapest = activeProducts.reduce((prev, curr) =>
-                                        prev.price < curr.price ? prev : curr
-                                    );
+                    //             if (activeProducts.length === 0) {
+                    //                 botReply = "Hiện tại không có sản phẩm nào đang bán.";
+                    //             } else {
+                    //                 // Tìm sản phẩm rẻ nhất trong active
+                    //                 const cheapest = activeProducts.reduce((prev, curr) =>
+                    //                     prev.price < curr.price ? prev : curr
+                    //                 );
 
-                                    const priceFormatted = Number(cheapest.price).toLocaleString('vi-VN') + ' ₫';
+                    //                 const priceFormatted = Number(cheapest.price).toLocaleString('vi-VN') + ' ₫';
 
-                                    botReply = `Sản phẩm giá tốt nhất đang bán là:\n\n${cheapest.name}.\n Giá: ${priceFormatted}`;
-                                }
-                            } else {
-                                botReply = "Không thể tải danh sách sản phẩm để kiểm tra giá.";
-                            }
-                        } catch (err) {
-                            console.error("Lỗi khi lọc sản phẩm active:", err);
-                            botReply = "Lỗi kết nối khi kiểm tra sản phẩm.";
-                        }
-                    }
+                    //                 botReply = `Sản phẩm giá tốt nhất đang bán là:\n\n${cheapest.name}.\n Giá: ${priceFormatted}`;
+                    //             }
+                    //         } else {
+                    //             botReply = "Không thể tải danh sách sản phẩm để kiểm tra giá.";
+                    //         }
+                    //     } catch (err) {
+                    //         console.error("Lỗi khi lọc sản phẩm active:", err);
+                    //         botReply = "Lỗi kết nối khi kiểm tra sản phẩm.";
+                    //     }
+                    // }
 
                     appendChatMessage(botReply, 'bot');
 
-                    if (data.sessionID) {
-                        localStorage.setItem('chatSessionID', data.sessionID);
+                    if (sessionID) {
+                        localStorage.setItem('chatSessionID', sessionID);
                     }
                 } else {
                     appendChatMessage(`Lỗi: ${data.message || res.status}`, 'bot');

@@ -620,12 +620,13 @@
             if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
             try {
+                const sessionID = localStorage.getItem('chatSessionIDAdmin') || 'admin-' + Date.now();
                 const res = await fetch(`${BASE_URL}/chat-messages/chat`, {
                     method: 'POST',
                     headers,
                     body: JSON.stringify({
                         question: message,
-                        sessionID: localStorage.getItem('chatSessionIDAdmin') || 'admin-' + Date.now()
+                        sessionID,
                     })
                 });
 
@@ -660,8 +661,8 @@
 
                 appendChatMessage(botReply, 'bot');
 
-                if (data.sessionID) {
-                    localStorage.setItem('chatSessionIDAdmin', data.sessionID);
+                if (sessionID) {
+                    localStorage.setItem('chatSessionIDAdmin', sessionID);
                 }
 
             } catch (err) {
